@@ -17,7 +17,7 @@ export function WhyUsSection() {
       {/* Facade & Glazing Specialists - Image Right (Full Bleed) */}
       <div className="flex flex-col lg:grid lg:grid-cols-2 lg:items-stretch">
         {/* Text - Top on mobile, Left on desktop - Blue background full bleed left */}
-        <div className="bg-[#2175D9] flex items-center px-4 sm:px-6 lg:pr-16 xl:pr-20 py-10 sm:py-12 lg:py-24 order-1">
+        <div className="bg-[#2175D9] flex items-center px-6 sm:px-10 lg:px-6 lg:pr-16 xl:pr-20 py-10 sm:py-12 lg:py-24 order-1">
           <div className="max-w-xl lg:ml-auto">
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-semibold text-white mb-4 sm:mb-6 tracking-tight">
               Facade & glazing specialists
@@ -34,8 +34,8 @@ export function WhyUsSection() {
             </Link>
           </div>
         </div>
-        {/* Image - Bottom on mobile, Right on desktop */}
-        <div className="relative h-[250px] sm:h-[300px] lg:h-auto lg:min-h-[600px] order-2">
+        {/* Image - Hidden on mobile, Right on desktop */}
+        <div className="hidden sm:block relative sm:h-[300px] lg:h-auto lg:min-h-[600px] order-2">
           <img
             src="/images/facade-specialist.webp"
             alt="Facade and glazing construction"
@@ -62,7 +62,7 @@ export function WhyUsSection() {
           ))}
         </div>
         {/* Text Right */}
-        <div className="flex items-center px-4 sm:px-6 lg:pl-16 xl:pl-20 py-10 sm:py-12 lg:py-24 order-1 lg:order-2">
+        <div className="flex items-center px-6 sm:px-10 lg:px-6 lg:pl-16 xl:pl-20 py-10 sm:py-12 lg:py-24 order-1 lg:order-2">
           <div className="max-w-xl">
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-navy mb-6">
               Australia-wide coverage

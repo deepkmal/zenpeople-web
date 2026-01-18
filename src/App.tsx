@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Layout } from './components/layout';
 import { HomePage } from './pages/HomePage';
+import { ContactPage } from './pages/ContactPage';
 
 function App() {
   return (
@@ -13,7 +14,7 @@ function App() {
           <Route path="/jobs" element={<PlaceholderPage title="Find a Job" />} />
           <Route path="/jobs/:slug" element={<PlaceholderPage title="Job Details" />} />
           <Route path="/hire" element={<PlaceholderPage title="Find Staff" />} />
-          <Route path="/contact" element={<PlaceholderPage title="Contact Us" />} />
+          <Route path="/contact" element={<ContactPage />} />
           <Route path="/sectors/:slug" element={<PlaceholderPage title="Industry Sector" />} />
           <Route path="/privacy" element={<PlaceholderPage title="Privacy Policy" />} />
           <Route path="/terms" element={<PlaceholderPage title="Terms & Conditions" />} />

@@ -9,8 +9,8 @@ export function FeaturedJobs() {
       <Container>
         {/* Header */}
         <div className="text-center mb-12">
-          <h2 className="text-2xl sm:text-3xl font-semibold text-navy italic">
-            latest opportunities.
+          <h2 className="text-2xl sm:text-3xl font-semibold text-navy">
+            Recently listed
           </h2>
         </div>
 

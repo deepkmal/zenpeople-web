@@ -18,9 +18,7 @@ export function Footer() {
                 </span>
               </Link>
               <p className="mt-4 text-gray-300 leading-relaxed">
-                specialist facade & glazing recruitment
-                <br />
-                australia-wide.
+                Specialising in facade and glazing recruitment Australia-wide.
               </p>
               <div className="mt-6 space-y-2">
                 <a
@@ -40,7 +38,7 @@ export function Footer() {
 
             {/* Industries Column */}
             <div>
-              <h3 className="font-semibold text-lg mb-4">Industries we serve</h3>
+              <h3 className="font-semibold text-lg mb-4">Industries we staff for</h3>
               <ul className="space-y-2">
                 {sectors.map((sector) => (
                   <li key={sector.id}>
