@@ -30,7 +30,7 @@ export function ContactPage() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
-  const [touched, setTouched] = useState<Record<string, boolean>>({});
+  const [hasAttemptedSubmit, setHasAttemptedSubmit] = useState(false);
 
   const validateEmail = (email: string): boolean => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -67,10 +67,6 @@ export function ContactPage() {
 
   const isFormValid = Object.keys(errors).length === 0;
 
-  const handleBlur = (field: string) => {
-    setTouched((prev) => ({ ...prev, [field]: true }));
-  };
-
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -82,9 +78,7 @@ export function ContactPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Mark all fields as touched
-    setTouched({ firstName: true, lastName: true, contact: true, email: true, message: true });
+    setHasAttemptedSubmit(true);
 
     if (!isFormValid) {
       return;
@@ -98,7 +92,7 @@ export function ContactPage() {
       await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate API call
       setSubmitStatus('success');
       setFormData({ firstName: '', lastName: '', company: '', email: '', phone: '', message: '' });
-      setTouched({});
+      setHasAttemptedSubmit(false);
     } catch {
       setSubmitStatus('error');
     } finally {
@@ -206,13 +200,12 @@ export function ContactPage() {
                       name="firstName"
                       value={formData.firstName}
                       onChange={handleChange}
-                      onBlur={() => handleBlur('firstName')}
-                      className={`w-full px-4 py-3 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange border border-gray-200 ${
-                        touched.firstName && errors.firstName ? 'ring-2 ring-red-400' : ''
+                      className={`w-full px-4 py-3 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-navy border border-gray-200 ${
+                        hasAttemptedSubmit && errors.firstName ? 'ring-2 ring-red-400' : ''
                       }`}
                       placeholder="First name"
                     />
-                    {touched.firstName && errors.firstName && (
+                    {hasAttemptedSubmit && errors.firstName && (
                       <p className="mt-1 text-sm text-red-500">{errors.firstName}</p>
                     )}
                   </div>
@@ -223,13 +216,12 @@ export function ContactPage() {
                       name="lastName"
                       value={formData.lastName}
                       onChange={handleChange}
-                      onBlur={() => handleBlur('lastName')}
-                      className={`w-full px-4 py-3 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange border border-gray-200 ${
-                        touched.lastName && errors.lastName ? 'ring-2 ring-red-400' : ''
+                      className={`w-full px-4 py-3 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-navy border border-gray-200 ${
+                        hasAttemptedSubmit && errors.lastName ? 'ring-2 ring-red-400' : ''
                       }`}
                       placeholder="Last name"
                     />
-                    {touched.lastName && errors.lastName && (
+                    {hasAttemptedSubmit && errors.lastName && (
                       <p className="mt-1 text-sm text-red-500">{errors.lastName}</p>
                     )}
                   </div>
@@ -242,13 +234,13 @@ export function ContactPage() {
                     name="company"
                     value={formData.company}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange border border-gray-200"
+                    className="w-full px-4 py-3 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-navy border border-gray-200"
                     placeholder="Company (optional)"
                   />
                 </div>
 
                 {/* Contact error message */}
-                {touched.contact && errors.contact && (
+                {hasAttemptedSubmit && errors.contact && (
                   <p className="text-sm text-red-500">{errors.contact}</p>
                 )}
 
@@ -259,13 +251,12 @@ export function ContactPage() {
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
-                    onBlur={() => handleBlur('contact')}
-                    className={`w-full px-4 py-3 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange border border-gray-200 ${
-                      touched.email && errors.email ? 'ring-2 ring-red-400' : ''
+                    className={`w-full px-4 py-3 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-navy border border-gray-200 ${
+                      hasAttemptedSubmit && errors.email ? 'ring-2 ring-red-400' : ''
                     }`}
                     placeholder="Email"
                   />
-                  {touched.email && errors.email && (
+                  {hasAttemptedSubmit && errors.email && (
                     <p className="mt-1 text-sm text-red-500">{errors.email}</p>
                   )}
                 </div>
@@ -277,8 +268,7 @@ export function ContactPage() {
                     name="phone"
                     value={formData.phone}
                     onChange={handleChange}
-                    onBlur={() => handleBlur('contact')}
-                    className="w-full px-4 py-3 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange border border-gray-200"
+                    className="w-full px-4 py-3 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-navy border border-gray-200"
                     placeholder="Phone"
                   />
                 </div>
@@ -289,14 +279,13 @@ export function ContactPage() {
                     name="message"
                     value={formData.message}
                     onChange={handleChange}
-                    onBlur={() => handleBlur('message')}
                     rows={4}
-                    className={`w-full px-4 py-3 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange resize-none border border-gray-200 ${
-                      touched.message && errors.message ? 'ring-2 ring-red-400' : ''
+                    className={`w-full px-4 py-3 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-navy resize-none border border-gray-200 ${
+                      hasAttemptedSubmit && errors.message ? 'ring-2 ring-red-400' : ''
                     }`}
                     placeholder="Message"
                   />
-                  {touched.message && errors.message && (
+                  {hasAttemptedSubmit && errors.message && (
                     <p className="mt-1 text-sm text-red-500">{errors.message}</p>
                   )}
                 </div>

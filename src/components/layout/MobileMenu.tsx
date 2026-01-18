@@ -155,7 +155,7 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
           </nav>
 
           {/* Footer */}
-          <div className="p-4 border-t">
+          <div className="p-4">
             <Link
               to="/contact"
               onClick={onClose}
