@@ -1,0 +1,18 @@
+@import "tailwindcss";
+
+@theme {
+  --color-navy: #1E3A5F;
+  --color-orange: #E86A33;
+  --font-inter: "Inter", system-ui, sans-serif;
+}
+
+@layer base {
+  html {
+    font-family: var(--font-inter);
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply antialiased text-gray-700;
+  }
+}
