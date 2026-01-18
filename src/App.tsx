@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Layout } from './components/layout';
 import { HomePage } from './pages/HomePage';
 import { ContactPage } from './pages/ContactPage';
+import { HirePage } from './pages/HirePage';
 
 function App() {
   return (
@@ -13,7 +14,7 @@ function App() {
           <Route path="/services" element={<PlaceholderPage title="Our Services" />} />
           <Route path="/jobs" element={<PlaceholderPage title="Find a Job" />} />
           <Route path="/jobs/:slug" element={<PlaceholderPage title="Job Details" />} />
-          <Route path="/hire" element={<PlaceholderPage title="Find Staff" />} />
+          <Route path="/hire" element={<HirePage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/sectors/:slug" element={<PlaceholderPage title="Industry Sector" />} />
           <Route path="/privacy" element={<PlaceholderPage title="Privacy Policy" />} />

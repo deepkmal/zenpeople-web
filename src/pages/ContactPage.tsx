@@ -101,7 +101,7 @@ export function ContactPage() {
   };
 
   return (
-    <section className="py-16 lg:py-24 bg-gray-50 min-h-screen pt-32 lg:pt-40">
+    <section className="py-16 lg:py-24 bg-gray-50 pt-32 lg:pt-40">
       <Container>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 lg:items-start">
           {/* Left Column - Text */}

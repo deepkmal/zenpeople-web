@@ -17,7 +17,7 @@ export function WhyUsSection() {
       {/* Facade & Glazing Specialists - Image Right (Full Bleed) */}
       <div className="flex flex-col lg:grid lg:grid-cols-2 lg:items-stretch">
         {/* Text - Top on mobile, Left on desktop - Blue background full bleed left */}
-        <div className="bg-[#2175D9] flex items-center px-6 sm:px-10 lg:px-6 lg:pr-16 xl:pr-20 py-10 sm:py-12 lg:py-24 order-1">
+        <div className="bg-[#2175D9] flex items-center px-6 sm:px-10 lg:pl-[max(1.5rem,calc((100vw-80rem)/2+2rem))] lg:pr-16 xl:pr-20 py-10 sm:py-12 lg:py-24 order-1">
           <div className="max-w-xl lg:ml-auto">
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-semibold text-white mb-4 sm:mb-6 tracking-tight">
               Facade & glazing specialists
@@ -47,13 +47,13 @@ export function WhyUsSection() {
       {/* Australia-wide Coverage - Image Left (Full Bleed) */}
       <div className="flex flex-col lg:grid lg:grid-cols-2 lg:items-stretch">
         {/* Image Grid Left - Full bleed, no gaps, no rounded edges - Hidden on mobile/tablet */}
-        <div className="hidden lg:grid lg:order-1 grid-cols-3 grid-rows-2">
+        <div className="hidden lg:grid lg:order-1 grid-cols-3 grid-rows-2 overflow-hidden" style={{ gap: 0 }}>
           {cityImages.map((item) => (
-            <div key={item.city} className="relative aspect-square overflow-hidden">
+            <div key={item.city} className="relative aspect-square overflow-hidden -mb-[1px]">
               <img
                 src={item.image}
                 alt={item.city}
-                className="w-full h-full object-cover"
+                className="block w-full h-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent flex items-end p-4">
                 <span className="text-white text-sm font-semibold">{item.city}</span>
@@ -62,7 +62,7 @@ export function WhyUsSection() {
           ))}
         </div>
         {/* Text Right */}
-        <div className="flex items-center px-6 sm:px-10 lg:px-6 lg:pl-16 xl:pl-20 py-10 sm:py-12 lg:py-24 order-1 lg:order-2">
+        <div className="flex items-center px-6 sm:px-10 lg:pl-16 xl:pl-20 lg:pr-[max(1.5rem,calc((100vw-80rem)/2+2rem))] py-10 sm:py-12 lg:py-24 order-1 lg:order-2">
           <div className="max-w-xl">
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-navy mb-6">
               Australia-wide coverage

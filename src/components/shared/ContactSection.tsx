@@ -13,12 +13,27 @@ interface FormData {
 interface FormErrors {
   firstName?: string;
   lastName?: string;
+  company?: string;
   contact?: string;
   email?: string;
   message?: string;
 }
 
-export function ContactSection() {
+interface ContactSectionProps {
+  heading?: string;
+  subtitle?: string;
+  companyRequired?: boolean;
+  hideMessage?: boolean;
+  buttonLabel?: string;
+}
+
+export function ContactSection({
+  heading = 'Get in touch.',
+  subtitle = "Whether you're hiring or looking for work, we're here to help.",
+  companyRequired = false,
+  hideMessage = false,
+  buttonLabel = 'Send Message',
+}: ContactSectionProps) {
   const [formData, setFormData] = useState<FormData>({
     firstName: '',
     lastName: '',
@@ -47,6 +62,10 @@ export function ContactSection() {
       newErrors.lastName = 'Last name is required';
     }
 
+    if (companyRequired && !formData.company.trim()) {
+      newErrors.company = 'Company is required';
+    }
+
     // At least one contact method required
     if (!formData.email.trim() && !formData.phone.trim()) {
       newErrors.contact = 'Please provide either email or phone';
@@ -57,12 +76,12 @@ export function ContactSection() {
       newErrors.email = 'Please enter a valid email';
     }
 
-    if (!formData.message.trim()) {
+    if (!hideMessage && !formData.message.trim()) {
       newErrors.message = 'Message is required';
     }
 
     return newErrors;
-  }, [formData]);
+  }, [formData, companyRequired, hideMessage]);
 
   const isFormValid = Object.keys(errors).length === 0;
 
@@ -106,10 +125,10 @@ export function ContactSection() {
           {/* Left Column - Text */}
           <div className="text-white text-center lg:text-left">
             <h2 className="text-3xl lg:text-4xl font-bold mb-4">
-              Get in touch.
+              {heading}
             </h2>
             <p className="text-white/80 text-lg">
-              Whether you're hiring or looking for work, we're here to help.
+              {subtitle}
             </p>
           </div>
 
@@ -175,9 +194,14 @@ export function ContactSection() {
                     name="company"
                     value={formData.company}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-navy"
-                    placeholder="Company (optional)"
+                    className={`w-full px-4 py-3 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-navy ${
+                      hasAttemptedSubmit && errors.company ? 'ring-2 ring-red-400' : ''
+                    }`}
+                    placeholder={companyRequired ? 'Company' : 'Company (optional)'}
                   />
+                  {hasAttemptedSubmit && errors.company && (
+                    <p className="mt-1 text-sm text-red-300">{errors.company}</p>
+                  )}
                 </div>
 
                 {/* Contact error message */}
@@ -214,22 +238,24 @@ export function ContactSection() {
                   />
                 </div>
 
-                <div>
-                  <textarea
-                    id="message"
-                    name="message"
-                    value={formData.message}
-                    onChange={handleChange}
-                    rows={4}
-                    className={`w-full px-4 py-3 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-navy resize-none ${
-                      hasAttemptedSubmit && errors.message ? 'ring-2 ring-red-400' : ''
-                    }`}
-                    placeholder="Message"
-                  />
-                  {hasAttemptedSubmit && errors.message && (
-                    <p className="mt-1 text-sm text-red-300">{errors.message}</p>
-                  )}
-                </div>
+                {!hideMessage && (
+                  <div>
+                    <textarea
+                      id="message"
+                      name="message"
+                      value={formData.message}
+                      onChange={handleChange}
+                      rows={4}
+                      className={`w-full px-4 py-3 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-navy resize-none ${
+                        hasAttemptedSubmit && errors.message ? 'ring-2 ring-red-400' : ''
+                      }`}
+                      placeholder="Message"
+                    />
+                    {hasAttemptedSubmit && errors.message && (
+                      <p className="mt-1 text-sm text-red-300">{errors.message}</p>
+                    )}
+                  </div>
+                )}
 
                 {submitStatus === 'error' && (
                   <p className="text-red-300 text-sm">
@@ -242,7 +268,7 @@ export function ContactSection() {
                   disabled={isSubmitting || !isFormValid}
                   className="w-full px-6 py-3 bg-navy text-white font-semibold hover:bg-navy/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {isSubmitting ? 'Sending...' : 'Send Message'}
+                  {isSubmitting ? 'Sending...' : buttonLabel}
                 </button>
               </form>
             )}

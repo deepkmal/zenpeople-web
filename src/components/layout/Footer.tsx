@@ -38,7 +38,7 @@ export function Footer() {
 
             {/* Industries Column */}
             <div>
-              <h3 className="font-semibold text-lg mb-4">Industries we staff for</h3>
+              <h3 className="font-semibold text-lg mb-4">We staff for</h3>
               <ul className="space-y-2">
                 {sectors.map((sector) => (
                   <li key={sector.id}>

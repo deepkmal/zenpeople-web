@@ -4,6 +4,7 @@ export interface Testimonial {
   name: string;
   title: string;
   company: string;
+  type: 'client' | 'candidate';
 }
 
 export const testimonials: Testimonial[] = [
@@ -13,6 +14,7 @@ export const testimonials: Testimonial[] = [
     name: 'John Smith',
     title: 'HR Manager',
     company: 'ABC Facades',
+    type: 'client',
   },
   {
     id: '2',
@@ -20,6 +22,7 @@ export const testimonials: Testimonial[] = [
     name: 'Sarah Johnson',
     title: 'Facade Engineer',
     company: 'Placed Candidate',
+    type: 'candidate',
   },
   {
     id: '3',
@@ -27,6 +30,7 @@ export const testimonials: Testimonial[] = [
     name: 'Michael Chen',
     title: 'Operations Director',
     company: 'XYZ Glazing',
+    type: 'client',
   },
   {
     id: '4',
@@ -34,6 +38,7 @@ export const testimonials: Testimonial[] = [
     name: 'Emma Williams',
     title: 'Managing Director',
     company: 'Premier Facades',
+    type: 'client',
   },
   {
     id: '5',
@@ -41,5 +46,30 @@ export const testimonials: Testimonial[] = [
     name: 'David Brown',
     title: 'Project Coordinator',
     company: 'Placed Candidate',
+    type: 'candidate',
+  },
+  {
+    id: '6',
+    quote: "We've worked with many recruiters over the years, but ZenPeople truly stands out. They consistently deliver candidates who understand our technical requirements.",
+    name: 'Rachel Torres',
+    title: 'HR Director',
+    company: 'Cityscape Glazing',
+    type: 'client',
+  },
+  {
+    id: '7',
+    quote: "The team at ZenPeople filled three critical roles for us in under a month. Their understanding of facade engineering roles is exceptional.",
+    name: 'James Patterson',
+    title: 'General Manager',
+    company: 'Horizon Facades',
+    type: 'client',
+  },
+  {
+    id: '8',
+    quote: "What impressed me most was how well ZenPeople understood our company culture. Every candidate they sent was not just qualified, but the right fit.",
+    name: 'Lisa Nguyen',
+    title: 'Operations Manager',
+    company: 'Aurora Glass Systems',
+    type: 'client',
   },
 ];

@@ -3,20 +3,38 @@ import { ArrowUpRight } from 'lucide-react';
 import { Container } from '../ui/Container';
 import { sectors } from '../../data/sectors';
 
-export function IndustrySectors() {
+interface IndustrySectorsProps {
+  variant?: 'default' | 'hire';
+}
+
+export function IndustrySectors({ variant = 'default' }: IndustrySectorsProps) {
+  const isHireVariant = variant === 'hire';
+
   return (
     <section className="bg-white">
       {/* Header */}
-      <Container className="py-12 lg:py-16">
-        <div className="text-center">
+      {isHireVariant ? (
+        <div className="px-6 sm:px-10 lg:px-[max(2rem,calc((100vw-80rem)/2+2rem))] pt-12 lg:pt-16 pb-6 lg:pb-8">
           <h2 className="text-2xl sm:text-3xl font-semibold text-navy">
-            We specialise in recruiting for
+            We staff for
           </h2>
         </div>
-      </Container>
+      ) : (
+        <Container className="pt-12 lg:pt-16 pb-6 lg:pb-8">
+          <div className="text-center">
+            <h2 className="text-2xl sm:text-3xl font-semibold text-navy">
+              We specialise in recruiting for
+            </h2>
+          </div>
+        </Container>
+      )}
 
       {/* Sectors Grid - Full Width with Max Width */}
-      <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+      <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 ${
+        isHireVariant
+          ? 'px-6 sm:px-10 lg:px-[max(2rem,calc((100vw-80rem)/2+2rem))]'
+          : 'max-w-7xl mx-auto px-6 sm:px-6 lg:px-8'
+      }`}>
         {sectors.map((sector) => (
           <Link
             key={sector.id}

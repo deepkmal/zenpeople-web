@@ -1,10 +1,20 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useMemo } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Container } from '../ui/Container';
 import { testimonials } from '../../data/testimonials';
 
-export function Testimonials() {
+interface TestimonialsProps {
+  variant?: 'default' | 'clients-only';
+}
+
+export function Testimonials({ variant = 'default' }: TestimonialsProps) {
+  const filteredTestimonials = useMemo(() => {
+    if (variant === 'clients-only') {
+      return testimonials.filter((t) => t.type === 'client');
+    }
+    return testimonials;
+  }, [variant]);
   const [emblaRef, emblaApi] = useEmblaCarousel({
     align: 'start',
     loop: true,
@@ -35,26 +45,28 @@ export function Testimonials() {
     emblaApi.on('reInit', onSelect);
   }, [emblaApi, onSelect]);
 
+  const isClientsOnly = variant === 'clients-only';
+
   return (
-    <section className="py-16 lg:py-24 bg-gray-100">
+    <section className={`py-16 lg:py-24 ${isClientsOnly ? 'bg-white' : 'bg-gray-100'}`}>
       <Container>
         {/* Header */}
-        <div className="text-center mb-12">
-          <h2 className="text-2xl sm:text-3xl font-bold text-navy">
-            What our clients & candidates say
+        <div className={`mb-8 ${isClientsOnly ? 'text-left' : 'text-center'}`}>
+          <h2 className="text-2xl sm:text-3xl text-navy font-semibold">
+            {isClientsOnly ? 'What our clients say' : 'What our clients & candidates say'}
           </h2>
         </div>
 
         {/* Carousel */}
         <div className="relative">
           <div className="overflow-hidden py-4" ref={emblaRef}>
-            <div className="flex gap-6 px-1">
-              {testimonials.map((testimonial) => (
+            <div className="flex gap-6 px-2">
+              {filteredTestimonials.map((testimonial) => (
                 <div
                   key={testimonial.id}
                   className="flex-shrink-0 w-full sm:w-1/2 lg:w-1/3"
                 >
-                  <div className="bg-white shadow-md p-6 h-full flex flex-col">
+                  <div className={`bg-white shadow-md p-6 h-full flex flex-col ${isClientsOnly ? 'border-t-[0.5px] border-gray-200' : ''}`}>
                     <blockquote className="flex-1">
                       <p className="text-gray-700 leading-relaxed">
                         "{testimonial.quote}"
@@ -93,7 +105,7 @@ export function Testimonials() {
 
         {/* Mobile Navigation Dots */}
         <div className="flex justify-center gap-2 mt-6 lg:hidden">
-          {testimonials.map((_, index) => (
+          {filteredTestimonials.map((_, index) => (
             <button
               key={index}
               onClick={() => emblaApi?.scrollTo(index)}
