@@ -160,17 +160,25 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
 
               {/* For employers Accordion */}
               <div>
-                <button
-                  onClick={() => setIsEmployersOpen(!isEmployersOpen)}
-                  className="flex items-center justify-between w-full px-4 py-3 text-gray-700 hover:text-[#2175D9] hover:bg-gray-50 rounded-lg font-medium"
-                >
-                  For employers
-                  <ChevronDown
-                    className={`w-4 h-4 transition-transform duration-200 ${
-                      isEmployersOpen ? 'rotate-180' : ''
-                    }`}
-                  />
-                </button>
+                <div className="flex items-center justify-between px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg">
+                  <Link
+                    to="/hire"
+                    onClick={onClose}
+                    className="font-medium hover:text-[#2175D9]"
+                  >
+                    For employers
+                  </Link>
+                  <button
+                    onClick={() => setIsEmployersOpen(!isEmployersOpen)}
+                    className="p-1 hover:text-[#2175D9]"
+                  >
+                    <ChevronDown
+                      className={`w-4 h-4 transition-transform duration-200 ${
+                        isEmployersOpen ? 'rotate-180' : ''
+                      }`}
+                    />
+                  </button>
+                </div>
                 <div
                   className={`overflow-hidden transition-all duration-200 ${
                     isEmployersOpen ? 'max-h-20 opacity-100' : 'max-h-0 opacity-0'
@@ -190,17 +198,25 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
 
               {/* For talent Accordion */}
               <div>
-                <button
-                  onClick={() => setIsTalentOpen(!isTalentOpen)}
-                  className="flex items-center justify-between w-full px-4 py-3 text-gray-700 hover:text-[#2175D9] hover:bg-gray-50 rounded-lg font-medium"
-                >
-                  For talent
-                  <ChevronDown
-                    className={`w-4 h-4 transition-transform duration-200 ${
-                      isTalentOpen ? 'rotate-180' : ''
-                    }`}
-                  />
-                </button>
+                <div className="flex items-center justify-between px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg">
+                  <Link
+                    to="/jobs"
+                    onClick={onClose}
+                    className="font-medium hover:text-[#2175D9]"
+                  >
+                    For talent
+                  </Link>
+                  <button
+                    onClick={() => setIsTalentOpen(!isTalentOpen)}
+                    className="p-1 hover:text-[#2175D9]"
+                  >
+                    <ChevronDown
+                      className={`w-4 h-4 transition-transform duration-200 ${
+                        isTalentOpen ? 'rotate-180' : ''
+                      }`}
+                    />
+                  </button>
+                </div>
                 <div
                   className={`overflow-hidden transition-all duration-200 ${
                     isTalentOpen ? 'max-h-20 opacity-100' : 'max-h-0 opacity-0'

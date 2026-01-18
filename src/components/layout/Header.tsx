@@ -137,7 +137,8 @@ export function Header() {
                 onMouseEnter={() => setIsEmployersDropdownOpen(true)}
                 onMouseLeave={() => setIsEmployersDropdownOpen(false)}
               >
-                <button
+                <Link
+                  to="/hire"
                   className={`flex items-center gap-1 font-medium text-sm transition-colors ${
                     isTransparent
                       ? 'text-white hover:text-white/80'
@@ -150,7 +151,7 @@ export function Header() {
                       isEmployersDropdownOpen ? 'rotate-180' : ''
                     }`}
                   />
-                </button>
+                </Link>
 
                 {isEmployersDropdownOpen && (
                   <div className="absolute top-full left-0 pt-2">
@@ -173,7 +174,8 @@ export function Header() {
                 onMouseEnter={() => setIsTalentDropdownOpen(true)}
                 onMouseLeave={() => setIsTalentDropdownOpen(false)}
               >
-                <button
+                <Link
+                  to="/jobs"
                   className={`flex items-center gap-1 font-medium text-sm transition-colors ${
                     isTransparent
                       ? 'text-white hover:text-white/80'
@@ -186,7 +188,7 @@ export function Header() {
                       isTalentDropdownOpen ? 'rotate-180' : ''
                     }`}
                   />
-                </button>
+                </Link>
 
                 {isTalentDropdownOpen && (
                   <div className="absolute top-full left-0 pt-2">
