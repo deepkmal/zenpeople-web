@@ -5,13 +5,16 @@ import { Container } from '../ui/Container';
 import { testimonials } from '../../data/testimonials';
 
 interface TestimonialsProps {
-  variant?: 'default' | 'clients-only';
+  variant?: 'default' | 'clients-only' | 'candidates-only';
 }
 
 export function Testimonials({ variant = 'default' }: TestimonialsProps) {
   const filteredTestimonials = useMemo(() => {
     if (variant === 'clients-only') {
       return testimonials.filter((t) => t.type === 'client');
+    }
+    if (variant === 'candidates-only') {
+      return testimonials.filter((t) => t.type === 'candidate');
     }
     return testimonials;
   }, [variant]);
@@ -46,14 +49,22 @@ export function Testimonials({ variant = 'default' }: TestimonialsProps) {
   }, [emblaApi, onSelect]);
 
   const isClientsOnly = variant === 'clients-only';
+  const isCandidatesOnly = variant === 'candidates-only';
+  const isSpecificVariant = isClientsOnly || isCandidatesOnly;
+
+  const getHeading = () => {
+    if (isClientsOnly) return 'What our clients say';
+    if (isCandidatesOnly) return 'What our candidates say';
+    return 'What our clients & candidates say';
+  };
 
   return (
-    <section className={`py-16 lg:py-24 ${isClientsOnly ? 'bg-white' : 'bg-gray-100'}`}>
+    <section className={`py-16 lg:py-24 ${isSpecificVariant ? 'bg-white' : 'bg-gray-100'}`}>
       <Container>
         {/* Header */}
-        <div className={`mb-8 ${isClientsOnly ? 'text-left' : 'text-center'}`}>
+        <div className={`mb-8 ${isSpecificVariant ? 'text-left' : 'text-center'}`}>
           <h2 className="text-2xl sm:text-3xl text-navy font-semibold">
-            {isClientsOnly ? 'What our clients say' : 'What our clients & candidates say'}
+            {getHeading()}
           </h2>
         </div>
 
@@ -66,7 +77,7 @@ export function Testimonials({ variant = 'default' }: TestimonialsProps) {
                   key={testimonial.id}
                   className="flex-shrink-0 w-full sm:w-1/2 lg:w-1/3"
                 >
-                  <div className={`bg-white shadow-md p-6 h-full flex flex-col ${isClientsOnly ? 'border-t-[0.5px] border-gray-200' : ''}`}>
+                  <div className={`bg-white shadow-md p-6 h-full flex flex-col ${isSpecificVariant ? 'border-t-[0.5px] border-gray-200' : ''}`}>
                     <blockquote className="flex-1">
                       <p className="text-gray-700 leading-relaxed">
                         "{testimonial.quote}"

@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
-import { Container } from '../ui/Container';
 
 const cityImages = [
   { city: 'Sydney', image: '/images/cities/sydney.webp' },

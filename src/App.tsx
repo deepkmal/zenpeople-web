@@ -3,6 +3,7 @@ import { Layout } from './components/layout';
 import { HomePage } from './pages/HomePage';
 import { ContactPage } from './pages/ContactPage';
 import { HirePage } from './pages/HirePage';
+import { JobsPage } from './pages/JobsPage';
 
 function App() {
   return (
@@ -12,7 +13,7 @@ function App() {
           <Route path="/" element={<HomePage />} />
           {/* Placeholder routes - pages to be implemented */}
           <Route path="/services" element={<PlaceholderPage title="Our Services" />} />
-          <Route path="/jobs" element={<PlaceholderPage title="Find a Job" />} />
+          <Route path="/jobs" element={<JobsPage />} />
           <Route path="/jobs/:slug" element={<PlaceholderPage title="Job Details" />} />
           <Route path="/hire" element={<HirePage />} />
           <Route path="/contact" element={<ContactPage />} />

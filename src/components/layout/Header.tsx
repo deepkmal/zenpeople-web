@@ -9,6 +9,8 @@ import { sectors } from '../../data/sectors';
 export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isEmployersDropdownOpen, setIsEmployersDropdownOpen] = useState(false);
+  const [isTalentDropdownOpen, setIsTalentDropdownOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
@@ -37,6 +39,26 @@ export function Header() {
       scrollToSection('services');
     } else {
       navigate('/', { state: { scrollTo: 'services' } });
+    }
+  };
+
+  const handleGetQuoteClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsEmployersDropdownOpen(false);
+    if (location.pathname === '/hire') {
+      scrollToSection('get-a-quote');
+    } else {
+      navigate('/hire', { state: { scrollTo: 'get-a-quote' } });
+    }
+  };
+
+  const handleRegisterResumeClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsTalentDropdownOpen(false);
+    if (location.pathname === '/jobs') {
+      scrollToSection('register-resume');
+    } else {
+      navigate('/jobs', { state: { scrollTo: 'register-resume' } });
     }
   };
 
@@ -109,26 +131,87 @@ export function Header() {
                 )}
               </div>
 
-              <Link
-                to="/hire"
-                className={`transition-colors font-medium text-sm ${
-                  isTransparent
-                    ? 'text-white hover:text-white/80'
-                    : 'text-gray-700 hover:text-[#2175D9]'
-                }`}
+              {/* For employers Dropdown */}
+              <div
+                className="relative"
+                onMouseEnter={() => setIsEmployersDropdownOpen(true)}
+                onMouseLeave={() => setIsEmployersDropdownOpen(false)}
               >
-                Find me staff
-              </Link>
+                <button
+                  className={`flex items-center gap-1 font-medium text-sm transition-colors ${
+                    isTransparent
+                      ? 'text-white hover:text-white/80'
+                      : isEmployersDropdownOpen ? 'text-[#2175D9]' : 'text-gray-700 hover:text-[#2175D9]'
+                  }`}
+                >
+                  For employers
+                  <ChevronDown
+                    className={`w-4 h-4 transition-transform ${
+                      isEmployersDropdownOpen ? 'rotate-180' : ''
+                    }`}
+                  />
+                </button>
+
+                {isEmployersDropdownOpen && (
+                  <div className="absolute top-full left-0 pt-2">
+                    <div className="w-48 bg-white rounded-lg shadow-lg py-2 border border-gray-100">
+                      <a
+                        href="/hire#get-a-quote"
+                        onClick={handleGetQuoteClick}
+                        className="block px-4 py-3 text-gray-700 hover:text-[#2175D9] hover:bg-[#2175D9]/5 transition-colors"
+                      >
+                        Get a quote
+                      </a>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* For talent Dropdown */}
+              <div
+                className="relative"
+                onMouseEnter={() => setIsTalentDropdownOpen(true)}
+                onMouseLeave={() => setIsTalentDropdownOpen(false)}
+              >
+                <button
+                  className={`flex items-center gap-1 font-medium text-sm transition-colors ${
+                    isTransparent
+                      ? 'text-white hover:text-white/80'
+                      : isTalentDropdownOpen ? 'text-[#2175D9]' : 'text-gray-700 hover:text-[#2175D9]'
+                  }`}
+                >
+                  For talent
+                  <ChevronDown
+                    className={`w-4 h-4 transition-transform ${
+                      isTalentDropdownOpen ? 'rotate-180' : ''
+                    }`}
+                  />
+                </button>
+
+                {isTalentDropdownOpen && (
+                  <div className="absolute top-full left-0 pt-2">
+                    <div className="w-48 bg-white rounded-lg shadow-lg py-2 border border-gray-100">
+                      <a
+                        href="/jobs#register-resume"
+                        onClick={handleRegisterResumeClick}
+                        className="block px-4 py-3 text-gray-700 hover:text-[#2175D9] hover:bg-[#2175D9]/5 transition-colors"
+                      >
+                        Register resume
+                      </a>
+                    </div>
+                  </div>
+                )}
+              </div>
 
               <Link
-                to="/jobs"
+                to="/jobs/all"
                 className={`transition-colors font-medium text-sm ${
                   isTransparent
                     ? 'text-white hover:text-white/80'
                     : 'text-gray-700 hover:text-[#2175D9]'
                 }`}
               >
-                Find me a job
+                Find jobs
               </Link>
 
               {isTransparent ? (

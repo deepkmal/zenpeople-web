@@ -10,6 +10,8 @@ interface MobileMenuProps {
 
 export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
   const [isSectorsOpen, setIsSectorsOpen] = useState(false);
+  const [isEmployersOpen, setIsEmployersOpen] = useState(false);
+  const [isTalentOpen, setIsTalentOpen] = useState(false);
   const [shouldRender, setShouldRender] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const location = useLocation();
@@ -29,6 +31,26 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
       setTimeout(() => scrollToSection('services'), 100);
     } else {
       navigate('/', { state: { scrollTo: 'services' } });
+    }
+  };
+
+  const handleGetQuoteClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    onClose();
+    if (location.pathname === '/hire') {
+      setTimeout(() => scrollToSection('get-a-quote'), 100);
+    } else {
+      navigate('/hire', { state: { scrollTo: 'get-a-quote' } });
+    }
+  };
+
+  const handleRegisterResumeClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    onClose();
+    if (location.pathname === '/jobs') {
+      setTimeout(() => scrollToSection('register-resume'), 100);
+    } else {
+      navigate('/jobs', { state: { scrollTo: 'register-resume' } });
     }
   };
 
@@ -136,20 +158,72 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                 </div>
               </div>
 
-              <Link
-                to="/hire"
-                onClick={onClose}
-                className="block px-4 py-3 text-gray-700 hover:text-[#2175D9] hover:bg-gray-50 rounded-lg font-medium"
-              >
-                Find me staff
-              </Link>
+              {/* For employers Accordion */}
+              <div>
+                <button
+                  onClick={() => setIsEmployersOpen(!isEmployersOpen)}
+                  className="flex items-center justify-between w-full px-4 py-3 text-gray-700 hover:text-[#2175D9] hover:bg-gray-50 rounded-lg font-medium"
+                >
+                  For employers
+                  <ChevronDown
+                    className={`w-4 h-4 transition-transform duration-200 ${
+                      isEmployersOpen ? 'rotate-180' : ''
+                    }`}
+                  />
+                </button>
+                <div
+                  className={`overflow-hidden transition-all duration-200 ${
+                    isEmployersOpen ? 'max-h-20 opacity-100' : 'max-h-0 opacity-0'
+                  }`}
+                >
+                  <div className="pl-4 mt-1 space-y-1">
+                    <a
+                      href="/hire#get-a-quote"
+                      onClick={handleGetQuoteClick}
+                      className="block px-4 py-2 text-gray-600 hover:text-[#2175D9] hover:bg-gray-50 rounded-lg"
+                    >
+                      Get a quote
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              {/* For talent Accordion */}
+              <div>
+                <button
+                  onClick={() => setIsTalentOpen(!isTalentOpen)}
+                  className="flex items-center justify-between w-full px-4 py-3 text-gray-700 hover:text-[#2175D9] hover:bg-gray-50 rounded-lg font-medium"
+                >
+                  For talent
+                  <ChevronDown
+                    className={`w-4 h-4 transition-transform duration-200 ${
+                      isTalentOpen ? 'rotate-180' : ''
+                    }`}
+                  />
+                </button>
+                <div
+                  className={`overflow-hidden transition-all duration-200 ${
+                    isTalentOpen ? 'max-h-20 opacity-100' : 'max-h-0 opacity-0'
+                  }`}
+                >
+                  <div className="pl-4 mt-1 space-y-1">
+                    <a
+                      href="/jobs#register-resume"
+                      onClick={handleRegisterResumeClick}
+                      className="block px-4 py-2 text-gray-600 hover:text-[#2175D9] hover:bg-gray-50 rounded-lg"
+                    >
+                      Register resume
+                    </a>
+                  </div>
+                </div>
+              </div>
 
               <Link
-                to="/jobs"
+                to="/jobs/all"
                 onClick={onClose}
                 className="block px-4 py-3 text-gray-700 hover:text-[#2175D9] hover:bg-gray-50 rounded-lg font-medium"
               >
-                Find me a job
+                Find jobs
               </Link>
             </div>
           </nav>

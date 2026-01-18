@@ -16,7 +16,7 @@ export function IndustrySectors({ variant = 'default' }: IndustrySectorsProps) {
       {isHireVariant ? (
         <div className="px-6 sm:px-10 lg:px-[max(2rem,calc((100vw-80rem)/2+2rem))] pt-12 lg:pt-16 pb-6 lg:pb-8">
           <h2 className="text-2xl sm:text-3xl font-semibold text-navy">
-            We staff for
+            We recruit for
           </h2>
         </div>
       ) : (

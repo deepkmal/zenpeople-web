@@ -2,9 +2,9 @@ import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { IndustrySectors } from '../components/home/IndustrySectors';
 import { Testimonials } from '../components/home/Testimonials';
-import { ContactSection } from '../components/shared/ContactSection';
+import { ResumeUploadSection } from '../components/jobs/ResumeUploadSection';
 
-export function HirePage() {
+export function JobsPage() {
   const location = useLocation();
 
   useEffect(() => {
@@ -25,38 +25,38 @@ export function HirePage() {
         <div className="bg-white flex items-center px-6 sm:px-10 lg:pl-[max(2rem,calc((100vw-80rem)/2+2rem))] lg:pr-16 xl:pr-20 py-12 sm:py-16 lg:py-24">
           <div className="max-w-xl">
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-semibold text-navy mb-6 tracking-tight">
-              Specialists in our field
+              Find me a job
             </h1>
             <p className="text-gray-600 text-base sm:text-lg lg:text-xl leading-relaxed">
-              We are specialists in facade and glazing recruitment. It's the sole focus of our work. <br /><br />Our clients consistently tell us that we deliver more qualified, industry-relevant candidates than any other agency. <br /><br />With over 30 years of combined recruitment experience, our deep understanding and dedication to this niche sector ensure you receive the expert attention your business deserves.
+              Because we focus exclusively on facade and glazing roles, we're able to connect skilled professionals like you with opportunities that truly match your experience and career goals. If you've got the right background, chances are we already have roles that align with exactly what you're looking for.
             </p>
           </div>
         </div>
         <div className="hidden lg:block relative lg:min-h-[500px]">
           <img
             src="/images/facade-specialist.webp"
-            alt="Facade and glazing construction"
+            alt="Facade and glazing professional"
             className="absolute inset-0 w-full h-full object-cover"
           />
         </div>
       </div>
 
-      {/* Section 2 - White background, image left, text right */}
+      {/* Section 2 - Blue background, image left, text right */}
       <div className="flex flex-col lg:grid lg:grid-cols-2 lg:items-stretch">
         <div className="hidden lg:block relative lg:min-h-[500px]">
           <img
             src="/images/sectors/engineering.webp"
-            alt="Industry expertise"
+            alt="Career development"
             className="absolute inset-0 w-full h-full object-cover"
           />
         </div>
         <div className="bg-[#2175D9] flex items-center px-6 sm:px-10 lg:pl-16 xl:pl-20 lg:pr-[max(2rem,calc((100vw-80rem)/2+2rem))] py-12 sm:py-16 lg:py-24">
           <div className="max-w-xl">
             <h2 className="text-2xl sm:text-4xl lg:text-5xl font-semibold text-white mb-6 tracking-tight">
-              Firsthand industry knowledge
+              Your career, your way
             </h2>
             <p className="text-white/80 text-base sm:text-lg lg:text-xl leading-relaxed">
-              What sets us apart is not just our focus, but our firsthand knowledge. Many members of our team have worked directly within the facade and glazing industry. This means you're speaking with people who truly understand the roles, challenges, and requirements unique to your field.
+              We understand that searching for a new job can feel overwhelming — that's why we take the time to get to know you, your motivations, and what you really want from your next move. From there, we'll share roles that suit your profile, and you decide which ones you'd like to pursue. You're always in control of the process, and of course, everything you share with us remains 100% confidential.
             </p>
           </div>
         </div>
@@ -67,37 +67,30 @@ export function HirePage() {
         <div className="bg-[#141B2D] flex items-center px-6 sm:px-10 lg:pl-[max(2rem,calc((100vw-80rem)/2+2rem))] lg:pr-16 xl:pr-20 py-12 sm:py-16 lg:py-24">
           <div className="max-w-xl">
             <h2 className="text-2xl sm:text-4xl lg:text-5xl font-semibold text-white mb-6 tracking-tight">
-              Our guarantee
+              We work for you
             </h2>
             <p className="text-white/80 text-base sm:text-lg lg:text-xl leading-relaxed">
-              We're confident in our ability to outperform generalist recruiters. In fact, we guarantee that partnering with us will result in access to more high-quality candidates than going it alone or working with a broader agency - and our client testimonials back this up.
+              We are always working to get you an interview. Once we confidently begin approaching our clients on your behalf, we will constantly be working hard behind the scenes to provide interviews for you. We never stop unless you advise us to. And yes, we will keep you updated throughout the entire process. However, please feel free to check back with us at any point on your applications.
             </p>
           </div>
         </div>
         <div className="hidden lg:block relative lg:min-h-[500px]">
           <img
             src="/images/sectors/executive-search.webp"
-            alt="Professional recruitment"
+            alt="Professional support"
             className="absolute inset-0 w-full h-full object-cover"
           />
         </div>
       </div>
 
+      {/* Resume Upload Section */}
+      <ResumeUploadSection id="register-resume" />
+
       {/* Industry Sectors Grid */}
       <IndustrySectors variant="hire" />
 
-      {/* Testimonials */}
-      <Testimonials variant="clients-only" />
-
-      {/* Contact Form */}
-      <ContactSection
-        id="get-a-quote"
-        heading="Get a quote."
-        subtitle="Tell us about your hiring needs and we'll get back to you with a tailored solution."
-        companyRequired
-        hideMessage
-        buttonLabel="Get quote"
-      />
+      {/* Testimonials - Candidates only */}
+      <Testimonials variant="candidates-only" />
     </div>
   );
 }

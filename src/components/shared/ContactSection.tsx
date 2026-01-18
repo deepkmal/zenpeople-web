@@ -20,6 +20,7 @@ interface FormErrors {
 }
 
 interface ContactSectionProps {
+  id?: string;
   heading?: string;
   subtitle?: string;
   companyRequired?: boolean;
@@ -28,6 +29,7 @@ interface ContactSectionProps {
 }
 
 export function ContactSection({
+  id,
   heading = 'Get in touch.',
   subtitle = "Whether you're hiring or looking for work, we're here to help.",
   companyRequired = false,
@@ -119,7 +121,7 @@ export function ContactSection({
   };
 
   return (
-    <section className="py-16 lg:py-24 bg-[#2175D9]">
+    <section id={id} className="py-16 lg:py-24 bg-[#2175D9]">
       <Container>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 lg:items-start">
           {/* Left Column - Text */}
