@@ -2,17 +2,6 @@ import { Link } from 'react-router-dom';
 import { Container } from '../ui/Container';
 import { sectors } from '../../data/sectors';
 
-const locations = [
-  'sydney',
-  'melbourne',
-  'brisbane',
-  'perth',
-  'adelaide',
-  'canberra',
-  'hobart',
-  'darwin',
-];
-
 export function Footer() {
   return (
     <footer className="bg-[#141B2D] text-white">
@@ -97,21 +86,6 @@ export function Footer() {
               </ul>
             </div>
           </div>
-        </div>
-
-        {/* Locations */}
-        <div className="border-t border-white/20 py-6">
-          <p className="text-center text-gray-400 text-sm">
-            <span className="mr-2">locations:</span>
-            {locations.map((location, index) => (
-              <span key={location}>
-                {location}
-                {index < locations.length - 1 && (
-                  <span className="mx-2">|</span>
-                )}
-              </span>
-            ))}
-          </p>
         </div>
 
         {/* Copyright */}

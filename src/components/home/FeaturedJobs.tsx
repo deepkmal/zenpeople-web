@@ -19,11 +19,11 @@ export function FeaturedJobs() {
           {jobs.map((job) => (
             <div
               key={job.id}
-              className="bg-white rounded-xl border border-gray-200 p-6 lg:p-8 shadow-sm hover:shadow-md transition-shadow"
+              className="bg-white border border-gray-200 p-6 lg:p-8 shadow-sm hover:shadow-md transition-shadow"
             >
               {/* Top Row */}
               <div className="flex justify-between items-start mb-4">
-                <span className="text-xs font-semibold uppercase tracking-wide text-orange">
+                <span className="text-xs font-semibold uppercase tracking-wide text-[#2175D9]">
                   {job.sector}
                 </span>
                 <span className="text-xs text-gray-500 uppercase tracking-wide">
@@ -67,7 +67,7 @@ export function FeaturedJobs() {
 
                 <Link
                   to={`/jobs/${job.slug}`}
-                  className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-navy text-white text-sm font-medium rounded-lg hover:bg-navy/90 transition-colors"
+                  className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-navy text-white text-sm font-medium hover:bg-navy/90 transition-colors"
                 >
                   Learn more
                 </Link>

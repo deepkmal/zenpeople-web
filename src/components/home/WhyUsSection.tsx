@@ -55,8 +55,8 @@ export function WhyUsSection() {
                 alt={item.city}
                 className="w-full h-full object-cover"
               />
-              <div className="absolute inset-0 bg-black/30 flex items-end p-3">
-                <span className="text-white text-sm font-medium">{item.city}</span>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent flex items-end p-4">
+                <span className="text-white text-sm font-semibold">{item.city}</span>
               </div>
             </div>
           ))}

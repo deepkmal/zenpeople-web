@@ -47,14 +47,14 @@ export function Testimonials() {
 
         {/* Carousel */}
         <div className="relative">
-          <div className="overflow-hidden" ref={emblaRef}>
-            <div className="flex gap-6">
+          <div className="overflow-hidden py-4" ref={emblaRef}>
+            <div className="flex gap-6 px-1">
               {testimonials.map((testimonial) => (
                 <div
                   key={testimonial.id}
                   className="flex-shrink-0 w-full sm:w-1/2 lg:w-1/3"
                 >
-                  <div className="bg-white rounded-lg shadow-md p-6 h-full flex flex-col">
+                  <div className="bg-white shadow-md p-6 h-full flex flex-col">
                     <blockquote className="flex-1">
                       <p className="text-gray-700 leading-relaxed">
                         "{testimonial.quote}"

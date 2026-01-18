@@ -3,6 +3,7 @@ import { Container } from '../ui/Container';
 
 interface FormData {
   name: string;
+  company: string;
   email: string;
   phone: string;
   message: string;
@@ -17,6 +18,7 @@ interface FormErrors {
 export function ContactSection() {
   const [formData, setFormData] = useState<FormData>({
     name: '',
+    company: '',
     email: '',
     phone: '',
     message: '',
@@ -80,7 +82,7 @@ export function ContactSection() {
       console.log('Form submitted:', formData);
       await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate API call
       setSubmitStatus('success');
-      setFormData({ name: '', email: '', phone: '', message: '' });
+      setFormData({ name: '', company: '', email: '', phone: '', message: '' });
       setTouched({});
     } catch {
       setSubmitStatus('error');
@@ -144,6 +146,24 @@ export function ContactSection() {
                   {touched.name && errors.name && (
                     <p className="mt-1 text-sm text-red-300">{errors.name}</p>
                   )}
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="company"
+                    className="block text-sm text-white mb-2"
+                  >
+                    Company <span className="text-white/60">(optional)</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="company"
+                    name="company"
+                    value={formData.company}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange"
+                    placeholder="Your company name"
+                  />
                 </div>
 
                 <div>

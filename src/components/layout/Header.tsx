@@ -13,9 +13,12 @@ export function Header() {
   const location = useLocation();
   const navigate = useNavigate();
 
+  const isHomePage = location.pathname === '/';
+  const isTransparent = isHomePage && !isScrolled;
+
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10);
+      setIsScrolled(window.scrollY > 50);
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
@@ -40,8 +43,8 @@ export function Header() {
   return (
     <>
       <header
-        className={`fixed top-0 inset-x-0 z-50 bg-white transition-shadow w-full ${
-          isScrolled ? 'shadow-sm' : ''
+        className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 w-full ${
+          isTransparent ? 'bg-transparent' : 'bg-white shadow-sm'
         }`}
       >
         <Container>
@@ -49,8 +52,8 @@ export function Header() {
             {/* Logo */}
             <Link to="/" className="flex items-center">
               <span className="text-2xl font-bold">
-                <span className="text-[#2175D9]">Zen</span>
-                <span className="text-navy">People</span>
+                <span className={isTransparent ? 'text-white' : 'text-[#2175D9]'}>Zen</span>
+                <span className={isTransparent ? 'text-white' : 'text-navy'}>People</span>
               </span>
             </Link>
 
@@ -59,7 +62,11 @@ export function Header() {
               <a
                 href="/#services"
                 onClick={handleAboutClick}
-                className="text-gray-700 hover:text-[#2175D9] transition-colors font-medium text-sm"
+                className={`transition-colors font-medium text-sm ${
+                  isTransparent
+                    ? 'text-white hover:text-white/80'
+                    : 'text-gray-700 hover:text-[#2175D9]'
+                }`}
               >
                 About us
               </a>
@@ -72,7 +79,9 @@ export function Header() {
               >
                 <button
                   className={`flex items-center gap-1 font-medium text-sm transition-colors ${
-                    isDropdownOpen ? 'text-[#2175D9]' : 'text-gray-700 hover:text-[#2175D9]'
+                    isTransparent
+                      ? 'text-white hover:text-white/80'
+                      : isDropdownOpen ? 'text-[#2175D9]' : 'text-gray-700 hover:text-[#2175D9]'
                   }`}
                 >
                   Industry Sectors
@@ -102,27 +111,46 @@ export function Header() {
 
               <Link
                 to="/hire"
-                className="text-gray-700 hover:text-[#2175D9] transition-colors font-medium text-sm"
+                className={`transition-colors font-medium text-sm ${
+                  isTransparent
+                    ? 'text-white hover:text-white/80'
+                    : 'text-gray-700 hover:text-[#2175D9]'
+                }`}
               >
                 Find me staff
               </Link>
 
               <Link
                 to="/jobs"
-                className="text-gray-700 hover:text-[#2175D9] transition-colors font-medium text-sm"
+                className={`transition-colors font-medium text-sm ${
+                  isTransparent
+                    ? 'text-white hover:text-white/80'
+                    : 'text-gray-700 hover:text-[#2175D9]'
+                }`}
               >
                 Find me a job
               </Link>
 
-              <Button href="/contact" variant="primary" size="md">
-                Contact Us
-              </Button>
+              {isTransparent ? (
+                <Link
+                  to="/contact"
+                  className="px-5 py-2.5 bg-white text-navy font-medium text-sm hover:bg-white/90 transition-colors"
+                >
+                  Contact Us
+                </Link>
+              ) : (
+                <Button href="/contact" variant="primary" size="md">
+                  Contact Us
+                </Button>
+              )}
             </div>
 
             {/* Mobile Menu Button */}
             <button
               onClick={() => setIsMobileMenuOpen(true)}
-              className="lg:hidden p-2 text-gray-700 hover:text-navy"
+              className={`lg:hidden p-2 ${
+                isTransparent ? 'text-white hover:text-white/80' : 'text-gray-700 hover:text-navy'
+              }`}
               aria-label="Open menu"
             >
               <Menu className="w-6 h-6" />
