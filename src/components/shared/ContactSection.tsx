@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Container } from '../ui/Container';
 
 interface FormData {
@@ -6,6 +6,12 @@ interface FormData {
   email: string;
   phone: string;
   message: string;
+}
+
+interface FormErrors {
+  name?: string;
+  email?: string;
+  message?: string;
 }
 
 export function ContactSection() {
@@ -17,6 +23,38 @@ export function ContactSection() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
+
+  const validateEmail = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const errors = useMemo<FormErrors>(() => {
+    const newErrors: FormErrors = {};
+
+    if (!formData.name.trim()) {
+      newErrors.name = 'Name is required';
+    }
+
+    if (!formData.email.trim()) {
+      newErrors.email = 'Email is required';
+    } else if (!validateEmail(formData.email)) {
+      newErrors.email = 'Please enter a valid email';
+    }
+
+    if (!formData.message.trim()) {
+      newErrors.message = 'Message is required';
+    }
+
+    return newErrors;
+  }, [formData]);
+
+  const isFormValid = Object.keys(errors).length === 0;
+
+  const handleBlur = (field: string) => {
+    setTouched((prev) => ({ ...prev, [field]: true }));
+  };
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -27,6 +65,14 @@ export function ContactSection() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Mark all fields as touched
+    setTouched({ name: true, email: true, message: true });
+
+    if (!isFormValid) {
+      return;
+    }
+
     setIsSubmitting(true);
 
     // Placeholder submission - replace with actual API call
@@ -35,6 +81,7 @@ export function ContactSection() {
       await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate API call
       setSubmitStatus('success');
       setFormData({ name: '', email: '', phone: '', message: '' });
+      setTouched({});
     } catch {
       setSubmitStatus('error');
     } finally {
@@ -43,42 +90,23 @@ export function ContactSection() {
   };
 
   return (
-    <section className="py-16 lg:py-24 bg-navy">
+    <section className="py-16 lg:py-24 bg-[#2175D9]">
       <Container>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
           {/* Left Column - Text */}
           <div className="text-white">
             <h2 className="text-3xl lg:text-4xl font-bold mb-4">
-              ready to get started?
+              Ready to get started?
             </h2>
-            <p className="text-white/80 text-lg mb-8">
-              whether you're hiring or looking for work, we're here to help.
+            <p className="text-white/80 text-lg">
+              Whether you're hiring or looking for work, we're here to help.
             </p>
-
-            <div className="space-y-3">
-              <p>
-                <a
-                  href="tel:0731855006"
-                  className="text-sky-300 hover:text-white transition-colors"
-                >
-                  07 3185 5006
-                </a>
-              </p>
-              <p>
-                <a
-                  href="mailto:hello@zenpeople.com.au"
-                  className="text-sky-300 hover:text-white transition-colors"
-                >
-                  hello@zenpeople.com.au
-                </a>
-              </p>
-            </div>
           </div>
 
           {/* Right Column - Form */}
           <div>
             {submitStatus === 'success' ? (
-              <div className="bg-white/10 rounded-lg p-8 text-center">
+              <div className="bg-white/10 p-8 text-center">
                 <h3 className="text-xl font-semibold text-white mb-2">
                   Thank you for your message!
                 </h3>
@@ -107,10 +135,15 @@ export function ContactSection() {
                     name="name"
                     value={formData.name}
                     onChange={handleChange}
-                    required
-                    className="w-full px-4 py-3 rounded-lg bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange"
+                    onBlur={() => handleBlur('name')}
+                    className={`w-full px-4 py-3 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange ${
+                      touched.name && errors.name ? 'ring-2 ring-red-400' : ''
+                    }`}
                     placeholder="Your name"
                   />
+                  {touched.name && errors.name && (
+                    <p className="mt-1 text-sm text-red-300">{errors.name}</p>
+                  )}
                 </div>
 
                 <div>
@@ -126,10 +159,15 @@ export function ContactSection() {
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
-                    required
-                    className="w-full px-4 py-3 rounded-lg bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange"
+                    onBlur={() => handleBlur('email')}
+                    className={`w-full px-4 py-3 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange ${
+                      touched.email && errors.email ? 'ring-2 ring-red-400' : ''
+                    }`}
                     placeholder="your@email.com"
                   />
+                  {touched.email && errors.email && (
+                    <p className="mt-1 text-sm text-red-300">{errors.email}</p>
+                  )}
                 </div>
 
                 <div>
@@ -145,7 +183,7 @@ export function ContactSection() {
                     name="phone"
                     value={formData.phone}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 rounded-lg bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange"
+                    className="w-full px-4 py-3 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange"
                     placeholder="0400 000 000"
                   />
                 </div>
@@ -162,11 +200,16 @@ export function ContactSection() {
                     name="message"
                     value={formData.message}
                     onChange={handleChange}
-                    required
+                    onBlur={() => handleBlur('message')}
                     rows={4}
-                    className="w-full px-4 py-3 rounded-lg bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange resize-none"
+                    className={`w-full px-4 py-3 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange resize-none ${
+                      touched.message && errors.message ? 'ring-2 ring-red-400' : ''
+                    }`}
                     placeholder="How can we help?"
                   />
+                  {touched.message && errors.message && (
+                    <p className="mt-1 text-sm text-red-300">{errors.message}</p>
+                  )}
                 </div>
 
                 {submitStatus === 'error' && (
@@ -177,8 +220,8 @@ export function ContactSection() {
 
                 <button
                   type="submit"
-                  disabled={isSubmitting}
-                  className="w-full px-6 py-3 bg-white text-navy font-semibold rounded-lg hover:bg-gray-100 transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
+                  disabled={isSubmitting || !isFormValid}
+                  className="w-full px-6 py-3 bg-navy text-white font-semibold hover:bg-navy/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isSubmitting ? 'Sending...' : 'Send Message'}
                 </button>

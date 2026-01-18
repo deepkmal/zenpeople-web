@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { ChevronDown, Menu } from 'lucide-react';
 import { Container } from '../ui/Container';
 import { Button } from '../ui/Button';
@@ -10,6 +10,8 @@ export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -19,10 +21,26 @@ export function Header() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const handleAboutClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (location.pathname === '/') {
+      scrollToSection('services');
+    } else {
+      navigate('/', { state: { scrollTo: 'services' } });
+    }
+  };
+
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-50 bg-white transition-shadow ${
+        className={`fixed top-0 inset-x-0 z-50 bg-white transition-shadow w-full ${
           isScrolled ? 'shadow-sm' : ''
         }`}
       >
@@ -31,27 +49,30 @@ export function Header() {
             {/* Logo */}
             <Link to="/" className="flex items-center">
               <span className="text-2xl font-bold">
-                <span className="text-orange">Zen</span>
+                <span className="text-[#2175D9]">Zen</span>
                 <span className="text-navy">People</span>
               </span>
             </Link>
 
             {/* Desktop Navigation */}
             <div className="hidden lg:flex items-center gap-8">
-              <Link
-                to="/services"
-                className="text-gray-700 hover:text-navy transition-colors font-medium"
+              <a
+                href="/#services"
+                onClick={handleAboutClick}
+                className="text-gray-700 hover:text-[#2175D9] transition-colors font-medium text-sm"
               >
-                Our Services
-              </Link>
+                About us
+              </a>
 
               {/* Industry Sectors Dropdown */}
-              <div className="relative">
+              <div
+                className="relative"
+                onMouseEnter={() => setIsDropdownOpen(true)}
+                onMouseLeave={() => setIsDropdownOpen(false)}
+              >
                 <button
-                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                  onBlur={() => setTimeout(() => setIsDropdownOpen(false), 150)}
-                  className={`flex items-center gap-1 font-medium transition-colors ${
-                    isDropdownOpen ? 'text-orange' : 'text-gray-700 hover:text-navy'
+                  className={`flex items-center gap-1 font-medium text-sm transition-colors ${
+                    isDropdownOpen ? 'text-[#2175D9]' : 'text-gray-700 hover:text-[#2175D9]'
                   }`}
                 >
                   Industry Sectors
@@ -63,30 +84,32 @@ export function Header() {
                 </button>
 
                 {isDropdownOpen && (
-                  <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-lg shadow-lg py-2 border border-gray-100">
-                    {sectors.map((sector) => (
-                      <Link
-                        key={sector.id}
-                        to={`/sectors/${sector.slug}`}
-                        className="block px-4 py-3 text-gray-700 hover:text-navy hover:bg-gray-50 transition-colors"
-                      >
-                        {sector.name}
-                      </Link>
-                    ))}
+                  <div className="absolute top-full left-0 pt-2">
+                    <div className="w-64 bg-white rounded-lg shadow-lg py-2 border border-gray-100">
+                      {sectors.map((sector) => (
+                        <Link
+                          key={sector.id}
+                          to={`/sectors/${sector.slug}`}
+                          className="block px-4 py-3 text-gray-700 hover:text-[#2175D9] hover:bg-[#2175D9]/5 transition-colors"
+                        >
+                          {sector.name}
+                        </Link>
+                      ))}
+                    </div>
                   </div>
                 )}
               </div>
 
               <Link
                 to="/hire"
-                className="text-gray-700 hover:text-navy transition-colors font-medium"
+                className="text-gray-700 hover:text-[#2175D9] transition-colors font-medium text-sm"
               >
                 Find me staff
               </Link>
 
               <Link
                 to="/jobs"
-                className="text-gray-700 hover:text-navy transition-colors font-medium"
+                className="text-gray-700 hover:text-[#2175D9] transition-colors font-medium text-sm"
               >
                 Find me a job
               </Link>

@@ -3,16 +3,44 @@
 @theme {
   --color-navy: #1E3A5F;
   --color-orange: #E86A33;
-  --font-inter: "Inter", system-ui, sans-serif;
+  --font-montserrat: "Montserrat", system-ui, sans-serif;
 }
 
 @layer base {
   html {
-    font-family: var(--font-inter);
+    font-family: var(--font-montserrat);
     scroll-behavior: smooth;
+    overflow-x: hidden;
   }
 
   body {
     @apply antialiased text-gray-700;
+    overflow-x: hidden;
+    width: 100%;
+    min-width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  #root {
+    overflow-x: hidden;
+    width: 100%;
+  }
+
+  a,
+  button,
+  [role="button"],
+  input[type="submit"],
+  input[type="button"],
+  select {
+    cursor: pointer;
+  }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"],
+  input[type="search"],
+  textarea {
+    cursor: text;
   }
 }

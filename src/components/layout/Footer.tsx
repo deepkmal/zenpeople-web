@@ -15,7 +15,7 @@ const locations = [
 
 export function Footer() {
   return (
-    <footer className="bg-navy text-white">
+    <footer className="bg-[#141B2D] text-white">
       <Container>
         {/* Main Footer Content */}
         <div className="py-12 lg:py-16">
@@ -24,7 +24,7 @@ export function Footer() {
             <div>
               <Link to="/" className="inline-block">
                 <span className="text-2xl font-bold">
-                  <span className="text-orange">Zen</span>
+                  <span className="text-[#2175D9]">Zen</span>
                   <span className="text-white">People</span>
                 </span>
               </Link>
@@ -35,10 +35,10 @@ export function Footer() {
               </p>
               <div className="mt-6 space-y-2">
                 <a
-                  href="tel:0731855006"
+                  href="tel:0428192718"
                   className="block text-sky-300 hover:text-white transition-colors"
                 >
-                  07 3185 5006
+                  0428 192 718
                 </a>
                 <a
                   href="mailto:hello@zenpeople.com.au"

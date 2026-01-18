@@ -4,7 +4,7 @@ import { JobSearchBar } from './JobSearchBar';
 
 export function Hero() {
   return (
-    <section className="relative min-h-screen flex items-center justify-center">
+    <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden">
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
         <img
@@ -13,13 +13,13 @@ export function Hero() {
           className="w-full h-full object-cover object-center"
         />
         {/* Overlay */}
-        <div className="absolute inset-0 bg-black/45" />
+        <div className="absolute inset-0 bg-black/55" />
       </div>
 
       {/* Content */}
-      <div className="relative z-10 w-full px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto text-center pt-20">
+      <div className="relative z-10 w-full px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-left pt-20">
         {/* Headline */}
-        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-8">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-medium text-white leading-tight mb-8 tracking-tighter">
           #1 in Facade & Glazing Recruitment —
           <br className="hidden sm:block" />
           <span className="sm:hidden"> </span>

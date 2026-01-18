@@ -24,9 +24,9 @@ export function JobSearchBar() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="w-full max-w-3xl mx-auto">
+    <form onSubmit={handleSubmit} className="w-full max-w-3xl">
       {/* Desktop Layout */}
-      <div className="hidden sm:flex bg-white rounded-lg shadow-lg overflow-hidden">
+      <div className="hidden sm:flex bg-white shadow-xl overflow-hidden">
         {/* Job Search Input */}
         <div className="flex-1 flex items-center px-4 border-r border-gray-200">
           <Search className="w-5 h-5 text-gray-400 flex-shrink-0" />
@@ -63,16 +63,17 @@ export function JobSearchBar() {
         {/* Submit Button */}
         <button
           type="submit"
-          className="px-8 py-4 bg-orange text-white font-semibold hover:bg-orange/90 transition-colors"
+          className="px-6 py-4 bg-[#2175D9] text-white hover:bg-[#1a62b8] transition-colors"
+          aria-label="Search"
         >
-          Let's Go
+          <Search className="w-5 h-5" />
         </button>
       </div>
 
       {/* Mobile Layout */}
       <div className="sm:hidden space-y-3">
         {/* Job Search Input */}
-        <div className="flex items-center bg-white rounded-lg shadow px-4">
+        <div className="flex items-center bg-white shadow-xl px-4">
           <Search className="w-5 h-5 text-gray-400 flex-shrink-0" />
           <input
             type="text"
@@ -84,7 +85,7 @@ export function JobSearchBar() {
         </div>
 
         {/* Location Dropdown */}
-        <div className="flex items-center bg-white rounded-lg shadow px-4">
+        <div className="flex items-center bg-white shadow-xl px-4">
           <MapPin className="w-5 h-5 text-gray-400 flex-shrink-0" />
           <select
             value={location}
@@ -102,9 +103,10 @@ export function JobSearchBar() {
         {/* Submit Button */}
         <button
           type="submit"
-          className="w-full px-8 py-4 bg-orange text-white font-semibold rounded-lg hover:bg-orange/90 transition-colors"
+          className="w-full flex items-center justify-center gap-2 px-8 py-4 bg-[#2175D9] text-white font-semibold shadow-xl hover:bg-[#1a62b8] transition-colors"
         >
-          Let's Go
+          <Search className="w-5 h-5" />
+          <span>Search</span>
         </button>
       </div>
     </form>
