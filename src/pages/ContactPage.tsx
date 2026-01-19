@@ -191,8 +191,8 @@ export function ContactPage() {
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4">
-                {/* First Name & Last Name - side by side */}
-                <div className="grid grid-cols-2 gap-4">
+                {/* First Name & Last Name - stacked on mobile, side by side on larger screens */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <input
                       type="text"
