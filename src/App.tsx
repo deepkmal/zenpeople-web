@@ -5,6 +5,7 @@ import { HomePage } from './pages/HomePage';
 import { ContactPage } from './pages/ContactPage';
 import { HirePage } from './pages/HirePage';
 import { JobsPage } from './pages/JobsPage';
+import { SectorPage } from './pages/SectorPage';
 
 function App() {
   return (
@@ -19,7 +20,7 @@ function App() {
           <Route path="/jobs/:slug" element={<PlaceholderPage title="Job Details" />} />
           <Route path="/hire" element={<HirePage />} />
           <Route path="/contact" element={<ContactPage />} />
-          <Route path="/sectors/:slug" element={<PlaceholderPage title="Industry Sector" />} />
+          <Route path="/sectors/:slug" element={<SectorPage />} />
           <Route path="/privacy" element={<PlaceholderPage title="Privacy Policy" />} />
           <Route path="/terms" element={<PlaceholderPage title="Terms & Conditions" />} />
         </Routes>

@@ -121,7 +121,7 @@ export function Header() {
                         <Link
                           key={sector.id}
                           to={`/sectors/${sector.slug}`}
-                          className="block px-4 py-3 text-gray-700 hover:text-[#2175D9] hover:bg-[#2175D9]/5 transition-colors"
+                          className="block px-4 py-3 text-gray-700 hover:text-[#2175D9] hover:bg-[#2175D9]/5 transition-colors !cursor-pointer"
                         >
                           {sector.name}
                         </Link>
@@ -159,7 +159,7 @@ export function Header() {
                       <a
                         href="/hire#get-a-quote"
                         onClick={handleGetQuoteClick}
-                        className="block px-4 py-3 text-gray-700 hover:text-[#2175D9] hover:bg-[#2175D9]/5 transition-colors"
+                        className="block px-4 py-3 text-gray-700 hover:text-[#2175D9] hover:bg-[#2175D9]/5 transition-colors !cursor-pointer"
                       >
                         Get a quote
                       </a>
@@ -196,7 +196,7 @@ export function Header() {
                       <a
                         href="/jobs#register-resume"
                         onClick={handleRegisterResumeClick}
-                        className="block px-4 py-3 text-gray-700 hover:text-[#2175D9] hover:bg-[#2175D9]/5 transition-colors"
+                        className="block px-4 py-3 text-gray-700 hover:text-[#2175D9] hover:bg-[#2175D9]/5 transition-colors !cursor-pointer"
                       >
                         Register resume
                       </a>
