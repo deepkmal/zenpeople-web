@@ -17,7 +17,7 @@ export const sectors: Sector[] = [
     id: '1',
     name: 'Engineering, Design & Consulting',
     slug: 'engineering-consulting',
-    image: '/images/sectors/engineering.webp',
+    image: '/images/sectors/engineering-consulting.webp',
     description: 'We connect top engineering and consulting talent with leading facade and glazing companies across Australia. From structural engineers to facade consultants, we understand the technical expertise required in this specialised field.',
     positions: [
       { id: 'facade-engineer', name: 'Facade Engineer' },

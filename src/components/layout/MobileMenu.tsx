@@ -239,7 +239,7 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                 onClick={onClose}
                 className="block px-4 py-3 text-gray-700 hover:text-[#2175D9] hover:bg-gray-50 rounded-lg font-medium"
               >
-                Find jobs
+                Search jobs
               </Link>
             </div>
           </nav>

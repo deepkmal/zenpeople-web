@@ -45,8 +45,8 @@ export function HirePage() {
       <div className="flex flex-col lg:grid lg:grid-cols-2 lg:items-stretch">
         <div className="hidden lg:block relative lg:min-h-[500px]">
           <img
-            src="/images/sectors/engineering.webp"
-            alt="Industry expertise"
+            src="/images/specialists-employers.webp"
+            alt="Firsthand industry knowledge"
             className="absolute inset-0 w-full h-full object-cover"
           />
         </div>
@@ -76,8 +76,8 @@ export function HirePage() {
         </div>
         <div className="hidden lg:block relative lg:min-h-[500px]">
           <img
-            src="/images/sectors/executive-search.webp"
-            alt="Professional recruitment"
+            src="/images/our-guarantee.webp"
+            alt="Our guarantee"
             className="absolute inset-0 w-full h-full object-cover"
           />
         </div>

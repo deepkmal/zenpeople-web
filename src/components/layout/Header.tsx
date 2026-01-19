@@ -213,7 +213,7 @@ export function Header() {
                     : 'text-gray-700 hover:text-[#2175D9]'
                 }`}
               >
-                Find jobs
+                Search jobs
               </Link>
 
               {isTransparent ? (
