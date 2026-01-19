@@ -71,10 +71,10 @@ export function WhyUsSection() {
             </p>
             <Link
               to="/talent"
-              className="inline-flex items-center gap-3 bg-white shadow-lg hover:shadow-xl px-6 py-4 transition-all group"
+              className="inline-flex items-center gap-3 bg-[#141B2D] hover:bg-[#141B2D]/90 px-6 py-4 transition-all group"
             >
-              <span className="text-lg font-semibold text-navy">Show me what's available</span>
-              <ArrowRight className="w-5 h-5 text-navy group-hover:translate-x-1 transition-transform" />
+              <span className="text-lg font-semibold text-white">Show me what's available</span>
+              <ArrowRight className="w-5 h-5 text-white group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
         </div>
