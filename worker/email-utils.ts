@@ -1,35 +1,5 @@
 import type { EmailOptions } from './types';
 
-// CORS headers for API responses
-export const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type',
-};
-
-// JSON response helper
-export function jsonResponse(data: object, status: number = 200): Response {
-  return new Response(JSON.stringify(data), {
-    status,
-    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-  });
-}
-
-// Success response helper
-export function successResponse(message: string = 'Form submitted successfully'): Response {
-  return jsonResponse({ success: true, message }, 200);
-}
-
-// Error response helper
-export function errorResponse(error: string, status: number = 400): Response {
-  return jsonResponse({ error }, status);
-}
-
-// CORS preflight handler
-export function handleOptions(): Response {
-  return new Response(null, { headers: corsHeaders });
-}
-
 // Send email via Resend API
 export async function sendEmail(
   apiKey: string,

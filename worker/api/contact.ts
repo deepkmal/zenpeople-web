@@ -1,33 +1,31 @@
-import type { Env, ContactFormData } from './_shared/types';
+import { Hono } from 'hono';
+import type { Env, ContactFormData } from '../types';
 import {
-  handleOptions,
-  successResponse,
-  errorResponse,
   sendEmail,
   tableRow,
   optionalTableRow,
   emailWrapper,
   notificationTable,
   contactConfirmationEmail,
-} from './_shared/email-utils';
+} from '../email-utils';
 
-export const onRequestPost: PagesFunction<Env> = async (context) => {
-  const { request, env } = context;
+const contact = new Hono<{ Bindings: Env }>();
 
+contact.post('/', async (c) => {
   try {
-    const data: ContactFormData = await request.json();
+    const data: ContactFormData = await c.req.json();
 
     // Validate required fields
     if (!data.firstName || !data.lastName) {
-      return errorResponse('First name and last name are required');
+      return c.json({ error: 'First name and last name are required' }, 400);
     }
 
     if (!data.email) {
-      return errorResponse('Email is required');
+      return c.json({ error: 'Email is required' }, 400);
     }
 
     if (!data.message) {
-      return errorResponse('Message is required');
+      return c.json({ error: 'Message is required' }, 400);
     }
 
     // Build notification email content
@@ -44,8 +42,8 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     );
 
     // Send notification email to ZenPeople
-    const notificationResult = await sendEmail(env.RESEND_API_KEY, {
-      from: env.SOURCE_EMAIL,
+    const notificationResult = await sendEmail(c.env.RESEND_API_KEY, {
+      from: c.env.SOURCE_EMAIL,
       to: 'hello@zenpeople.com.au',
       subject: `New Contact Form Submission - ${data.firstName} ${data.lastName}`,
       html: notificationHtml,
@@ -53,12 +51,12 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     });
 
     if (!notificationResult.ok) {
-      return errorResponse('Failed to send notification email', 500);
+      return c.json({ error: 'Failed to send notification email' }, 500);
     }
 
     // Send confirmation email to user
-    const confirmationResult = await sendEmail(env.RESEND_API_KEY, {
-      from: env.SOURCE_EMAIL,
+    const confirmationResult = await sendEmail(c.env.RESEND_API_KEY, {
+      from: c.env.SOURCE_EMAIL,
       to: data.email,
       subject: 'Thank You for Contacting ZenPeople',
       html: contactConfirmationEmail(data.firstName),
@@ -66,17 +64,13 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
     if (!confirmationResult.ok) {
       console.error('Failed to send confirmation email:', confirmationResult.error);
-      // Don't fail the request if confirmation email fails
     }
 
-    return successResponse('Thank you for your message. We\'ll be in touch soon!');
+    return c.json({ success: true, message: "Thank you for your message. We'll be in touch soon!" });
   } catch (error) {
     console.error('Contact form error:', error);
-    return errorResponse('Internal server error', 500);
+    return c.json({ error: 'Internal server error' }, 500);
   }
-};
+});
 
-// Handle CORS preflight
-export const onRequestOptions: PagesFunction = async () => {
-  return handleOptions();
-};
+export default contact;

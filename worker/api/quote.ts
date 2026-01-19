@@ -1,33 +1,31 @@
-import type { Env, QuoteFormData } from './_shared/types';
+import { Hono } from 'hono';
+import type { Env, QuoteFormData } from '../types';
 import {
-  handleOptions,
-  successResponse,
-  errorResponse,
   sendEmail,
   tableRow,
   optionalTableRow,
   emailWrapper,
   notificationTable,
   quoteConfirmationEmail,
-} from './_shared/email-utils';
+} from '../email-utils';
 
-export const onRequestPost: PagesFunction<Env> = async (context) => {
-  const { request, env } = context;
+const quote = new Hono<{ Bindings: Env }>();
 
+quote.post('/', async (c) => {
   try {
-    const data: QuoteFormData = await request.json();
+    const data: QuoteFormData = await c.req.json();
 
     // Validate required fields
     if (!data.firstName || !data.lastName) {
-      return errorResponse('First name and last name are required');
+      return c.json({ error: 'First name and last name are required' }, 400);
     }
 
     if (!data.company) {
-      return errorResponse('Company name is required');
+      return c.json({ error: 'Company name is required' }, 400);
     }
 
     if (!data.email) {
-      return errorResponse('Email is required');
+      return c.json({ error: 'Email is required' }, 400);
     }
 
     // Build notification email content
@@ -44,8 +42,8 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     );
 
     // Send notification email to ZenPeople
-    const notificationResult = await sendEmail(env.RESEND_API_KEY, {
-      from: env.SOURCE_EMAIL,
+    const notificationResult = await sendEmail(c.env.RESEND_API_KEY, {
+      from: c.env.SOURCE_EMAIL,
       to: 'hello@zenpeople.com.au',
       subject: `New Quote Request - ${data.company}`,
       html: notificationHtml,
@@ -53,12 +51,12 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     });
 
     if (!notificationResult.ok) {
-      return errorResponse('Failed to send notification email', 500);
+      return c.json({ error: 'Failed to send notification email' }, 500);
     }
 
     // Send confirmation email to user
-    const confirmationResult = await sendEmail(env.RESEND_API_KEY, {
-      from: env.SOURCE_EMAIL,
+    const confirmationResult = await sendEmail(c.env.RESEND_API_KEY, {
+      from: c.env.SOURCE_EMAIL,
       to: data.email,
       subject: 'Thank You for Your Quote Request - ZenPeople',
       html: quoteConfirmationEmail(data.firstName, data.company),
@@ -66,17 +64,13 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
     if (!confirmationResult.ok) {
       console.error('Failed to send confirmation email:', confirmationResult.error);
-      // Don't fail the request if confirmation email fails
     }
 
-    return successResponse('Thank you for your quote request. We\'ll send you a tailored proposal within 24 hours!');
+    return c.json({ success: true, message: "Thank you for your quote request. We'll send you a tailored proposal within 24 hours!" });
   } catch (error) {
     console.error('Quote form error:', error);
-    return errorResponse('Internal server error', 500);
+    return c.json({ error: 'Internal server error' }, 500);
   }
-};
+});
 
-// Handle CORS preflight
-export const onRequestOptions: PagesFunction = async () => {
-  return handleOptions();
-};
+export default quote;

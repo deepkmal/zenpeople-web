@@ -1,6 +1,7 @@
 export interface Env {
   RESEND_API_KEY: string;
   SOURCE_EMAIL: string;
+  ASSETS: Fetcher;
 }
 
 export interface ContactFormData {
@@ -35,10 +36,4 @@ export interface EmailOptions {
   subject: string;
   html: string;
   replyTo?: string;
-}
-
-export interface ApiResponse {
-  success?: boolean;
-  message?: string;
-  error?: string;
 }
