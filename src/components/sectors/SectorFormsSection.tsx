@@ -482,7 +482,7 @@ export function SectorFormsSection() {
                   disabled={resumeIsSubmitting || !resumeIsFormValid}
                   className="w-full px-6 py-3 bg-navy text-white font-semibold hover:bg-navy/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {resumeIsSubmitting ? 'Submitting...' : 'Submit'}
+                  {resumeIsSubmitting ? 'Registering...' : 'Register resume'}
                 </button>
               </form>
             )}
@@ -706,7 +706,7 @@ export function SectorFormsSection() {
                     disabled={resumeIsSubmitting || !resumeIsFormValid}
                     className="w-full px-6 py-3 bg-navy text-white font-semibold hover:bg-navy/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    {resumeIsSubmitting ? 'Submitting...' : 'Submit'}
+                    {resumeIsSubmitting ? 'Registering...' : 'Register resume'}
                   </button>
                 </form>
               )}
