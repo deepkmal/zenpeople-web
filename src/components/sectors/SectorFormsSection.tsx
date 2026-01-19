@@ -525,32 +525,26 @@ export function SectorFormsSection() {
                 </div>
               ) : (
                 <form onSubmit={handleQuoteSubmit} className="space-y-3">
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <input
-                        type="text"
-                        name="firstName"
-                        value={quoteFormData.firstName}
-                        onChange={handleQuoteChange}
-                        className={`w-full px-4 py-3 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-navy text-sm ${
-                          quoteHasAttemptedSubmit && quoteErrors.firstName ? 'ring-2 ring-red-400' : ''
-                        }`}
-                        placeholder="First name *"
-                      />
-                    </div>
-                    <div>
-                      <input
-                        type="text"
-                        name="lastName"
-                        value={quoteFormData.lastName}
-                        onChange={handleQuoteChange}
-                        className={`w-full px-4 py-3 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-navy text-sm ${
-                          quoteHasAttemptedSubmit && quoteErrors.lastName ? 'ring-2 ring-red-400' : ''
-                        }`}
-                        placeholder="Last name *"
-                      />
-                    </div>
-                  </div>
+                  <input
+                    type="text"
+                    name="firstName"
+                    value={quoteFormData.firstName}
+                    onChange={handleQuoteChange}
+                    className={`w-full px-4 py-3 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-navy text-sm ${
+                      quoteHasAttemptedSubmit && quoteErrors.firstName ? 'ring-2 ring-red-400' : ''
+                    }`}
+                    placeholder="First name *"
+                  />
+                  <input
+                    type="text"
+                    name="lastName"
+                    value={quoteFormData.lastName}
+                    onChange={handleQuoteChange}
+                    className={`w-full px-4 py-3 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-navy text-sm ${
+                      quoteHasAttemptedSubmit && quoteErrors.lastName ? 'ring-2 ring-red-400' : ''
+                    }`}
+                    placeholder="Last name *"
+                  />
                   <input
                     type="text"
                     name="company"

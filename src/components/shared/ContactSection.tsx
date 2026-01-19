@@ -149,7 +149,7 @@ export function ContactSection({
         <Container>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 lg:items-start">
           {/* Left Column - Text */}
-          <div className="text-white text-center lg:text-left">
+          <div className="text-white text-left">
             <h2 className="text-3xl lg:text-4xl font-bold mb-4">
               {heading}
             </h2>
