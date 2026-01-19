@@ -67,7 +67,7 @@ export function Footer() {
                 </li>
                 <li>
                   <Link
-                    to="/hire"
+                    to="/employers"
                     className="text-gray-300 hover:text-white transition-colors"
                   >
                     Find me staff

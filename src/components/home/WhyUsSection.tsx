@@ -25,7 +25,7 @@ export function WhyUsSection() {
               We focus exclusively on the facade and glazing industry. It's all we do, so we do it better than anyone else. Our deep industry knowledge means we understand the technical requirements, safety standards, and specific skills needed for every role.
             </p>
             <Link
-              to="/hire"
+              to="/employers"
               className="inline-flex items-center gap-3 bg-white shadow-lg hover:shadow-xl px-6 py-4 transition-all group"
             >
               <span className="text-lg font-semibold text-navy">Get me a quote</span>

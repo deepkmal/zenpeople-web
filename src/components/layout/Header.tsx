@@ -45,10 +45,10 @@ export function Header() {
   const handleGetQuoteClick = (e: React.MouseEvent) => {
     e.preventDefault();
     setIsEmployersDropdownOpen(false);
-    if (location.pathname === '/hire') {
+    if (location.pathname === '/employers') {
       scrollToSection('get-a-quote');
     } else {
-      navigate('/hire', { state: { scrollTo: 'get-a-quote' } });
+      navigate('/employers', { state: { scrollTo: 'get-a-quote' } });
     }
   };
 
@@ -138,7 +138,7 @@ export function Header() {
                 onMouseLeave={() => setIsEmployersDropdownOpen(false)}
               >
                 <Link
-                  to="/hire"
+                  to="/employers"
                   className={`flex items-center gap-1 font-medium text-sm transition-colors ${
                     isTransparent
                       ? 'text-white hover:text-white/80'
@@ -157,7 +157,7 @@ export function Header() {
                   <div className="absolute top-full left-0 pt-2">
                     <div className="w-48 bg-white rounded-lg shadow-lg py-2 border border-gray-100">
                       <a
-                        href="/hire#get-a-quote"
+                        href="/employers#get-a-quote"
                         onClick={handleGetQuoteClick}
                         className="block px-4 py-3 text-gray-700 hover:text-[#2175D9] hover:bg-[#2175D9]/5 transition-colors !cursor-pointer"
                       >

@@ -32,7 +32,7 @@ export function Hero() {
 
         {/* Secondary Link */}
         <Link
-          to="/hire"
+          to="/employers"
           className="inline-flex items-center gap-2 text-white hover:text-white/80 transition-colors group"
         >
           <span className="underline underline-offset-4">Looking to hire? Click here.</span>

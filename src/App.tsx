@@ -19,7 +19,7 @@ function App() {
           <Route path="/talent" element={<JobsPage />} />
           <Route path="/jobs" element={<PlaceholderPage title="Job Board" />} />
           <Route path="/jobs/:slug" element={<PlaceholderPage title="Job Details" />} />
-          <Route path="/hire" element={<HirePage />} />
+          <Route path="/employers" element={<HirePage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/sectors/:slug" element={<SectorPage />} />
           <Route path="/privacy" element={<PlaceholderPage title="Privacy Policy" />} />

@@ -37,10 +37,10 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
   const handleGetQuoteClick = (e: React.MouseEvent) => {
     e.preventDefault();
     onClose();
-    if (location.pathname === '/hire') {
+    if (location.pathname === '/employers') {
       setTimeout(() => scrollToSection('get-a-quote'), 100);
     } else {
-      navigate('/hire', { state: { scrollTo: 'get-a-quote' } });
+      navigate('/employers', { state: { scrollTo: 'get-a-quote' } });
     }
   };
 
@@ -162,7 +162,7 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
               <div>
                 <div className="flex items-center justify-between px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg">
                   <Link
-                    to="/hire"
+                    to="/employers"
                     onClick={onClose}
                     className="font-medium hover:text-[#2175D9]"
                   >
@@ -186,7 +186,7 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                 >
                   <div className="pl-4 mt-1 space-y-1">
                     <a
-                      href="/hire#get-a-quote"
+                      href="/employers#get-a-quote"
                       onClick={handleGetQuoteClick}
                       className="block px-4 py-2 text-gray-600 hover:text-[#2175D9] hover:bg-gray-50 rounded-lg"
                     >
