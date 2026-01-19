@@ -16,8 +16,8 @@ interface FormErrors {
   firstName?: string;
   lastName?: string;
   company?: string;
-  contact?: string;
   email?: string;
+  phone?: string;
   message?: string;
 }
 
@@ -73,14 +73,14 @@ export function ContactSection({
       newErrors.company = 'Company is required';
     }
 
-    // At least one contact method required
-    if (!formData.email.trim() && !formData.phone.trim()) {
-      newErrors.contact = 'Please provide either email or phone';
+    if (!formData.email.trim()) {
+      newErrors.email = 'Email is required';
+    } else if (!validateEmail(formData.email)) {
+      newErrors.email = 'Please enter a valid email';
     }
 
-    // Validate email format if provided
-    if (formData.email.trim() && !validateEmail(formData.email)) {
-      newErrors.email = 'Please enter a valid email';
+    if (!formData.phone.trim()) {
+      newErrors.phone = 'Phone is required';
     }
 
     if (!hideMessage && !formData.message.trim()) {
@@ -118,7 +118,7 @@ export function ContactSection({
         lastName: formData.lastName,
         company: formData.company || undefined,
         email: formData.email,
-        phone: formData.phone || undefined,
+        phone: formData.phone,
         message: formData.message,
       });
 
@@ -230,11 +230,6 @@ export function ContactSection({
                   )}
                 </div>
 
-                {/* Contact error message */}
-                {hasAttemptedSubmit && errors.contact && (
-                  <p className="text-sm text-red-300">{errors.contact}</p>
-                )}
-
                 <div>
                   <input
                     type="email"
@@ -245,7 +240,7 @@ export function ContactSection({
                     className={`w-full px-4 py-3 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-navy ${
                       hasAttemptedSubmit && errors.email ? 'ring-2 ring-red-400' : ''
                     }`}
-                    placeholder="Email"
+                    placeholder="Email *"
                   />
                   {hasAttemptedSubmit && errors.email && (
                     <p className="mt-1 text-sm text-red-300">{errors.email}</p>
@@ -259,9 +254,14 @@ export function ContactSection({
                     name="phone"
                     value={formData.phone}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-navy"
-                    placeholder="Phone"
+                    className={`w-full px-4 py-3 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-navy ${
+                      hasAttemptedSubmit && errors.phone ? 'ring-2 ring-red-400' : ''
+                    }`}
+                    placeholder="Phone *"
                   />
+                  {hasAttemptedSubmit && errors.phone && (
+                    <p className="mt-1 text-sm text-red-300">{errors.phone}</p>
+                  )}
                 </div>
 
                 {!hideMessage && (
