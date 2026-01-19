@@ -249,7 +249,7 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
             <Link
               to="/contact"
               onClick={onClose}
-              className="block w-full px-6 py-3 bg-navy text-white text-center font-medium rounded-lg hover:bg-navy/90 transition-colors"
+              className="block w-full px-6 py-3 bg-[#141B2D] text-white text-center font-medium hover:bg-[#141B2D]/90 transition-colors"
             >
               Contact Us
             </Link>
