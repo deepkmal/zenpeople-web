@@ -20,7 +20,7 @@ export function SectorPage() {
           {/* Left - Content */}
           <div className="bg-[#141B2D] flex items-center px-6 sm:px-10 lg:pl-[max(2rem,calc((100vw-80rem)/2+2rem))] lg:pr-16 xl:pr-20 py-12 sm:py-16 lg:py-20">
             <div className="max-w-xl">
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-6 tracking-tight">
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-semibold text-white mb-6 tracking-tight">
                 {sector.name}
               </h1>
               <p className="text-white/80 text-base sm:text-lg lg:text-xl leading-relaxed">
