@@ -21,9 +21,9 @@ export function IndustrySectors({ variant = 'default' }: IndustrySectorsProps) {
         </div>
       ) : (
         <Container className="pt-12 lg:pt-16 pb-6 lg:pb-8">
-          <div className="text-center">
+          <div className="text-left lg:text-center">
             <h2 className="text-2xl sm:text-3xl font-semibold text-navy">
-              We specialise in recruiting for
+              We recruit for
             </h2>
           </div>
         </Container>
