@@ -290,7 +290,7 @@ export function ResumeUploadSection({ id }: ResumeUploadSectionProps) {
               <div>
                 {!file ? (
                   <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
-                    <label className="cursor-pointer inline-flex items-center justify-center gap-2 px-4 py-3 bg-[#2175D9] text-white font-medium hover:bg-[#1a62b8] transition-colors">
+                    <label className="cursor-pointer inline-flex items-center justify-center gap-2 px-4 py-3 bg-[#141B2D] text-white font-medium hover:bg-[#141B2D]/90 transition-colors">
                       <Paperclip className="w-4 h-4" />
                       <span>Upload resume</span>
                       <input

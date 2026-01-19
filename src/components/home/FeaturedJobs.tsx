@@ -17,9 +17,10 @@ export function FeaturedJobs() {
         {/* Job Cards */}
         <div className="space-y-6 max-w-4xl mx-auto">
           {jobs.map((job) => (
-            <div
+            <Link
               key={job.id}
-              className="bg-white border border-gray-200 p-6 lg:p-8 shadow-sm hover:shadow-md transition-shadow"
+              to="/jobs"
+              className="block bg-white border border-gray-200 p-6 lg:p-8 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
             >
               {/* Top Row */}
               <div className="flex justify-between items-start mb-4">
@@ -65,14 +66,13 @@ export function FeaturedJobs() {
                   </div>
                 </div>
 
-                <Link
-                  to={`/jobs/${job.slug}`}
-                  className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-navy text-white text-sm font-medium hover:bg-navy/90 transition-colors"
+                <span
+                  className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-[#141B2D] text-white text-sm font-medium hover:bg-[#141B2D]/90 transition-colors cursor-pointer"
                 >
                   Learn more
-                </Link>
+                </span>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
 
