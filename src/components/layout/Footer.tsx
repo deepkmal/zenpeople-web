@@ -59,7 +59,7 @@ export function Footer() {
               <ul className="space-y-2">
                 <li>
                   <Link
-                    to="/jobs"
+                    to="/talent"
                     className="text-gray-300 hover:text-white transition-colors"
                   >
                     Find me a job

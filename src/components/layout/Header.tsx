@@ -55,10 +55,10 @@ export function Header() {
   const handleRegisterResumeClick = (e: React.MouseEvent) => {
     e.preventDefault();
     setIsTalentDropdownOpen(false);
-    if (location.pathname === '/jobs') {
+    if (location.pathname === '/talent') {
       scrollToSection('register-resume');
     } else {
-      navigate('/jobs', { state: { scrollTo: 'register-resume' } });
+      navigate('/talent', { state: { scrollTo: 'register-resume' } });
     }
   };
 
@@ -175,7 +175,7 @@ export function Header() {
                 onMouseLeave={() => setIsTalentDropdownOpen(false)}
               >
                 <Link
-                  to="/jobs"
+                  to="/talent"
                   className={`flex items-center gap-1 font-medium text-sm transition-colors ${
                     isTransparent
                       ? 'text-white hover:text-white/80'
@@ -194,7 +194,7 @@ export function Header() {
                   <div className="absolute top-full left-0 pt-2">
                     <div className="w-48 bg-white rounded-lg shadow-lg py-2 border border-gray-100">
                       <a
-                        href="/jobs#register-resume"
+                        href="/talent#register-resume"
                         onClick={handleRegisterResumeClick}
                         className="block px-4 py-3 text-gray-700 hover:text-[#2175D9] hover:bg-[#2175D9]/5 transition-colors !cursor-pointer"
                       >
@@ -206,7 +206,7 @@ export function Header() {
               </div>
 
               <Link
-                to="/jobs/all"
+                to="/jobs"
                 className={`transition-colors font-medium text-sm ${
                   isTransparent
                     ? 'text-white hover:text-white/80'

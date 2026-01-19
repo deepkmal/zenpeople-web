@@ -1,5 +1,7 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { Container } from '../ui/Container';
+import { Toast } from '../ui/Toast';
+import { submitContactForm } from '../../utils/api';
 
 interface FormData {
   firstName: string;
@@ -47,6 +49,9 @@ export function ContactSection({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [hasAttemptedSubmit, setHasAttemptedSubmit] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+
+  const handleCloseToast = useCallback(() => setShowToast(false), []);
 
   const validateEmail = (email: string): boolean => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -105,14 +110,27 @@ export function ContactSection({
     }
 
     setIsSubmitting(true);
+    setSubmitStatus('idle');
 
-    // Placeholder submission - replace with actual API call
     try {
-      console.log('Form submitted:', formData);
-      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate API call
-      setSubmitStatus('success');
-      setFormData({ firstName: '', lastName: '', company: '', email: '', phone: '', message: '' });
-      setHasAttemptedSubmit(false);
+      const result = await submitContactForm({
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        company: formData.company || undefined,
+        email: formData.email,
+        phone: formData.phone || undefined,
+        message: formData.message,
+      });
+
+      if (result.success) {
+        setSubmitStatus('success');
+        setFormData({ firstName: '', lastName: '', company: '', email: '', phone: '', message: '' });
+        setHasAttemptedSubmit(false);
+        setShowToast(true);
+      } else {
+        console.error('Form submission error:', result.error);
+        setSubmitStatus('error');
+      }
     } catch {
       setSubmitStatus('error');
     } finally {
@@ -121,9 +139,15 @@ export function ContactSection({
   };
 
   return (
-    <section id={id} className="py-16 lg:py-24 bg-[#2175D9]">
-      <Container>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 lg:items-start">
+    <>
+      <Toast
+        message="Thank you for your message! We'll be in touch within 24 hours."
+        isVisible={showToast}
+        onClose={handleCloseToast}
+      />
+      <section id={id} className="py-16 lg:py-24 bg-[#2175D9]">
+        <Container>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 lg:items-start">
           {/* Left Column - Text */}
           <div className="text-white text-center lg:text-left">
             <h2 className="text-3xl lg:text-4xl font-bold mb-4">
@@ -165,7 +189,7 @@ export function ContactSection({
                       className={`w-full px-4 py-3 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-navy ${
                         hasAttemptedSubmit && errors.firstName ? 'ring-2 ring-red-400' : ''
                       }`}
-                      placeholder="First name"
+                      placeholder="First name *"
                     />
                     {hasAttemptedSubmit && errors.firstName && (
                       <p className="mt-1 text-sm text-red-300">{errors.firstName}</p>
@@ -181,7 +205,7 @@ export function ContactSection({
                       className={`w-full px-4 py-3 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-navy ${
                         hasAttemptedSubmit && errors.lastName ? 'ring-2 ring-red-400' : ''
                       }`}
-                      placeholder="Last name"
+                      placeholder="Last name *"
                     />
                     {hasAttemptedSubmit && errors.lastName && (
                       <p className="mt-1 text-sm text-red-300">{errors.lastName}</p>
@@ -251,7 +275,7 @@ export function ContactSection({
                       className={`w-full px-4 py-3 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-navy resize-none ${
                         hasAttemptedSubmit && errors.message ? 'ring-2 ring-red-400' : ''
                       }`}
-                      placeholder="Message"
+                      placeholder="Message *"
                     />
                     {hasAttemptedSubmit && errors.message && (
                       <p className="mt-1 text-sm text-red-300">{errors.message}</p>
@@ -276,7 +300,8 @@ export function ContactSection({
             )}
           </div>
         </div>
-      </Container>
-    </section>
+        </Container>
+      </section>
+    </>
   );
 }

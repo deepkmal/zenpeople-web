@@ -1,6 +1,8 @@
-import { useState, useMemo, useRef } from 'react';
+import { useState, useMemo, useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Paperclip, X } from 'lucide-react';
+import { ArrowRight, Paperclip, FileText, X } from 'lucide-react';
+import { submitResumeForm } from '../../utils/api';
+import { Toast } from '../ui/Toast';
 
 interface FormData {
   firstName: string;
@@ -44,6 +46,9 @@ export function ResumeUploadSection({ id }: ResumeUploadSectionProps) {
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [hasAttemptedSubmit, setHasAttemptedSubmit] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [showToast, setShowToast] = useState(false);
+
+  const handleCloseToast = useCallback(() => setShowToast(false), []);
 
   const validateEmail = (email: string): boolean => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -127,16 +132,29 @@ export function ResumeUploadSection({ id }: ResumeUploadSectionProps) {
     }
 
     setIsSubmitting(true);
+    setSubmitStatus('idle');
 
     try {
-      console.log('Form submitted:', { ...formData, file: file?.name });
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      setSubmitStatus('success');
-      setFormData({ firstName: '', lastName: '', phone: '', email: '', additionalInfo: '' });
-      setFile(null);
-      setHasAttemptedSubmit(false);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
+      const result = await submitResumeForm({
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        phone: formData.phone,
+        email: formData.email,
+        additionalInfo: formData.additionalInfo || undefined,
+      });
+
+      if (result.success) {
+        setSubmitStatus('success');
+        setFormData({ firstName: '', lastName: '', phone: '', email: '', additionalInfo: '' });
+        setFile(null);
+        setHasAttemptedSubmit(false);
+        if (fileInputRef.current) {
+          fileInputRef.current.value = '';
+        }
+        setShowToast(true);
+      } else {
+        console.error('Resume form error:', result.error);
+        setSubmitStatus('error');
       }
     } catch {
       setSubmitStatus('error');
@@ -146,8 +164,14 @@ export function ResumeUploadSection({ id }: ResumeUploadSectionProps) {
   };
 
   return (
-    <section id={id} className="flex flex-col lg:grid lg:grid-cols-2 lg:items-stretch">
-      {/* Left side - Text and CTA */}
+    <>
+      <Toast
+        message="Thank you for registering! We'll review your details and contact you for suitable opportunities."
+        isVisible={showToast}
+        onClose={handleCloseToast}
+      />
+      <section id={id} className="flex flex-col lg:grid lg:grid-cols-2 lg:items-stretch">
+        {/* Left side - Text and CTA */}
       <div className="bg-white flex items-center px-6 sm:px-10 lg:pl-[max(2rem,calc((100vw-80rem)/2+2rem))] lg:pr-16 xl:pr-20 py-12 sm:py-16 lg:py-24">
         <div className="max-w-xl">
           <h2 className="text-2xl sm:text-3xl lg:text-4xl font-semibold text-navy mb-6 tracking-tight">
@@ -157,8 +181,8 @@ export function ResumeUploadSection({ id }: ResumeUploadSectionProps) {
             View our latest facade and glazing roles across Australia. From project managers to estimators, engineers to installers — find your next career move.
           </p>
           <Link
-            to="/jobs/all"
-            className="inline-flex items-center gap-3 bg-[#2175D9] text-white px-6 py-4 font-semibold hover:bg-[#1a62b8] transition-colors group"
+            to="/jobs"
+            className="inline-flex items-center gap-3 bg-[#141B2D] text-white px-6 py-4 font-semibold hover:bg-[#141B2D]/90 transition-colors group"
           >
             <span>Show me what's available</span>
             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -202,7 +226,7 @@ export function ResumeUploadSection({ id }: ResumeUploadSectionProps) {
                     className={`w-full px-4 py-3 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-navy ${
                       hasAttemptedSubmit && errors.firstName ? 'ring-2 ring-red-400' : ''
                     }`}
-                    placeholder="First name"
+                    placeholder="First name *"
                   />
                   {hasAttemptedSubmit && errors.firstName && (
                     <p className="mt-1 text-sm text-red-500">{errors.firstName}</p>
@@ -218,7 +242,7 @@ export function ResumeUploadSection({ id }: ResumeUploadSectionProps) {
                     className={`w-full px-4 py-3 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-navy ${
                       hasAttemptedSubmit && errors.lastName ? 'ring-2 ring-red-400' : ''
                     }`}
-                    placeholder="Last name"
+                    placeholder="Last name *"
                   />
                   {hasAttemptedSubmit && errors.lastName && (
                     <p className="mt-1 text-sm text-red-500">{errors.lastName}</p>
@@ -226,72 +250,74 @@ export function ResumeUploadSection({ id }: ResumeUploadSectionProps) {
                 </div>
               </div>
 
-              {/* Phone & Email */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <input
-                    type="tel"
-                    id="phone"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    className={`w-full px-4 py-3 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-navy ${
-                      hasAttemptedSubmit && errors.phone ? 'ring-2 ring-red-400' : ''
-                    }`}
-                    placeholder="Phone"
-                  />
-                  {hasAttemptedSubmit && errors.phone && (
-                    <p className="mt-1 text-sm text-red-500">{errors.phone}</p>
-                  )}
-                </div>
-                <div>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    className={`w-full px-4 py-3 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-navy ${
-                      hasAttemptedSubmit && errors.email ? 'ring-2 ring-red-400' : ''
-                    }`}
-                    placeholder="Email"
-                  />
-                  {hasAttemptedSubmit && errors.email && (
-                    <p className="mt-1 text-sm text-red-500">{errors.email}</p>
-                  )}
-                </div>
+              {/* Phone */}
+              <div>
+                <input
+                  type="tel"
+                  id="phone"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  className={`w-full px-4 py-3 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-navy ${
+                    hasAttemptedSubmit && errors.phone ? 'ring-2 ring-red-400' : ''
+                  }`}
+                  placeholder="Phone *"
+                />
+                {hasAttemptedSubmit && errors.phone && (
+                  <p className="mt-1 text-sm text-red-500">{errors.phone}</p>
+                )}
+              </div>
+
+              {/* Email */}
+              <div>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  className={`w-full px-4 py-3 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-navy ${
+                    hasAttemptedSubmit && errors.email ? 'ring-2 ring-red-400' : ''
+                  }`}
+                  placeholder="Email *"
+                />
+                {hasAttemptedSubmit && errors.email && (
+                  <p className="mt-1 text-sm text-red-500">{errors.email}</p>
+                )}
               </div>
 
               {/* File Upload */}
               <div>
-                <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
-                  <label className="cursor-pointer inline-flex items-center justify-center gap-2 px-4 py-3 bg-[#2175D9] text-white font-medium hover:bg-[#1a62b8] transition-colors">
-                    <Paperclip className="w-4 h-4" />
-                    <span>Upload resume</span>
-                    <input
-                      ref={fileInputRef}
-                      type="file"
-                      accept=".pdf,.doc,.docx"
-                      onChange={handleFileChange}
-                      className="hidden"
-                    />
-                  </label>
-                  {file && (
-                    <div className="flex items-center gap-2 text-gray-600">
-                      <span className="text-sm truncate max-w-[200px]">{file.name}</span>
-                      <button
-                        type="button"
-                        onClick={handleRemoveFile}
-                        className="text-gray-400 hover:text-red-500 transition-colors"
-                      >
-                        <X className="w-4 h-4" />
-                      </button>
-                    </div>
-                  )}
-                  {!file && !fileError && (
-                    <span className="text-sm text-gray-400">PDF, DOC, or DOCX</span>
-                  )}
-                </div>
+                {!file ? (
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
+                    <label className="cursor-pointer inline-flex items-center justify-center gap-2 px-4 py-3 bg-[#2175D9] text-white font-medium hover:bg-[#1a62b8] transition-colors">
+                      <Paperclip className="w-4 h-4" />
+                      <span>Upload resume</span>
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept=".pdf,.doc,.docx"
+                        onChange={handleFileChange}
+                        className="hidden"
+                      />
+                    </label>
+                    {!fileError && (
+                      <span className="text-sm text-gray-400">PDF, DOC, or DOCX</span>
+                    )}
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-3 bg-white px-4 py-3">
+                    <FileText className="w-5 h-5 text-[#2175D9] flex-shrink-0" />
+                    <span className="text-sm text-gray-700 truncate flex-1">{file.name}</span>
+                    <button
+                      type="button"
+                      onClick={handleRemoveFile}
+                      className="flex-shrink-0 w-6 h-6 flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-gray-100 rounded transition-colors"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                )}
                 {fileError && (
                   <p className="mt-1 text-sm text-red-500">{fileError}</p>
                 )}
@@ -328,8 +354,9 @@ export function ResumeUploadSection({ id }: ResumeUploadSectionProps) {
               </button>
             </form>
           )}
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </>
   );
 }

@@ -203,7 +203,7 @@ export function ContactPage() {
                       className={`w-full px-4 py-3 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-navy border border-gray-200 ${
                         hasAttemptedSubmit && errors.firstName ? 'ring-2 ring-red-400' : ''
                       }`}
-                      placeholder="First name"
+                      placeholder="First name *"
                     />
                     {hasAttemptedSubmit && errors.firstName && (
                       <p className="mt-1 text-sm text-red-500">{errors.firstName}</p>
@@ -219,7 +219,7 @@ export function ContactPage() {
                       className={`w-full px-4 py-3 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-navy border border-gray-200 ${
                         hasAttemptedSubmit && errors.lastName ? 'ring-2 ring-red-400' : ''
                       }`}
-                      placeholder="Last name"
+                      placeholder="Last name *"
                     />
                     {hasAttemptedSubmit && errors.lastName && (
                       <p className="mt-1 text-sm text-red-500">{errors.lastName}</p>
@@ -283,7 +283,7 @@ export function ContactPage() {
                     className={`w-full px-4 py-3 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-navy resize-none border border-gray-200 ${
                       hasAttemptedSubmit && errors.message ? 'ring-2 ring-red-400' : ''
                     }`}
-                    placeholder="Message"
+                    placeholder="Message *"
                   />
                   {hasAttemptedSubmit && errors.message && (
                     <p className="mt-1 text-sm text-red-500">{errors.message}</p>

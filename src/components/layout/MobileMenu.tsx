@@ -47,10 +47,10 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
   const handleRegisterResumeClick = (e: React.MouseEvent) => {
     e.preventDefault();
     onClose();
-    if (location.pathname === '/jobs') {
+    if (location.pathname === '/talent') {
       setTimeout(() => scrollToSection('register-resume'), 100);
     } else {
-      navigate('/jobs', { state: { scrollTo: 'register-resume' } });
+      navigate('/talent', { state: { scrollTo: 'register-resume' } });
     }
   };
 
@@ -200,7 +200,7 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
               <div>
                 <div className="flex items-center justify-between px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg">
                   <Link
-                    to="/jobs"
+                    to="/talent"
                     onClick={onClose}
                     className="font-medium hover:text-[#2175D9]"
                   >
@@ -224,7 +224,7 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                 >
                   <div className="pl-4 mt-1 space-y-1">
                     <a
-                      href="/jobs#register-resume"
+                      href="/talent#register-resume"
                       onClick={handleRegisterResumeClick}
                       className="block px-4 py-2 text-gray-600 hover:text-[#2175D9] hover:bg-gray-50 rounded-lg"
                     >
@@ -235,7 +235,7 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
               </div>
 
               <Link
-                to="/jobs/all"
+                to="/jobs"
                 onClick={onClose}
                 className="block px-4 py-3 text-gray-700 hover:text-[#2175D9] hover:bg-gray-50 rounded-lg font-medium"
               >

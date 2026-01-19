@@ -16,7 +16,8 @@ function App() {
           <Route path="/" element={<HomePage />} />
           {/* Placeholder routes - pages to be implemented */}
           <Route path="/services" element={<PlaceholderPage title="Our Services" />} />
-          <Route path="/jobs" element={<JobsPage />} />
+          <Route path="/talent" element={<JobsPage />} />
+          <Route path="/jobs" element={<PlaceholderPage title="Job Board" />} />
           <Route path="/jobs/:slug" element={<PlaceholderPage title="Job Details" />} />
           <Route path="/hire" element={<HirePage />} />
           <Route path="/contact" element={<ContactPage />} />

@@ -1,5 +1,7 @@
-import { useState, useMemo, useRef } from 'react';
-import { ChevronDown, Paperclip, X } from 'lucide-react';
+import { useState, useMemo, useRef, useCallback } from 'react';
+import { ChevronDown, Paperclip, FileText, X } from 'lucide-react';
+import { submitQuoteForm, submitResumeForm } from '../../utils/api';
+import { Toast } from '../ui/Toast';
 
 // Quote Form Data Types
 interface QuoteFormData {
@@ -75,6 +77,13 @@ export function SectorFormsSection() {
   const [resumeHasAttemptedSubmit, setResumeHasAttemptedSubmit] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // Toast state
+  const [showQuoteToast, setShowQuoteToast] = useState(false);
+  const [showResumeToast, setShowResumeToast] = useState(false);
+
+  const handleCloseQuoteToast = useCallback(() => setShowQuoteToast(false), []);
+  const handleCloseResumeToast = useCallback(() => setShowResumeToast(false), []);
+
   const validateEmail = (email: string): boolean => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
@@ -126,12 +135,25 @@ export function SectorFormsSection() {
     setQuoteHasAttemptedSubmit(true);
     if (!quoteIsFormValid) return;
     setQuoteIsSubmitting(true);
+    setQuoteSubmitStatus('idle');
     try {
-      console.log('Quote form submitted:', quoteFormData);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      setQuoteSubmitStatus('success');
-      setQuoteFormData({ firstName: '', lastName: '', company: '', email: '', phone: '' });
-      setQuoteHasAttemptedSubmit(false);
+      const result = await submitQuoteForm({
+        firstName: quoteFormData.firstName,
+        lastName: quoteFormData.lastName,
+        company: quoteFormData.company,
+        email: quoteFormData.email,
+        phone: quoteFormData.phone || undefined,
+      });
+
+      if (result.success) {
+        setQuoteSubmitStatus('success');
+        setQuoteFormData({ firstName: '', lastName: '', company: '', email: '', phone: '' });
+        setQuoteHasAttemptedSubmit(false);
+        setShowQuoteToast(true);
+      } else {
+        console.error('Quote form error:', result.error);
+        setQuoteSubmitStatus('error');
+      }
     } catch {
       setQuoteSubmitStatus('error');
     } finally {
@@ -174,14 +196,27 @@ export function SectorFormsSection() {
     setResumeHasAttemptedSubmit(true);
     if (!resumeIsFormValid) return;
     setResumeIsSubmitting(true);
+    setResumeSubmitStatus('idle');
     try {
-      console.log('Resume form submitted:', { ...resumeFormData, file: file?.name });
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      setResumeSubmitStatus('success');
-      setResumeFormData({ firstName: '', lastName: '', phone: '', email: '', additionalInfo: '' });
-      setFile(null);
-      setResumeHasAttemptedSubmit(false);
-      if (fileInputRef.current) fileInputRef.current.value = '';
+      const result = await submitResumeForm({
+        firstName: resumeFormData.firstName,
+        lastName: resumeFormData.lastName,
+        phone: resumeFormData.phone,
+        email: resumeFormData.email,
+        additionalInfo: resumeFormData.additionalInfo || undefined,
+      });
+
+      if (result.success) {
+        setResumeSubmitStatus('success');
+        setResumeFormData({ firstName: '', lastName: '', phone: '', email: '', additionalInfo: '' });
+        setFile(null);
+        setResumeHasAttemptedSubmit(false);
+        if (fileInputRef.current) fileInputRef.current.value = '';
+        setShowResumeToast(true);
+      } else {
+        console.error('Resume form error:', result.error);
+        setResumeSubmitStatus('error');
+      }
     } catch {
       setResumeSubmitStatus('error');
     } finally {
@@ -193,8 +228,19 @@ export function SectorFormsSection() {
   const toggleResumeAccordion = () => setIsResumeOpen(!isResumeOpen);
 
   return (
-    <section className="bg-gray-100">
-      {/* Desktop Layout - Side by Side */}
+    <>
+      <Toast
+        message="Thank you for your quote request! We'll be in touch within 24 hours."
+        isVisible={showQuoteToast}
+        onClose={handleCloseQuoteToast}
+      />
+      <Toast
+        message="Thank you for registering! We'll review your details and contact you for suitable opportunities."
+        isVisible={showResumeToast}
+        onClose={handleCloseResumeToast}
+      />
+      <section className="bg-gray-100">
+        {/* Desktop Layout - Side by Side */}
       <div className="hidden lg:grid lg:grid-cols-2">
         {/* Quote Form */}
         <div className="bg-[#2175D9] px-10 xl:pl-[max(2rem,calc((100vw-80rem)/2+2rem))] xl:pr-16 py-16 lg:py-20">
@@ -224,7 +270,7 @@ export function SectorFormsSection() {
                       className={`w-full px-4 py-3 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-navy ${
                         quoteHasAttemptedSubmit && quoteErrors.firstName ? 'ring-2 ring-red-400' : ''
                       }`}
-                      placeholder="First name"
+                      placeholder="First name *"
                     />
                     {quoteHasAttemptedSubmit && quoteErrors.firstName && (
                       <p className="mt-1 text-sm text-red-300">{quoteErrors.firstName}</p>
@@ -239,7 +285,7 @@ export function SectorFormsSection() {
                       className={`w-full px-4 py-3 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-navy ${
                         quoteHasAttemptedSubmit && quoteErrors.lastName ? 'ring-2 ring-red-400' : ''
                       }`}
-                      placeholder="Last name"
+                      placeholder="Last name *"
                     />
                     {quoteHasAttemptedSubmit && quoteErrors.lastName && (
                       <p className="mt-1 text-sm text-red-300">{quoteErrors.lastName}</p>
@@ -255,7 +301,7 @@ export function SectorFormsSection() {
                     className={`w-full px-4 py-3 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-navy ${
                       quoteHasAttemptedSubmit && quoteErrors.company ? 'ring-2 ring-red-400' : ''
                     }`}
-                    placeholder="Company"
+                    placeholder="Company *"
                   />
                   {quoteHasAttemptedSubmit && quoteErrors.company && (
                     <p className="mt-1 text-sm text-red-300">{quoteErrors.company}</p>
@@ -273,7 +319,7 @@ export function SectorFormsSection() {
                     className={`w-full px-4 py-3 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-navy ${
                       quoteHasAttemptedSubmit && quoteErrors.email ? 'ring-2 ring-red-400' : ''
                     }`}
-                    placeholder="Email"
+                    placeholder="Email *"
                   />
                   {quoteHasAttemptedSubmit && quoteErrors.email && (
                     <p className="mt-1 text-sm text-red-300">{quoteErrors.email}</p>
@@ -322,7 +368,7 @@ export function SectorFormsSection() {
               </div>
             ) : (
               <form onSubmit={handleResumeSubmit} className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <input
                       type="text"
@@ -332,7 +378,7 @@ export function SectorFormsSection() {
                       className={`w-full px-4 py-3 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-navy ${
                         resumeHasAttemptedSubmit && resumeErrors.firstName ? 'ring-2 ring-red-400' : ''
                       }`}
-                      placeholder="First name"
+                      placeholder="First name *"
                     />
                     {resumeHasAttemptedSubmit && resumeErrors.firstName && (
                       <p className="mt-1 text-sm text-red-500">{resumeErrors.firstName}</p>
@@ -347,68 +393,72 @@ export function SectorFormsSection() {
                       className={`w-full px-4 py-3 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-navy ${
                         resumeHasAttemptedSubmit && resumeErrors.lastName ? 'ring-2 ring-red-400' : ''
                       }`}
-                      placeholder="Last name"
+                      placeholder="Last name *"
                     />
                     {resumeHasAttemptedSubmit && resumeErrors.lastName && (
                       <p className="mt-1 text-sm text-red-500">{resumeErrors.lastName}</p>
                     )}
                   </div>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <input
-                      type="tel"
-                      name="phone"
-                      value={resumeFormData.phone}
-                      onChange={handleResumeChange}
-                      className={`w-full px-4 py-3 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-navy ${
-                        resumeHasAttemptedSubmit && resumeErrors.phone ? 'ring-2 ring-red-400' : ''
-                      }`}
-                      placeholder="Phone"
-                    />
-                    {resumeHasAttemptedSubmit && resumeErrors.phone && (
-                      <p className="mt-1 text-sm text-red-500">{resumeErrors.phone}</p>
-                    )}
-                  </div>
-                  <div>
-                    <input
-                      type="email"
-                      name="email"
-                      value={resumeFormData.email}
-                      onChange={handleResumeChange}
-                      className={`w-full px-4 py-3 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-navy ${
-                        resumeHasAttemptedSubmit && resumeErrors.email ? 'ring-2 ring-red-400' : ''
-                      }`}
-                      placeholder="Email"
-                    />
-                    {resumeHasAttemptedSubmit && resumeErrors.email && (
-                      <p className="mt-1 text-sm text-red-500">{resumeErrors.email}</p>
-                    )}
-                  </div>
+                <div>
+                  <input
+                    type="tel"
+                    name="phone"
+                    value={resumeFormData.phone}
+                    onChange={handleResumeChange}
+                    className={`w-full px-4 py-3 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-navy ${
+                      resumeHasAttemptedSubmit && resumeErrors.phone ? 'ring-2 ring-red-400' : ''
+                    }`}
+                    placeholder="Phone *"
+                  />
+                  {resumeHasAttemptedSubmit && resumeErrors.phone && (
+                    <p className="mt-1 text-sm text-red-500">{resumeErrors.phone}</p>
+                  )}
                 </div>
                 <div>
-                  <div className="flex items-center gap-4">
-                    <label className="cursor-pointer inline-flex items-center justify-center gap-2 px-4 py-3 bg-[#2175D9] text-white font-medium hover:bg-[#1a62b8] transition-colors">
-                      <Paperclip className="w-4 h-4" />
-                      <span>Upload resume</span>
-                      <input
-                        ref={fileInputRef}
-                        type="file"
-                        accept=".pdf,.doc,.docx"
-                        onChange={handleFileChange}
-                        className="hidden"
-                      />
-                    </label>
-                    {file && (
-                      <div className="flex items-center gap-2 text-gray-600">
-                        <span className="text-sm truncate max-w-[200px]">{file.name}</span>
-                        <button type="button" onClick={handleRemoveFile} className="text-gray-400 hover:text-red-500 transition-colors">
-                          <X className="w-4 h-4" />
-                        </button>
-                      </div>
-                    )}
-                    {!file && !fileError && <span className="text-sm text-gray-400">PDF, DOC, or DOCX</span>}
-                  </div>
+                  <input
+                    type="email"
+                    name="email"
+                    value={resumeFormData.email}
+                    onChange={handleResumeChange}
+                    className={`w-full px-4 py-3 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-navy ${
+                      resumeHasAttemptedSubmit && resumeErrors.email ? 'ring-2 ring-red-400' : ''
+                    }`}
+                    placeholder="Email *"
+                  />
+                  {resumeHasAttemptedSubmit && resumeErrors.email && (
+                    <p className="mt-1 text-sm text-red-500">{resumeErrors.email}</p>
+                  )}
+                </div>
+                <div>
+                  {!file ? (
+                    <div className="flex items-center gap-4">
+                      <label className="cursor-pointer inline-flex items-center justify-center gap-2 px-4 py-3 bg-[#2175D9] text-white font-medium hover:bg-[#1a62b8] transition-colors">
+                        <Paperclip className="w-4 h-4" />
+                        <span>Upload resume</span>
+                        <input
+                          ref={fileInputRef}
+                          type="file"
+                          accept=".pdf,.doc,.docx"
+                          onChange={handleFileChange}
+                          className="hidden"
+                        />
+                      </label>
+                      {!fileError && <span className="text-sm text-gray-400">PDF, DOC, or DOCX</span>}
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-3 bg-white px-4 py-3">
+                      <FileText className="w-5 h-5 text-[#2175D9] flex-shrink-0" />
+                      <span className="text-sm text-gray-700 truncate flex-1">{file.name}</span>
+                      <button
+                        type="button"
+                        onClick={handleRemoveFile}
+                        className="flex-shrink-0 w-6 h-6 flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-gray-100 rounded transition-colors"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                  )}
                   {fileError && <p className="mt-1 text-sm text-red-500">{fileError}</p>}
                   {resumeHasAttemptedSubmit && resumeErrors.file && !fileError && (
                     <p className="mt-1 text-sm text-red-500">{resumeErrors.file}</p>
@@ -485,7 +535,7 @@ export function SectorFormsSection() {
                         className={`w-full px-4 py-3 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-navy text-sm ${
                           quoteHasAttemptedSubmit && quoteErrors.firstName ? 'ring-2 ring-red-400' : ''
                         }`}
-                        placeholder="First name"
+                        placeholder="First name *"
                       />
                     </div>
                     <div>
@@ -497,7 +547,7 @@ export function SectorFormsSection() {
                         className={`w-full px-4 py-3 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-navy text-sm ${
                           quoteHasAttemptedSubmit && quoteErrors.lastName ? 'ring-2 ring-red-400' : ''
                         }`}
-                        placeholder="Last name"
+                        placeholder="Last name *"
                       />
                     </div>
                   </div>
@@ -509,7 +559,7 @@ export function SectorFormsSection() {
                     className={`w-full px-4 py-3 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-navy text-sm ${
                       quoteHasAttemptedSubmit && quoteErrors.company ? 'ring-2 ring-red-400' : ''
                     }`}
-                    placeholder="Company"
+                    placeholder="Company *"
                   />
                   <input
                     type="email"
@@ -519,7 +569,7 @@ export function SectorFormsSection() {
                     className={`w-full px-4 py-3 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-navy text-sm ${
                       quoteHasAttemptedSubmit && quoteErrors.email ? 'ring-2 ring-red-400' : ''
                     }`}
-                    placeholder="Email"
+                    placeholder="Email *"
                   />
                   <input
                     type="tel"
@@ -575,73 +625,75 @@ export function SectorFormsSection() {
                 </div>
               ) : (
                 <form onSubmit={handleResumeSubmit} className="space-y-3">
-                  <div className="grid grid-cols-2 gap-3">
-                    <input
-                      type="text"
-                      name="firstName"
-                      value={resumeFormData.firstName}
-                      onChange={handleResumeChange}
-                      className={`w-full px-4 py-3 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-navy text-sm ${
-                        resumeHasAttemptedSubmit && resumeErrors.firstName ? 'ring-2 ring-red-400' : ''
-                      }`}
-                      placeholder="First name"
-                    />
-                    <input
-                      type="text"
-                      name="lastName"
-                      value={resumeFormData.lastName}
-                      onChange={handleResumeChange}
-                      className={`w-full px-4 py-3 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-navy text-sm ${
-                        resumeHasAttemptedSubmit && resumeErrors.lastName ? 'ring-2 ring-red-400' : ''
-                      }`}
-                      placeholder="Last name"
-                    />
-                  </div>
-                  <div className="grid grid-cols-2 gap-3">
-                    <input
-                      type="tel"
-                      name="phone"
-                      value={resumeFormData.phone}
-                      onChange={handleResumeChange}
-                      className={`w-full px-4 py-3 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-navy text-sm ${
-                        resumeHasAttemptedSubmit && resumeErrors.phone ? 'ring-2 ring-red-400' : ''
-                      }`}
-                      placeholder="Phone"
-                    />
-                    <input
-                      type="email"
-                      name="email"
-                      value={resumeFormData.email}
-                      onChange={handleResumeChange}
-                      className={`w-full px-4 py-3 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-navy text-sm ${
-                        resumeHasAttemptedSubmit && resumeErrors.email ? 'ring-2 ring-red-400' : ''
-                      }`}
-                      placeholder="Email"
-                    />
-                  </div>
+                  <input
+                    type="text"
+                    name="firstName"
+                    value={resumeFormData.firstName}
+                    onChange={handleResumeChange}
+                    className={`w-full px-4 py-3 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-navy text-sm ${
+                      resumeHasAttemptedSubmit && resumeErrors.firstName ? 'ring-2 ring-red-400' : ''
+                    }`}
+                    placeholder="First name *"
+                  />
+                  <input
+                    type="text"
+                    name="lastName"
+                    value={resumeFormData.lastName}
+                    onChange={handleResumeChange}
+                    className={`w-full px-4 py-3 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-navy text-sm ${
+                      resumeHasAttemptedSubmit && resumeErrors.lastName ? 'ring-2 ring-red-400' : ''
+                    }`}
+                    placeholder="Last name *"
+                  />
+                  <input
+                    type="tel"
+                    name="phone"
+                    value={resumeFormData.phone}
+                    onChange={handleResumeChange}
+                    className={`w-full px-4 py-3 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-navy text-sm ${
+                      resumeHasAttemptedSubmit && resumeErrors.phone ? 'ring-2 ring-red-400' : ''
+                    }`}
+                    placeholder="Phone *"
+                  />
+                  <input
+                    type="email"
+                    name="email"
+                    value={resumeFormData.email}
+                    onChange={handleResumeChange}
+                    className={`w-full px-4 py-3 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-navy text-sm ${
+                      resumeHasAttemptedSubmit && resumeErrors.email ? 'ring-2 ring-red-400' : ''
+                    }`}
+                    placeholder="Email *"
+                  />
                   <div>
-                    <div className="flex flex-col gap-2">
-                      <label className="cursor-pointer inline-flex items-center justify-center gap-2 px-4 py-3 bg-[#2175D9] text-white font-medium hover:bg-[#1a62b8] transition-colors text-sm">
-                        <Paperclip className="w-4 h-4" />
-                        <span>Upload resume</span>
-                        <input
-                          ref={fileInputRef}
-                          type="file"
-                          accept=".pdf,.doc,.docx"
-                          onChange={handleFileChange}
-                          className="hidden"
-                        />
-                      </label>
-                      {file && (
-                        <div className="flex items-center gap-2 text-gray-600">
-                          <span className="text-sm truncate">{file.name}</span>
-                          <button type="button" onClick={handleRemoveFile} className="text-gray-400 hover:text-red-500 transition-colors">
-                            <X className="w-4 h-4" />
-                          </button>
-                        </div>
-                      )}
-                      {!file && !fileError && <span className="text-xs text-gray-400">PDF, DOC, or DOCX</span>}
-                    </div>
+                    {!file ? (
+                      <div className="flex flex-col gap-2">
+                        <label className="cursor-pointer inline-flex items-center justify-center gap-2 px-4 py-3 bg-[#2175D9] text-white font-medium hover:bg-[#1a62b8] transition-colors text-sm">
+                          <Paperclip className="w-4 h-4" />
+                          <span>Upload resume</span>
+                          <input
+                            ref={fileInputRef}
+                            type="file"
+                            accept=".pdf,.doc,.docx"
+                            onChange={handleFileChange}
+                            className="hidden"
+                          />
+                        </label>
+                        {!fileError && <span className="text-xs text-gray-400">PDF, DOC, or DOCX</span>}
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-3 bg-white px-4 py-3">
+                        <FileText className="w-5 h-5 text-[#2175D9] flex-shrink-0" />
+                        <span className="text-sm text-gray-700 truncate flex-1">{file.name}</span>
+                        <button
+                          type="button"
+                          onClick={handleRemoveFile}
+                          className="flex-shrink-0 w-6 h-6 flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-gray-100 rounded transition-colors"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    )}
                     {fileError && <p className="mt-1 text-xs text-red-500">{fileError}</p>}
                     {resumeHasAttemptedSubmit && resumeErrors.file && !fileError && (
                       <p className="mt-1 text-xs text-red-500">{resumeErrors.file}</p>
@@ -667,7 +719,8 @@ export function SectorFormsSection() {
             </div>
           </div>
         </div>
-      </div>
-    </section>
+        </div>
+      </section>
+    </>
   );
 }
