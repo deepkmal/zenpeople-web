@@ -116,12 +116,12 @@ export function Header() {
 
                 {isDropdownOpen && (
                   <div className="absolute top-full left-0 pt-2">
-                    <div className="w-64 bg-white rounded-lg shadow-lg py-2 border border-gray-100">
+                    <div className="w-64 bg-white shadow-lg py-2 border border-gray-100">
                       {sectors.map((sector) => (
                         <Link
                           key={sector.id}
                           to={`/sectors/${sector.slug}`}
-                          className="block px-4 py-3 text-gray-700 hover:text-[#2175D9] hover:bg-[#2175D9]/5 transition-colors !cursor-pointer"
+                          className="block px-4 py-3 text-sm text-gray-700 hover:text-[#2175D9] hover:bg-[#2175D9]/5 transition-colors !cursor-pointer"
                         >
                           {sector.name}
                         </Link>
@@ -155,11 +155,11 @@ export function Header() {
 
                 {isEmployersDropdownOpen && (
                   <div className="absolute top-full left-0 pt-2">
-                    <div className="w-48 bg-white rounded-lg shadow-lg py-2 border border-gray-100">
+                    <div className="w-48 bg-white shadow-lg py-2 border border-gray-100">
                       <a
                         href="/employers#get-a-quote"
                         onClick={handleGetQuoteClick}
-                        className="block px-4 py-3 text-gray-700 hover:text-[#2175D9] hover:bg-[#2175D9]/5 transition-colors !cursor-pointer"
+                        className="block px-4 py-3 text-sm text-gray-700 hover:text-[#2175D9] hover:bg-[#2175D9]/5 transition-colors !cursor-pointer"
                       >
                         Get a quote
                       </a>
@@ -192,11 +192,11 @@ export function Header() {
 
                 {isTalentDropdownOpen && (
                   <div className="absolute top-full left-0 pt-2">
-                    <div className="w-48 bg-white rounded-lg shadow-lg py-2 border border-gray-100">
+                    <div className="w-48 bg-white shadow-lg py-2 border border-gray-100">
                       <a
                         href="/talent#register-resume"
                         onClick={handleRegisterResumeClick}
-                        className="block px-4 py-3 text-gray-700 hover:text-[#2175D9] hover:bg-[#2175D9]/5 transition-colors !cursor-pointer"
+                        className="block px-4 py-3 text-sm text-gray-700 hover:text-[#2175D9] hover:bg-[#2175D9]/5 transition-colors !cursor-pointer"
                       >
                         Register resume
                       </a>

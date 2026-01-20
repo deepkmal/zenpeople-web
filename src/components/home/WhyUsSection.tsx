@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 
 const cityImages = [
@@ -11,6 +11,25 @@ const cityImages = [
 ];
 
 export function WhyUsSection() {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const handleGetQuoteClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (location.pathname === '/employers') {
+      scrollToSection('get-a-quote');
+    } else {
+      navigate('/employers', { state: { scrollTo: 'get-a-quote' } });
+    }
+  };
+
   return (
     <section className="bg-gray-50">
       {/* Facade & Glazing Specialists - Image Right (Full Bleed) */}
@@ -24,13 +43,14 @@ export function WhyUsSection() {
             <p className="text-white/90 text-base sm:text-lg lg:text-xl leading-relaxed mb-8">
               We focus exclusively on the facade and glazing industry. It's all we do, so we do it better than anyone else. Our deep industry knowledge means we understand the technical requirements, safety standards, and specific skills needed for every role.
             </p>
-            <Link
-              to="/employers"
+            <a
+              href="/employers#get-a-quote"
+              onClick={handleGetQuoteClick}
               className="inline-flex items-center gap-3 bg-white shadow-lg hover:shadow-xl px-6 py-4 transition-all group"
             >
-              <span className="text-lg font-semibold text-navy">Get me a quote</span>
+              <span className="text-lg font-semibold text-navy">Get a quote</span>
               <ArrowRight className="w-5 h-5 text-navy group-hover:translate-x-1 transition-transform" />
-            </Link>
+            </a>
           </div>
         </div>
         {/* Image - Hidden on mobile, Right on desktop */}

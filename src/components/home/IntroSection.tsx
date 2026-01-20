@@ -2,7 +2,7 @@ import { Container } from '../ui/Container';
 
 export function IntroSection() {
   return (
-    <section id="services" className="pt-12 pb-10 sm:pt-16 sm:pb-14 lg:pt-24 lg:pb-20 bg-[#141B2D] scroll-mt-20">
+    <section id="services" className="pt-12 pb-10 sm:pt-16 sm:pb-14 lg:pt-24 lg:pb-20 bg-[#141B2D] scroll-mt-16 lg:scroll-mt-20">
       <Container>
         <div className="max-w-4xl text-white text-base sm:text-lg md:text-xl lg:text-2xl font-medium lg:font-light leading-relaxed tracking-tight space-y-4 sm:space-y-5 lg:space-y-6">
           <p>

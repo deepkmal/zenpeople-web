@@ -170,7 +170,7 @@ export function ResumeUploadSection({ id }: ResumeUploadSectionProps) {
         isVisible={showToast}
         onClose={handleCloseToast}
       />
-      <section id={id} className="flex flex-col lg:grid lg:grid-cols-2 lg:items-stretch">
+      <section id={id} className="flex flex-col lg:grid lg:grid-cols-2 lg:items-stretch scroll-mt-16 lg:scroll-mt-20">
         {/* Left side - Text and CTA */}
       <div className="bg-white flex items-center px-6 sm:px-10 lg:pl-[max(2rem,calc((100vw-80rem)/2+2rem))] lg:pr-16 xl:pr-20 py-12 sm:py-16 lg:py-24">
         <div className="max-w-xl">
