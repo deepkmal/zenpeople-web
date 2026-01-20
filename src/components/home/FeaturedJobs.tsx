@@ -1,9 +1,17 @@
 import { Link } from 'react-router-dom';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, MapPin, Briefcase } from 'lucide-react';
 import { Container } from '../ui/Container';
-import { jobs, formatDate } from '../../data/jobs';
+import { useFeaturedJobs } from '../../hooks/useFeaturedJobs';
+import { employmentTypeLabels, formatRelativeTime } from '../../utils/payload-api';
 
 export function FeaturedJobs() {
+  const { jobs, loading, error } = useFeaturedJobs();
+
+  // Don't render section if there's an error or no jobs
+  if (error || (!loading && jobs.length === 0)) {
+    return null;
+  }
+
   return (
     <section className="py-16 lg:py-24 bg-gray-50">
       <Container>
@@ -15,65 +23,47 @@ export function FeaturedJobs() {
         </div>
 
         {/* Job Cards */}
-        <div className="space-y-6 max-w-4xl mx-auto">
-          {jobs.map((job) => (
-            <Link
-              key={job.id}
-              to="/jobs"
-              className="block bg-white border border-gray-200 p-6 lg:p-8 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
-            >
-              {/* Top Row */}
-              <div className="flex justify-between items-start mb-4">
-                <span className="text-xs font-semibold uppercase tracking-wide text-[#2175D9]">
-                  {job.sector}
-                </span>
-                <span className="text-xs text-gray-500 uppercase tracking-wide">
-                  {formatDate(job.postedDate)}
-                </span>
-              </div>
-
-              {/* Title */}
-              <h3 className="text-xl lg:text-2xl font-bold text-navy mb-3">
-                {job.title}
-              </h3>
-
-              {/* Description */}
-              <p className="text-gray-600 line-clamp-2 mb-6">{job.description}</p>
-
-              {/* Divider */}
-              <hr className="border-gray-200 mb-6" />
-
-              {/* Metadata Row */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div className="flex flex-wrap gap-6 sm:gap-8">
-                  <div>
-                    <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">
-                      Type
-                    </p>
-                    <p className="text-navy font-medium">{job.type}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">
-                      Location
-                    </p>
-                    <p className="text-navy font-medium">{job.location}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">
-                      Salary
-                    </p>
-                    <p className="text-navy font-medium">{job.salary}</p>
-                  </div>
+        <div className="space-y-4 max-w-4xl mx-auto">
+          {loading ? (
+            // Loading skeletons
+            Array.from({ length: 3 }).map((_, i) => (
+              <div
+                key={i}
+                className="bg-white border border-gray-200 p-5 animate-pulse"
+              >
+                <div className="h-6 bg-gray-200 rounded w-3/4 mb-3" />
+                <div className="flex gap-4">
+                  <div className="h-4 bg-gray-200 rounded w-24" />
+                  <div className="h-4 bg-gray-200 rounded w-32" />
                 </div>
-
-                <span
-                  className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-[#141B2D] text-white text-sm font-medium hover:bg-[#141B2D]/90 transition-colors cursor-pointer"
-                >
-                  Learn more
-                </span>
               </div>
-            </Link>
-          ))}
+            ))
+          ) : (
+            jobs.map((job) => (
+              <Link
+                key={job.id}
+                to={`/jobs/${job.slug}`}
+                className="block bg-white border border-gray-200 p-5 hover:shadow-md transition-shadow"
+              >
+                {/* Title */}
+                <h3 className="text-lg font-semibold text-navy mb-3">
+                  {job.title}
+                </h3>
+
+                {/* Metadata Row */}
+                <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600">
+                  <span className="flex items-center gap-1.5">
+                    <MapPin className="w-4 h-4 text-gray-400" />
+                    {job.city}
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <Briefcase className="w-4 h-4 text-gray-400" />
+                    {employmentTypeLabels[job.employment_type] || job.employment_type}
+                  </span>
+                </div>
+              </Link>
+            ))
+          )}
         </div>
 
         {/* View All Link */}

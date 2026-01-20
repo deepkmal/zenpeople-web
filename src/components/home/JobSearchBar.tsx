@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Search, MapPin } from 'lucide-react';
 
 const locations = [
@@ -14,13 +15,25 @@ const locations = [
 ];
 
 export function JobSearchBar() {
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [location, setLocation] = useState('All Locations');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement search functionality
-    console.log('Search:', { searchTerm, location });
+
+    // Build query params
+    const params = new URLSearchParams();
+    if (searchTerm.trim()) {
+      params.set('keyword', searchTerm.trim());
+    }
+    if (location !== 'All Locations') {
+      params.set('city', location);
+    }
+
+    // Navigate to jobs page with filters
+    const queryString = params.toString();
+    navigate(`/jobs${queryString ? `?${queryString}` : ''}`);
   };
 
   return (

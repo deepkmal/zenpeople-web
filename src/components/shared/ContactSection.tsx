@@ -1,7 +1,7 @@
 import { useState, useMemo, useCallback } from 'react';
 import { Container } from '../ui/Container';
 import { Toast } from '../ui/Toast';
-import { submitContactForm } from '../../utils/api';
+import { submitLead } from '../../utils/payload-api';
 
 interface FormData {
   firstName: string;
@@ -113,7 +113,8 @@ export function ContactSection({
     setSubmitStatus('idle');
 
     try {
-      const result = await submitContactForm({
+      const result = await submitLead({
+        type: 'contact',
         firstName: formData.firstName,
         lastName: formData.lastName,
         company: formData.company || undefined,

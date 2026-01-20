@@ -1,6 +1,6 @@
 import { useState, useMemo, useRef, useCallback } from 'react';
 import { ChevronDown, Paperclip, FileText, X } from 'lucide-react';
-import { submitQuoteForm, submitResumeForm } from '../../utils/api';
+import { submitLead } from '../../utils/payload-api';
 import { Toast } from '../ui/Toast';
 
 // Quote Form Data Types
@@ -137,7 +137,8 @@ export function SectorFormsSection() {
     setQuoteIsSubmitting(true);
     setQuoteSubmitStatus('idle');
     try {
-      const result = await submitQuoteForm({
+      const result = await submitLead({
+        type: 'quote',
         firstName: quoteFormData.firstName,
         lastName: quoteFormData.lastName,
         company: quoteFormData.company,
@@ -198,12 +199,14 @@ export function SectorFormsSection() {
     setResumeIsSubmitting(true);
     setResumeSubmitStatus('idle');
     try {
-      const result = await submitResumeForm({
+      const result = await submitLead({
+        type: 'resume',
         firstName: resumeFormData.firstName,
         lastName: resumeFormData.lastName,
         phone: resumeFormData.phone,
         email: resumeFormData.email,
         additionalInfo: resumeFormData.additionalInfo || undefined,
+        resume: file || undefined,
       });
 
       if (result.success) {

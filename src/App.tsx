@@ -5,6 +5,8 @@ import { HomePage } from './pages/HomePage';
 import { ContactPage } from './pages/ContactPage';
 import { HirePage } from './pages/HirePage';
 import { JobsPage } from './pages/JobsPage';
+import { JobBoardPage } from './pages/JobBoardPage';
+import { JobListingPage } from './pages/JobListingPage';
 import { SectorPage } from './pages/SectorPage';
 
 function App() {
@@ -17,8 +19,8 @@ function App() {
           {/* Placeholder routes - pages to be implemented */}
           <Route path="/services" element={<PlaceholderPage title="Our Services" />} />
           <Route path="/talent" element={<JobsPage />} />
-          <Route path="/jobs" element={<PlaceholderPage title="Job Board" />} />
-          <Route path="/jobs/:slug" element={<PlaceholderPage title="Job Details" />} />
+          <Route path="/jobs" element={<JobBoardPage />} />
+          <Route path="/jobs/:slug" element={<JobListingPage />} />
           <Route path="/employers" element={<HirePage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/sectors/:slug" element={<SectorPage />} />
