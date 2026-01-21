@@ -90,7 +90,7 @@ export function WhyUsSection() {
               From Sydney to Perth, Melbourne to Brisbane - we recruit for companies across every major Australian city. Our national network means we can source talent locally or help candidates relocate for the right opportunity.
             </p>
             <Link
-              to="/talent"
+              to="/jobs"
               className="inline-flex items-center gap-3 bg-[#141B2D] hover:bg-[#141B2D]/90 px-6 py-4 transition-all group"
             >
               <span className="text-lg font-semibold text-white">Show me what's available</span>

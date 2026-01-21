@@ -5,6 +5,7 @@ compatibility_date = "2024-01-01"
 [assets]
 directory = "./dist"
 binding = "ASSETS"
+not_found_handling = "single-page-application"
 
 # Environment variables (set in Cloudflare dashboard as secrets)
 # RESEND_API_KEY - Your Resend API key

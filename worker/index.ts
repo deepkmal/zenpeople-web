@@ -19,21 +19,9 @@ app.route('/api/contact', contact);
 app.route('/api/quote', quote);
 app.route('/api/resume', resume);
 
-// Serve static assets for all other routes, with SPA fallback
+// Serve static assets for all other routes (SPA fallback handled by wrangler.toml)
 app.all('*', async (c) => {
-  const response = await c.env.ASSETS.fetch(c.req.raw);
-
-  // If asset not found and not a file request, serve index.html for SPA routing
-  if (response.status === 404) {
-    const url = new URL(c.req.url);
-    // Check if it's not a file request (no extension or common static extensions)
-    if (!url.pathname.match(/\.[a-zA-Z0-9]+$/)) {
-      const indexRequest = new Request(new URL('/index.html', c.req.url), c.req.raw);
-      return c.env.ASSETS.fetch(indexRequest);
-    }
-  }
-
-  return response;
+  return c.env.ASSETS.fetch(c.req.raw);
 });
 
 export default app;
