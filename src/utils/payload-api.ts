@@ -1,7 +1,6 @@
 // Payload CMS API client
 
-const API_BASE = import.meta.env.VITE_PAYLOAD_API_URL || ''
-console.log('API_BASE:', API_BASE)
+const API_BASE = 'https://zenpeople-admin.fly.dev'
 
 // Types
 export interface Job {
