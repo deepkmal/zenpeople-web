@@ -39,12 +39,13 @@ export const Jobs: CollectionConfig = {
       },
       hooks: {
         beforeValidate: [
-          ({ data, originalDoc }) => {
+          ({ value, data, originalDoc }) => {
+            if (value) return value
             const title = data?.title ?? originalDoc?.title
-            if (!data?.slug && typeof title === 'string' && title.length > 0) {
-              return { ...data, slug: slugify(title) }
+            if (typeof title === 'string' && title.length > 0) {
+              return slugify(title)
             }
-            return data
+            return value
           },
         ],
       },

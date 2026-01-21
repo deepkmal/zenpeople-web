@@ -1,10 +1,27 @@
 ---
 name: git-push
-description: Stage, commit, and push changes with auto-generated message
-allowed-tools: Bash(git:*)
+description: Build, verify, and push changes with auto-generated message
+allowed-tools: Bash(git:*), Bash(npm run build), Bash(pnpm build:*), Bash(rm -rf:*)
 ---
 
 # Git Push Workflow
+
+## 1. Build Verification
+
+Run both builds to verify the code compiles:
+
+1. Run `npm run build` in the root directory (Vite website)
+2. Run `cd admin && pnpm build` (Payload CMS admin panel)
+
+If either build fails, STOP and report the error. Do not proceed to commit.
+
+## 2. Clean Build Outputs
+
+If both builds succeed, delete the build outputs:
+- `rm -rf dist` (website build output)
+- `rm -rf admin/.next admin/.open-next` (admin panel build outputs)
+
+## 3. Git Workflow
 
 1. Run `git status` to see all untracked and modified files
 2. Run `git diff` to see the actual changes

@@ -1,7 +1,7 @@
 import { getPayload } from 'payload'
-import config from './payload.config'
+import configPromise from './payload.config'
 
-const cities = ['Sydney', 'Melbourne', 'Brisbane', 'Perth', 'Adelaide', 'Hobart', 'Darwin', 'Canberra']
+const cities = ['Sydney', 'Melbourne', 'Brisbane', 'Perth', 'Adelaide', 'Hobart', 'Darwin', 'Canberra'] as const
 
 const employmentTypes = [
   'permanent-full-time',
@@ -130,7 +130,7 @@ function slugify(text: string, city: string): string {
     .replace(/^-|-$/g, '')
 }
 
-function getRandomItem<T>(array: T[]): T {
+function getRandomItem<T>(array: readonly T[]): T {
   return array[Math.floor(Math.random() * array.length)]
 }
 
@@ -150,101 +150,61 @@ function generateJobDescription(title: string, sector: string, city: string): st
 function generateRoleDescription(title: string, sector: string): object {
   const sectorName = sectorDisplayNames[sector]
 
-  const responsibilities = [
-    `Lead and manage projects within the ${sectorName} sector`,
-    'Collaborate with cross-functional teams to deliver high-quality outcomes',
-    'Develop and maintain client relationships',
-    'Ensure compliance with industry standards and regulations',
-    'Mentor and develop junior team members',
-    'Prepare reports and documentation as required',
-    'Contribute to continuous improvement initiatives',
-  ]
-
   return {
     root: {
       type: 'root',
-      direction: null,
       children: [
         {
           type: 'heading',
           tag: 'h3',
-          direction: null,
-          indent: 0,
-          children: [{ type: 'text', text: 'About the Role', format: 0 }],
+          children: [{ type: 'text', text: 'About the Role' }],
         },
         {
           type: 'paragraph',
-          direction: null,
-          indent: 0,
           children: [
             {
               type: 'text',
               text: `This is an exciting opportunity to join a respected organisation in the ${sectorName} industry. As a ${title}, you will play a key role in delivering exceptional outcomes for our clients.`,
-              format: 0,
             },
           ],
         },
         {
           type: 'heading',
           tag: 'h3',
-          direction: null,
-          indent: 0,
-          children: [{ type: 'text', text: 'Key Responsibilities', format: 0 }],
+          children: [{ type: 'text', text: 'Key Responsibilities' }],
         },
         {
-          type: 'list',
-          listType: 'bullet',
-          tag: 'ul',
-          direction: null,
-          indent: 0,
-          children: responsibilities.slice(0, 5).map((resp, index) => ({
-            type: 'listitem',
-            value: index + 1,
-            indent: 0,
-            direction: null,
-            children: [{ type: 'paragraph', direction: null, indent: 0, children: [{ type: 'text', text: resp, format: 0 }] }],
-          })),
+          type: 'paragraph',
+          children: [
+            {
+              type: 'text',
+              text: `• Lead and manage projects within the ${sectorName} sector\n• Collaborate with cross-functional teams to deliver high-quality outcomes\n• Develop and maintain client relationships\n• Ensure compliance with industry standards and regulations\n• Mentor and develop junior team members`,
+            },
+          ],
         },
       ],
     },
   }
 }
 
-function generateRequirements(title: string, sector: string): object {
-  const requirements = [
-    'Relevant tertiary qualifications',
-    '5+ years of experience in a similar role',
-    'Strong communication and interpersonal skills',
-    'Proven ability to work autonomously and as part of a team',
-    'Valid driver\'s licence',
-    'Right to work in Australia',
-  ]
-
+function generateRequirements(_title: string, _sector: string): object {
   return {
     root: {
       type: 'root',
-      direction: null,
       children: [
         {
           type: 'heading',
           tag: 'h3',
-          direction: null,
-          indent: 0,
-          children: [{ type: 'text', text: 'Requirements', format: 0 }],
+          children: [{ type: 'text', text: 'Requirements' }],
         },
         {
-          type: 'list',
-          listType: 'bullet',
-          tag: 'ul',
-          direction: null,
-          indent: 0,
-          children: requirements.map((req, index) => ({
-            type: 'listitem',
-            value: index + 1,
-            indent: 0,
-            direction: null,
-            children: [{ type: 'paragraph', direction: null, indent: 0, children: [{ type: 'text', text: req, format: 0 }] }],
-          })),
+          type: 'paragraph',
+          children: [
+            {
+              type: 'text',
+              text: `• Relevant tertiary qualifications\n• 5+ years of experience in a similar role\n• Strong communication and interpersonal skills\n• Proven ability to work autonomously and as part of a team\n• Valid driver's licence\n• Right to work in Australia`,
+            },
+          ],
         },
       ],
     },
@@ -254,6 +214,7 @@ function generateRequirements(title: string, sector: string): object {
 async function seed() {
   console.log('Starting seed process...')
 
+  const config = await configPromise
   const payload = await getPayload({ config })
 
   // Delete existing jobs
@@ -298,6 +259,18 @@ async function seed() {
     )
     const salary = salaryRanges[salaryIndex]
 
+    const roleDesc = {
+      root: {
+        type: 'root',
+        children: [
+          {
+            type: 'paragraph',
+            children: [{ type: 'text', text: `Role description for ${title}` }],
+          },
+        ],
+      },
+    }
+
     const job = await payload.create({
       collection: 'jobs',
       data: {
@@ -308,8 +281,7 @@ async function seed() {
         employment_type: employmentType,
         sector,
         salary,
-        role_desc: generateRoleDescription(title, sector),
-        role_requirements: generateRequirements(title, sector),
+        role_desc: roleDesc,
         isActive: true,
       },
     })

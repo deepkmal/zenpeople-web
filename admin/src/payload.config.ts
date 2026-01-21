@@ -11,28 +11,27 @@ import { Jobs, Applications, Resumes, Leads, Users } from './collections'
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
-// Only include S3 storage plugin if R2 credentials are configured
-const plugins: Plugin[] = []
-if (process.env.R2_ACCESS_KEY_ID && process.env.R2_SECRET_ACCESS_KEY && process.env.R2_ENDPOINT) {
-  plugins.push(
-    s3Storage({
-      collections: {
-        resumes: {
-          prefix: 'resumes',
-        },
+// S3 storage plugin for R2 file uploads
+// Always include the plugin so importmap is generated correctly
+// The plugin handles missing credentials gracefully at runtime
+const plugins: Plugin[] = [
+  s3Storage({
+    collections: {
+      resumes: {
+        prefix: 'resumes',
       },
-      bucket: process.env.R2_BUCKET || 'zenpeople-uploads',
-      config: {
-        credentials: {
-          accessKeyId: process.env.R2_ACCESS_KEY_ID,
-          secretAccessKey: process.env.R2_SECRET_ACCESS_KEY,
-        },
-        endpoint: process.env.R2_ENDPOINT,
-        region: 'auto',
+    },
+    bucket: process.env.R2_BUCKET || 'zenpeople-uploads',
+    config: {
+      credentials: {
+        accessKeyId: process.env.R2_ACCESS_KEY_ID || '',
+        secretAccessKey: process.env.R2_SECRET_ACCESS_KEY || '',
       },
-    }),
-  )
-}
+      endpoint: process.env.R2_ENDPOINT || 'https://placeholder.r2.cloudflarestorage.com',
+      region: 'auto',
+    },
+  }),
+]
 
 export default buildConfig({
   // Server URL for admin panel

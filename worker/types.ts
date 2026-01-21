@@ -1,6 +1,7 @@
 export interface Env {
   RESEND_API_KEY: string;
   SOURCE_EMAIL: string;
+  CMS_URL: string;
   ASSETS: Fetcher;
 }
 
