@@ -137,7 +137,7 @@ export function ApplicationForm({ jobId, jobTitle, onSuccess, onError }: Applica
     }
   }
 
-  const getFileIcon = (file: File) => {
+  const getFileIcon = () => {
     return <FileText className="w-5 h-5 text-gray-400" />
   }
 
@@ -240,7 +240,7 @@ export function ApplicationForm({ jobId, jobTitle, onSuccess, onError }: Applica
         </label>
         {formData.resume ? (
           <div className="flex items-center gap-3 p-3 border border-gray-200 bg-gray-50">
-            {getFileIcon(formData.resume)}
+            {getFileIcon()}
             <div className="flex-1 min-w-0">
               <p className="text-sm text-gray-700 truncate">{formData.resume.name}</p>
               <p className="text-xs text-gray-500">{formatFileSize(formData.resume.size)}</p>

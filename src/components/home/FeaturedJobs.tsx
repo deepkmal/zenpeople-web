@@ -1,8 +1,32 @@
 import { Link } from 'react-router-dom';
-import { ArrowRight, MapPin, Briefcase } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { Container } from '../ui/Container';
+import { JobCard } from '../jobs/JobCard';
 import { useFeaturedJobs } from '../../hooks/useFeaturedJobs';
-import { employmentTypeLabels, formatRelativeTime } from '../../utils/payload-api';
+
+function JobCardSkeleton() {
+  return (
+    <div className="bg-white border border-gray-200 p-6 animate-pulse">
+      <div className="flex justify-between items-start mb-3">
+        <div className="h-4 bg-gray-200 rounded w-32" />
+        <div className="h-4 bg-gray-200 rounded w-24" />
+      </div>
+      <div className="h-6 bg-gray-200 rounded w-3/4 mb-3" />
+      <div className="h-4 bg-gray-200 rounded w-full mb-2" />
+      <div className="h-4 bg-gray-200 rounded w-2/3 mb-6" />
+      <div className="flex flex-wrap gap-6">
+        <div>
+          <div className="h-3 bg-gray-200 rounded w-10 mb-1" />
+          <div className="h-4 bg-gray-200 rounded w-20" />
+        </div>
+        <div>
+          <div className="h-3 bg-gray-200 rounded w-16 mb-1" />
+          <div className="h-4 bg-gray-200 rounded w-24" />
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export function FeaturedJobs() {
   const { jobs, loading, error } = useFeaturedJobs();
@@ -27,41 +51,11 @@ export function FeaturedJobs() {
           {loading ? (
             // Loading skeletons
             Array.from({ length: 3 }).map((_, i) => (
-              <div
-                key={i}
-                className="bg-white border border-gray-200 p-5 animate-pulse"
-              >
-                <div className="h-6 bg-gray-200 rounded w-3/4 mb-3" />
-                <div className="flex gap-4">
-                  <div className="h-4 bg-gray-200 rounded w-24" />
-                  <div className="h-4 bg-gray-200 rounded w-32" />
-                </div>
-              </div>
+              <JobCardSkeleton key={i} />
             ))
           ) : (
             jobs.map((job) => (
-              <Link
-                key={job.id}
-                to={`/jobs/${job.slug}`}
-                className="block bg-white border border-gray-200 p-5 hover:shadow-md transition-shadow"
-              >
-                {/* Title */}
-                <h3 className="text-lg font-semibold text-navy mb-3">
-                  {job.title}
-                </h3>
-
-                {/* Metadata Row */}
-                <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600">
-                  <span className="flex items-center gap-1.5">
-                    <MapPin className="w-4 h-4 text-gray-400" />
-                    {job.city}
-                  </span>
-                  <span className="flex items-center gap-1.5">
-                    <Briefcase className="w-4 h-4 text-gray-400" />
-                    {employmentTypeLabels[job.employment_type] || job.employment_type}
-                  </span>
-                </div>
-              </Link>
+              <JobCard key={job.id} job={job} />
             ))
           )}
         </div>

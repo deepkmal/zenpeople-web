@@ -44,7 +44,7 @@ export function JobBoardPage() {
   })
 
   // Fetch jobs with active filters
-  const { jobs, loading, error, hasMore, totalJobs, loadMore } = useJobs(activeFilters)
+  const { jobs, loading, error, totalJobs, loadMore } = useJobs(activeFilters)
 
   // Update URL when active filters change
   useEffect(() => {
