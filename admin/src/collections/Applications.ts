@@ -13,15 +13,6 @@ export const Applications: CollectionConfig = {
     update: ({ req }) => !!req.user, // Admin only
     delete: ({ req }) => !!req.user, // Admin only
   },
-  upload: {
-    staticDir: 'resumes',
-    mimeTypes: [
-      'application/pdf',
-      'application/msword',
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-    ],
-    filesRequireSignedURLs: false,
-  },
   fields: [
     {
       name: 'firstName',
@@ -53,6 +44,15 @@ export const Applications: CollectionConfig = {
       required: true,
       admin: {
         description: 'The job this application is for',
+      },
+    },
+    {
+      name: 'resume',
+      type: 'upload',
+      relationTo: 'resumes',
+      required: true,
+      admin: {
+        description: 'Uploaded resume file',
       },
     },
     {

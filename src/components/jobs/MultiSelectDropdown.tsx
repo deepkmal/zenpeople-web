@@ -12,6 +12,7 @@ interface MultiSelectDropdownProps {
   value: string
   onChange: (value: string) => void
   placeholder?: string
+  showAllOption?: boolean
 }
 
 export function MultiSelectDropdown({
@@ -20,6 +21,7 @@ export function MultiSelectDropdown({
   value,
   onChange,
   placeholder = 'All',
+  showAllOption = true,
 }: MultiSelectDropdownProps) {
   const [isOpen, setIsOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
@@ -58,18 +60,20 @@ export function MultiSelectDropdown({
       {isOpen && (
         <div className="absolute z-50 top-full left-0 mt-1 w-full min-w-[200px] bg-white border border-gray-200 shadow-lg max-h-60 overflow-auto">
           {/* All option */}
-          <button
-            type="button"
-            onClick={() => {
-              onChange('')
-              setIsOpen(false)
-            }}
-            className="w-full flex items-center gap-2 px-3 py-2 text-sm text-left hover:bg-gray-50"
-          >
-            {!value && <Check className="w-4 h-4 text-navy" />}
-            {value && <span className="w-4" />}
-            <span>{placeholder}</span>
-          </button>
+          {showAllOption && (
+            <button
+              type="button"
+              onClick={() => {
+                onChange('')
+                setIsOpen(false)
+              }}
+              className="w-full flex items-center gap-2 px-3 py-2 text-sm text-left hover:bg-gray-50"
+            >
+              {!value && <Check className="w-4 h-4 text-navy" />}
+              {value && <span className="w-4" />}
+              <span>{placeholder}</span>
+            </button>
+          )}
 
           {/* Options */}
           {options.map((option) => (

@@ -69,6 +69,7 @@ export interface Config {
   collections: {
     jobs: Job;
     applications: Application;
+    resumes: Resume;
     leads: Lead;
     users: User;
     'payload-kv': PayloadKv;
@@ -80,6 +81,7 @@ export interface Config {
   collectionsSelect: {
     jobs: JobsSelect<false> | JobsSelect<true>;
     applications: ApplicationsSelect<false> | ApplicationsSelect<true>;
+    resumes: ResumesSelect<false> | ResumesSelect<true>;
     leads: LeadsSelect<false> | LeadsSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
@@ -132,9 +134,6 @@ export interface Job {
    * Job title (e.g., "Senior Facade Engineer")
    */
   title: string;
-  /**
-   * URL-friendly identifier (e.g., "senior-facade-engineer-sydney")
-   */
   slug: string;
   /**
    * Brief job summary (1-2 sentences) - used for search and SEO
@@ -143,7 +142,7 @@ export interface Job {
   /**
    * City location (e.g., "Sydney", "Melbourne")
    */
-  city: string;
+  city: 'Sydney' | 'Melbourne' | 'Brisbane' | 'Perth' | 'Adelaide' | 'Hobart' | 'Darwin' | 'Canberra';
   employment_type:
     | 'permanent-full-time'
     | 'permanent-part-time'
@@ -241,11 +240,26 @@ export interface Application {
    * The job this application is for
    */
   job: number | Job;
+  /**
+   * Uploaded resume file
+   */
+  resume: number | Resume;
   status?: ('new' | 'reviewing' | 'shortlisted' | 'interviewed' | 'offered' | 'hired' | 'rejected') | null;
   /**
    * Internal notes about this application
    */
   notes?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Uploaded resume files
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "resumes".
+ */
+export interface Resume {
+  id: number;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -274,6 +288,10 @@ export interface Lead {
   company?: string | null;
   message?: string | null;
   /**
+   * Uploaded resume file
+   */
+  resume?: (number | null) | Resume;
+  /**
    * Additional information (for resume submissions)
    */
   additionalInfo?: string | null;
@@ -284,15 +302,6 @@ export interface Lead {
   notes?: string | null;
   updatedAt: string;
   createdAt: string;
-  url?: string | null;
-  thumbnailURL?: string | null;
-  filename?: string | null;
-  mimeType?: string | null;
-  filesize?: number | null;
-  width?: number | null;
-  height?: number | null;
-  focalX?: number | null;
-  focalY?: number | null;
 }
 /**
  * Admin users who can manage the CMS
@@ -353,6 +362,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'applications';
         value: number | Application;
+      } | null)
+    | ({
+        relationTo: 'resumes';
+        value: number | Resume;
       } | null)
     | ({
         relationTo: 'leads';
@@ -433,8 +446,17 @@ export interface ApplicationsSelect<T extends boolean = true> {
   email?: T;
   phone?: T;
   job?: T;
+  resume?: T;
   status?: T;
   notes?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "resumes_select".
+ */
+export interface ResumesSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   url?: T;
@@ -459,20 +481,12 @@ export interface LeadsSelect<T extends boolean = true> {
   phone?: T;
   company?: T;
   message?: T;
+  resume?: T;
   additionalInfo?: T;
   status?: T;
   notes?: T;
   updatedAt?: T;
   createdAt?: T;
-  url?: T;
-  thumbnailURL?: T;
-  filename?: T;
-  mimeType?: T;
-  filesize?: T;
-  width?: T;
-  height?: T;
-  focalX?: T;
-  focalY?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

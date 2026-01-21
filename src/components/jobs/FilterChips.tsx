@@ -62,12 +62,12 @@ interface ChipProps {
 
 function Chip({ label, onRemove }: ChipProps) {
   return (
-    <span className="inline-flex items-center gap-1 px-3 py-1 bg-gray-100 text-sm text-gray-700 rounded-full">
+    <span className="inline-flex items-center gap-1 px-3 py-1 bg-[#2175D9] text-sm text-white rounded-full">
       {label}
       <button
         type="button"
         onClick={onRemove}
-        className="p-0.5 hover:bg-gray-200 rounded-full"
+        className="p-0.5 hover:bg-white/20 rounded-full"
         aria-label={`Remove ${label} filter`}
       >
         <X className="w-3 h-3" />

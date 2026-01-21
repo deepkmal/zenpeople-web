@@ -6,7 +6,7 @@ import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { s3Storage } from '@payloadcms/storage-s3'
 import { resendAdapter } from '@payloadcms/email-resend'
 
-import { Jobs, Applications, Leads, Users } from './collections'
+import { Jobs, Applications, Resumes, Leads, Users } from './collections'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -17,11 +17,8 @@ if (process.env.R2_ACCESS_KEY_ID && process.env.R2_SECRET_ACCESS_KEY && process.
   plugins.push(
     s3Storage({
       collections: {
-        applications: {
-          prefix: 'application-resumes',
-        },
-        leads: {
-          prefix: 'lead-resumes',
+        resumes: {
+          prefix: 'resumes',
         },
       },
       bucket: process.env.R2_BUCKET || 'zenpeople-uploads',
@@ -70,7 +67,7 @@ export default buildConfig({
   },
 
   // Collections
-  collections: [Jobs, Applications, Leads, Users],
+  collections: [Jobs, Applications, Resumes, Leads, Users],
 
   // Rich text editor
   editor: lexicalEditor(),

@@ -163,32 +163,46 @@ function generateRoleDescription(title: string, sector: string): object {
   return {
     root: {
       type: 'root',
+      direction: null,
       children: [
         {
           type: 'heading',
           tag: 'h3',
-          children: [{ type: 'text', text: 'About the Role' }],
+          direction: null,
+          indent: 0,
+          children: [{ type: 'text', text: 'About the Role', format: 0 }],
         },
         {
           type: 'paragraph',
+          direction: null,
+          indent: 0,
           children: [
             {
               type: 'text',
               text: `This is an exciting opportunity to join a respected organisation in the ${sectorName} industry. As a ${title}, you will play a key role in delivering exceptional outcomes for our clients.`,
+              format: 0,
             },
           ],
         },
         {
           type: 'heading',
           tag: 'h3',
-          children: [{ type: 'text', text: 'Key Responsibilities' }],
+          direction: null,
+          indent: 0,
+          children: [{ type: 'text', text: 'Key Responsibilities', format: 0 }],
         },
         {
           type: 'list',
           listType: 'bullet',
-          children: responsibilities.slice(0, 5).map((resp) => ({
+          tag: 'ul',
+          direction: null,
+          indent: 0,
+          children: responsibilities.slice(0, 5).map((resp, index) => ({
             type: 'listitem',
-            children: [{ type: 'paragraph', children: [{ type: 'text', text: resp }] }],
+            value: index + 1,
+            indent: 0,
+            direction: null,
+            children: [{ type: 'paragraph', direction: null, indent: 0, children: [{ type: 'text', text: resp, format: 0 }] }],
           })),
         },
       ],
@@ -209,18 +223,27 @@ function generateRequirements(title: string, sector: string): object {
   return {
     root: {
       type: 'root',
+      direction: null,
       children: [
         {
           type: 'heading',
           tag: 'h3',
-          children: [{ type: 'text', text: 'Requirements' }],
+          direction: null,
+          indent: 0,
+          children: [{ type: 'text', text: 'Requirements', format: 0 }],
         },
         {
           type: 'list',
           listType: 'bullet',
-          children: requirements.map((req) => ({
+          tag: 'ul',
+          direction: null,
+          indent: 0,
+          children: requirements.map((req, index) => ({
             type: 'listitem',
-            children: [{ type: 'paragraph', children: [{ type: 'text', text: req }] }],
+            value: index + 1,
+            indent: 0,
+            direction: null,
+            children: [{ type: 'paragraph', direction: null, indent: 0, children: [{ type: 'text', text: req, format: 0 }] }],
           })),
         },
       ],

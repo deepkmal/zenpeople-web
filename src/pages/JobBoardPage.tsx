@@ -135,20 +135,10 @@ export function JobBoardPage() {
     activeFilters.employment_type
 
   return (
-    <section className="py-8 lg:py-12 bg-gray-50 min-h-screen pt-24 lg:pt-28">
+    <section className="py-4 lg:py-8 bg-gray-50 min-h-screen pt-20 lg:pt-24">
       <Container>
-        {/* Page Header */}
-        <div className="mb-4">
-          <h1 className="text-2xl sm:text-3xl font-semibold text-navy mb-1">
-            Job Board
-          </h1>
-          <p className="text-gray-600">
-            {totalJobs > 0 ? `${totalJobs} jobs available` : 'Find your next opportunity'}
-          </p>
-        </div>
-
         {/* Filters */}
-        <div className="sticky top-16 lg:top-20 z-30 bg-gray-50 py-4 -mx-6 px-6 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+        <div className="sticky top-16 lg:top-20 z-30 bg-gray-50 py-4 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
           <JobFilters
             keyword={localKeyword}
             city={localCity}
@@ -219,7 +209,7 @@ export function JobBoardPage() {
         )}
 
         {/* Job List */}
-        <div className="mt-4 w-3/4">
+        <div className="mt-2 w-full lg:w-3/4">
           {/* Loading State (initial) */}
           {loading && jobs.length === 0 && <JobSkeletonList count={3} />}
 

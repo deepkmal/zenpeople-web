@@ -1,5 +1,12 @@
 import type { CollectionConfig } from 'payload'
 
+const slugify = (value: string): string =>
+  value
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '')
+
 export const Jobs: CollectionConfig = {
   slug: 'jobs',
   admin: {
@@ -28,7 +35,18 @@ export const Jobs: CollectionConfig = {
       required: true,
       unique: true,
       admin: {
-        description: 'URL-friendly identifier (e.g., "senior-facade-engineer-sydney")',
+        hidden: true,
+      },
+      hooks: {
+        beforeValidate: [
+          ({ data, originalDoc }) => {
+            const title = data?.title ?? originalDoc?.title
+            if (!data?.slug && typeof title === 'string' && title.length > 0) {
+              return { ...data, slug: slugify(title) }
+            }
+            return data
+          },
+        ],
       },
     },
     {
@@ -41,8 +59,18 @@ export const Jobs: CollectionConfig = {
     },
     {
       name: 'city',
-      type: 'text',
+      type: 'select',
       required: true,
+      options: [
+        { label: 'Sydney', value: 'Sydney' },
+        { label: 'Melbourne', value: 'Melbourne' },
+        { label: 'Brisbane', value: 'Brisbane' },
+        { label: 'Perth', value: 'Perth' },
+        { label: 'Adelaide', value: 'Adelaide' },
+        { label: 'Hobart', value: 'Hobart' },
+        { label: 'Darwin', value: 'Darwin' },
+        { label: 'Canberra', value: 'Canberra' },
+      ],
       admin: {
         description: 'City location (e.g., "Sydney", "Melbourne")',
       },

@@ -6,8 +6,8 @@ interface JobCardProps {
   job: Job
 }
 
-// Format date as "15 JANUARY 2026"
-function formatDate(dateString: string): string {
+// Format date as "15 JANUARY 2026" (desktop)
+function formatDateLong(dateString: string): string {
   const date = new Date(dateString)
   return date
     .toLocaleDateString('en-AU', {
@@ -16,6 +16,15 @@ function formatDate(dateString: string): string {
       year: 'numeric',
     })
     .toUpperCase()
+}
+
+// Format date as "21/01/26" (mobile)
+function formatDateShort(dateString: string): string {
+  const date = new Date(dateString)
+  const day = date.getDate().toString().padStart(2, '0')
+  const month = (date.getMonth() + 1).toString().padStart(2, '0')
+  const year = date.getFullYear().toString().slice(-2)
+  return `${day}/${month}/${year}`
 }
 
 // Get simplified employment type (just first part)
@@ -66,8 +75,9 @@ export function JobCard({ job }: JobCardProps) {
         <span className="text-xs font-semibold text-blue-600 uppercase tracking-wide">
           {sectorLabel}
         </span>
-        <span className="text-xs text-gray-400 uppercase">
-          {formatDate(job.createdAt)}
+        <span className="text-xs text-gray-400">
+          <span className="sm:hidden">{formatDateShort(job.createdAt)}</span>
+          <span className="hidden sm:inline uppercase">{formatDateLong(job.createdAt)}</span>
         </span>
       </div>
 
@@ -78,8 +88,8 @@ export function JobCard({ job }: JobCardProps) {
       <p className="text-gray-600 text-sm mb-6 line-clamp-2">{description}</p>
 
       {/* Bottom Row: Metadata & Button */}
-      <div className="flex items-end justify-between">
-        <div className="flex gap-8">
+      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+        <div className="flex flex-wrap gap-x-6 gap-y-2">
           <div>
             <span className="block text-xs text-gray-400 uppercase mb-1">Type</span>
             <span className="text-sm font-medium text-gray-900">{employmentType}</span>
@@ -91,11 +101,11 @@ export function JobCard({ job }: JobCardProps) {
           {job.salary && (
             <div>
               <span className="block text-xs text-gray-400 uppercase mb-1">Salary</span>
-              <span className="text-sm font-medium text-gray-900">{job.salary}</span>
+              <span className="text-sm font-medium text-gray-900 whitespace-nowrap">{job.salary}</span>
             </div>
           )}
         </div>
-        <span className="bg-navy text-white text-sm font-medium px-5 py-2.5">
+        <span className="bg-[#141B2D] text-white text-sm font-medium px-5 py-2.5 text-center sm:text-left shrink-0">
           Learn more
         </span>
       </div>

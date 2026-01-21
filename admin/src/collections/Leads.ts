@@ -13,16 +13,6 @@ export const Leads: CollectionConfig = {
     update: ({ req }) => !!req.user, // Admin only
     delete: ({ req }) => !!req.user, // Admin only
   },
-  // Enable file upload for resume submissions
-  upload: {
-    staticDir: 'lead-resumes',
-    mimeTypes: [
-      'application/pdf',
-      'application/msword',
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-    ],
-    filesRequireSignedURLs: false,
-  },
   fields: [
     {
       name: 'type',
@@ -63,6 +53,15 @@ export const Leads: CollectionConfig = {
     {
       name: 'message',
       type: 'textarea',
+    },
+    {
+      name: 'resume',
+      type: 'upload',
+      relationTo: 'resumes',
+      admin: {
+        description: 'Uploaded resume file',
+        condition: (data) => data?.type === 'resume',
+      },
     },
     {
       name: 'additionalInfo',
