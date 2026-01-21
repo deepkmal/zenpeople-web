@@ -130,13 +130,18 @@ export async function fetchJobs(
   const sortOrder = filters.sort === 'oldest' ? 'createdAt' : '-createdAt'
   params.append('sort', sortOrder)
 
-  const response = await fetch(`${API_BASE}/api/jobs?${params.toString()}`)
+  try {
+    const response = await fetch(`${API_BASE}/api/jobs?${params.toString()}`)
 
-  if (!response.ok) {
-    throw new Error('Failed to fetch jobs')
+    if (!response.ok) {
+      throw new Error('Failed to fetch jobs')
+    }
+
+    return response.json()
+  } catch (error) {
+    console.error('Error fetching jobs:', error)
+    throw error
   }
-
-  return response.json()
 }
 
 // Fetch single job by slug
