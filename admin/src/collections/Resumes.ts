@@ -19,7 +19,6 @@ export const Resumes: CollectionConfig = {
       'application/msword',
       'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
     ],
-    filesRequireSignedURLs: false,
   },
   fields: [],
   timestamps: true,
