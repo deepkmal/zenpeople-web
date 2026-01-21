@@ -1,5 +1,12 @@
 import type { RichTextContent, RichTextNode } from '../../utils/payload-api'
 
+type HeadingLevel = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'
+
+const headingLevels: HeadingLevel[] = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6']
+
+const getHeadingTag = (tag?: string): HeadingLevel =>
+  headingLevels.includes(tag as HeadingLevel) ? (tag as HeadingLevel) : 'h3'
+
 interface RichTextRendererProps {
   content: RichTextContent | undefined | null
   className?: string
@@ -54,7 +61,7 @@ function RenderNode({ node, insideListItem = false }: RenderNodeProps) {
 
   // Headings
   if (node.type === 'heading') {
-    const HeadingTag = (node.tag || 'h3') as keyof JSX.IntrinsicElements
+    const HeadingTag = getHeadingTag(node.tag)
     const headingClasses: Record<string, string> = {
       h1: 'text-2xl font-bold text-navy mb-4',
       h2: 'text-xl font-bold text-navy mb-3',
@@ -64,7 +71,7 @@ function RenderNode({ node, insideListItem = false }: RenderNodeProps) {
       h6: 'text-sm font-semibold text-navy mb-2',
     }
     return (
-      <HeadingTag className={headingClasses[node.tag || 'h3'] || headingClasses.h3}>
+      <HeadingTag className={headingClasses[HeadingTag] || headingClasses.h3}>
         {node.children?.map((child, i) => (
           <RenderNode key={i} node={child} />
         ))}
