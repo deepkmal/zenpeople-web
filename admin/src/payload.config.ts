@@ -41,6 +41,7 @@ export default buildConfig({
   cors: [
     'https://zenpeople.com',
     'https://www.zenpeople.com',
+    'https://zenpeople-web.deepaktestingemail.workers.dev',
     'http://localhost:5173',
     'http://localhost:5174',
     'http://localhost:3000',
@@ -51,6 +52,7 @@ export default buildConfig({
   csrf: [
     'https://zenpeople.com',
     'https://www.zenpeople.com',
+    'https://zenpeople-web.deepaktestingemail.workers.dev',
     'http://localhost:5173',
     'http://localhost:5174',
     'http://localhost:3000',
