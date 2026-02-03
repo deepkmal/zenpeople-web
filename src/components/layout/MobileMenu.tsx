@@ -228,7 +228,7 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                       onClick={handleRegisterResumeClick}
                       className="block px-4 py-2 text-gray-600 hover:text-[#2175D9] hover:bg-gray-50 rounded-lg"
                     >
-                      Register resume
+                      Match me with employment opportunities
                     </a>
                   </div>
                 </div>

@@ -194,7 +194,7 @@ export function ResumeUploadSection({ id }: ResumeUploadSectionProps) {
       <div className="bg-gray-100 flex items-center px-6 sm:px-10 lg:pl-16 xl:pl-20 lg:pr-[max(2rem,calc((100vw-80rem)/2+2rem))] py-12 sm:py-16 lg:py-24">
         <div className="w-full max-w-xl">
           <h3 className="text-2xl sm:text-3xl font-semibold text-navy mb-6">
-            Register your resume
+            Match me with employment opportunities
           </h3>
 
           {submitStatus === 'success' ? (

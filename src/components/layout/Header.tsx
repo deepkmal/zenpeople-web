@@ -192,13 +192,13 @@ export function Header() {
 
                 {isTalentDropdownOpen && (
                   <div className="absolute top-full left-0 pt-2">
-                    <div className="w-48 bg-white shadow-lg py-2 border border-gray-100">
+                    <div className="w-72 bg-white shadow-lg py-2 border border-gray-100">
                       <a
                         href="/talent#register-resume"
                         onClick={handleRegisterResumeClick}
                         className="block px-4 py-3 text-sm text-gray-700 hover:text-[#2175D9] hover:bg-[#2175D9]/5 transition-colors !cursor-pointer"
                       >
-                        Register resume
+                        Match me with employment opportunities
                       </a>
                     </div>
                   </div>

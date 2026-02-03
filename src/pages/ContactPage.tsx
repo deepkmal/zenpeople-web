@@ -116,18 +116,18 @@ export function ContactPage() {
             {/* Contact Info */}
             <div className="space-y-3 mb-8">
               <a
-                href="tel:0428192718"
+                href="tel:+61272284676"
                 className="flex items-center gap-3 text-navy hover:text-[#2175D9] transition-colors justify-center lg:justify-start"
               >
                 <Phone className="w-5 h-5" />
-                <span>0428 192 718</span>
+                <span>+61 2 7228 4676</span>
               </a>
               <a
-                href="mailto:hello@zenpeople.com.au"
+                href="mailto:recruitment@zenpeople.com.au"
                 className="flex items-center gap-3 text-navy hover:text-[#2175D9] transition-colors justify-center lg:justify-start"
               >
                 <Mail className="w-5 h-5" />
-                <span>hello@zenpeople.com.au</span>
+                <span>recruitment@zenpeople.com.au</span>
               </a>
             </div>
 

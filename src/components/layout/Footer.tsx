@@ -22,16 +22,16 @@ export function Footer() {
               </p>
               <div className="mt-6 space-y-2">
                 <a
-                  href="tel:0428192718"
+                  href="tel:+61272284676"
                   className="block text-sky-300 hover:text-white transition-colors"
                 >
-                  0428 192 718
+                  +61 2 7228 4676
                 </a>
                 <a
-                  href="mailto:hello@zenpeople.com.au"
+                  href="mailto:recruitment@zenpeople.com.au"
                   className="block text-sky-300 hover:text-white transition-colors"
                 >
-                  hello@zenpeople.com.au
+                  recruitment@zenpeople.com.au
                 </a>
               </div>
             </div>

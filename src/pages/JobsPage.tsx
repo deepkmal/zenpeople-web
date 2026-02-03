@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+import { Button } from '../components/ui/Button';
 import { IndustrySectors } from '../components/home/IndustrySectors';
 import { Testimonials } from '../components/home/Testimonials';
 import { ResumeUploadSection } from '../components/jobs/ResumeUploadSection';
@@ -30,6 +31,14 @@ export function JobsPage() {
             <p className="text-gray-600 text-base sm:text-lg lg:text-xl leading-relaxed">
               Because we focus exclusively on facade and glazing roles, we're able to connect skilled professionals like you with opportunities that truly match your experience and career goals. If you've got the right background, chances are we already have roles that align with exactly what you're looking for.
             </p>
+            <Button
+              variant="primary"
+              size="lg"
+              className="mt-8 font-semibold hover:scale-105 hover:shadow-lg transition-all duration-200"
+              onClick={() => document.getElementById('register-resume')?.scrollIntoView({ behavior: 'smooth' })}
+            >
+              Match me with employment opportunities
+            </Button>
           </div>
         </div>
         <div className="hidden lg:block relative lg:min-h-[500px]">
@@ -67,10 +76,10 @@ export function JobsPage() {
         <div className="bg-[#141B2D] flex items-center px-6 sm:px-10 lg:pl-[max(2rem,calc((100vw-80rem)/2+2rem))] lg:pr-16 xl:pr-20 py-12 sm:py-16 lg:py-24">
           <div className="max-w-xl">
             <h2 className="text-2xl sm:text-4xl lg:text-5xl font-semibold text-white mb-6 tracking-tight">
-              We work for you
+              We work for you - confidentially
             </h2>
             <p className="text-white/80 text-base sm:text-lg lg:text-xl leading-relaxed">
-              We are always working to get you an interview. Once we confidently begin approaching our clients on your behalf, we will constantly be working hard behind the scenes to provide interviews for you. We never stop unless you advise us to. And yes, we will keep you updated throughout the entire process. However, please feel free to check back with us at any point on your applications.
+              We are always working to get you an interview. Once we confidently begin approaching our clients on your behalf, we will constantly be working hard behind the scenes to provide interviews for you. We never stop unless you advise us to. And yes, we will keep you updated throughout the entire process. However, please feel free to check back with us at any point on your applications. And of course our number one priority is protecting your anonymity, especially if you already have a job.
             </p>
           </div>
         </div>

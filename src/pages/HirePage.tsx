@@ -70,7 +70,7 @@ export function HirePage() {
               Our guarantee
             </h2>
             <p className="text-white/80 text-base sm:text-lg lg:text-xl leading-relaxed">
-              We're confident in our ability to outperform generalist recruiters. In fact, we guarantee that partnering with us will result in access to more high-quality candidates than going it alone or working with a broader agency - and our client testimonials back this up.
+              We're confident in our ability to outperform generalist recruiters. In fact, we guarantee that partnering with us will result in access to more high-quality candidates than going it alone or working with a broader agency and our client testimonials back this up. On top of that, ZenPeople will ensure that all employment assignments are successful. No wasted recruitment fee's - ask about our ironclad guarantee.
             </p>
           </div>
         </div>
