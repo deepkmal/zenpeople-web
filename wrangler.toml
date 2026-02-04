@@ -24,13 +24,11 @@ head_sampling_rate = 1
 
 # Environment variables
 [vars]
-DESTINATION_EMAIL = "deepaktestingemail@gmail.com"
+SOURCE_EMAIL = "onboarding@resend.dev"
 
 # Secrets (set via wrangler secret put <NAME>)
 # RESEND_API_KEY
-# SOURCE_EMAIL
+# DESTINATION_EMAIL
 
-# Custom domain route (subdomain for API)
-routes = [
-  { pattern = "api.zenpeople.com.au/*", custom_domain = true }
-]
+# Custom domain configured via Cloudflare dashboard (Workers & Pages → Settings → Domains)
+# api.zenpeople.com.au
