@@ -1,5 +1,7 @@
 // Payload CMS API client
 
+import { jobs } from '../data/jobs'
+
 const API_BASE = 'https://zenpeople-admin.fly.dev'
 
 // Types
@@ -93,91 +95,84 @@ export const sectorLabels: Record<string, string> = {
   'executive-search': 'Executive Search',
 }
 
-// Fetch paginated jobs with filters
+// Fetch paginated jobs with filters (from static data)
 export async function fetchJobs(
   filters: JobFilters = {},
   page = 1
 ): Promise<JobsResponse> {
-  const params = new URLSearchParams()
-  params.append('limit', '20')
-  params.append('page', String(page))
+  const limit = 20
 
-  // Only show active jobs
-  params.append('where[isActive][equals]', 'true')
+  // Start with active jobs only
+  let filteredJobs = jobs.filter(job => job.isActive)
 
-  // Keyword search on title and summary
+  // Keyword search on title and summary (case-insensitive)
   if (filters.keyword) {
-    params.append('where[or][0][title][contains]', filters.keyword)
-    params.append('where[or][1][summary][contains]', filters.keyword)
+    const keyword = filters.keyword.toLowerCase()
+    filteredJobs = filteredJobs.filter(job =>
+      job.title.toLowerCase().includes(keyword) ||
+      job.summary.toLowerCase().includes(keyword)
+    )
   }
 
-  // City filter
+  // City filter (exact match)
   if (filters.city) {
-    params.append('where[city][equals]', filters.city)
+    filteredJobs = filteredJobs.filter(job => job.city === filters.city)
   }
 
-  // Sector filter
+  // Sector filter (exact match)
   if (filters.sector) {
-    params.append('where[sector][equals]', filters.sector)
+    filteredJobs = filteredJobs.filter(job => job.sector === filters.sector)
   }
 
-  // Employment type filter
+  // Employment type filter (exact match)
   if (filters.employment_type) {
-    params.append('where[employment_type][equals]', filters.employment_type)
+    filteredJobs = filteredJobs.filter(job => job.employment_type === filters.employment_type)
   }
 
-  // Sort
-  const sortOrder = filters.sort === 'oldest' ? 'createdAt' : '-createdAt'
-  params.append('sort', sortOrder)
+  // Sort by createdAt
+  filteredJobs.sort((a, b) => {
+    const dateA = new Date(a.createdAt).getTime()
+    const dateB = new Date(b.createdAt).getTime()
+    return filters.sort === 'oldest' ? dateA - dateB : dateB - dateA
+  })
 
-  try {
-    const response = await fetch(`${API_BASE}/api/jobs?${params.toString()}`)
+  // Calculate pagination
+  const totalDocs = filteredJobs.length
+  const totalPages = Math.ceil(totalDocs / limit)
+  const startIndex = (page - 1) * limit
+  const endIndex = startIndex + limit
+  const paginatedJobs = filteredJobs.slice(startIndex, endIndex)
 
-    if (!response.ok) {
-      throw new Error('Failed to fetch jobs')
-    }
-
-    return response.json()
-  } catch (error) {
-    console.error('Error fetching jobs:', error)
-    throw error
+  return {
+    docs: paginatedJobs,
+    totalDocs,
+    totalPages,
+    page,
+    hasNextPage: page < totalPages,
+    hasPrevPage: page > 1,
+    limit,
   }
 }
 
-// Fetch single job by slug
+// Fetch single job by slug (from static data)
 export async function fetchJobBySlug(slug: string): Promise<Job | null> {
-  const params = new URLSearchParams()
-  params.append('where[slug][equals]', slug)
-  params.append('where[isActive][equals]', 'true')
-  params.append('limit', '1')
-
-  const response = await fetch(`${API_BASE}/api/jobs?${params.toString()}`)
-
-  if (!response.ok) {
-    throw new Error('Failed to fetch job')
-  }
-
-  const data: JobsResponse = await response.json()
-
-  return data.docs[0] || null
+  const job = jobs.find(j => j.slug === slug && j.isActive)
+  return job || null
 }
 
-// Fetch featured jobs (3 most recent)
+// Fetch featured jobs (3 most recent from static data)
 export async function fetchFeaturedJobs(): Promise<Job[]> {
-  const params = new URLSearchParams()
-  params.append('limit', '3')
-  params.append('sort', '-createdAt')
-  params.append('where[isActive][equals]', 'true')
+  const activeJobs = jobs.filter(job => job.isActive)
 
-  const response = await fetch(`${API_BASE}/api/jobs?${params.toString()}`)
+  // Sort by createdAt descending (newest first)
+  activeJobs.sort((a, b) => {
+    const dateA = new Date(a.createdAt).getTime()
+    const dateB = new Date(b.createdAt).getTime()
+    return dateB - dateA
+  })
 
-  if (!response.ok) {
-    throw new Error('Failed to fetch featured jobs')
-  }
-
-  const data: JobsResponse = await response.json()
-
-  return data.docs
+  // Return top 3
+  return activeJobs.slice(0, 3)
 }
 
 // Submit job application (with optional resume upload)
@@ -272,20 +267,9 @@ export function formatRelativeTime(dateString: string): string {
   }
 }
 
-// Get unique cities from jobs (for filter dropdown)
+// Get unique cities from jobs (from static data)
 export async function fetchCities(): Promise<string[]> {
-  const params = new URLSearchParams()
-  params.append('limit', '0') // Just get unique values
-  params.append('where[isActive][equals]', 'true')
-
-  const response = await fetch(`${API_BASE}/api/jobs?${params.toString()}`)
-
-  if (!response.ok) {
-    return []
-  }
-
-  const data: JobsResponse = await response.json()
-  const cities = [...new Set(data.docs.map((job) => job.city))].sort()
-
+  const activeJobs = jobs.filter(job => job.isActive)
+  const cities = [...new Set(activeJobs.map(job => job.city))].sort()
   return cities
 }
