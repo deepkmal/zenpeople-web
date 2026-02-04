@@ -1,4 +1,4 @@
-const API_BASE = '';
+const API_BASE = 'https://api.zenpeople.com.au';
 
 interface ApiResponse {
   success?: boolean;
