@@ -21,3 +21,11 @@ invocation_logs = true
 enabled = false
 persist = true
 head_sampling_rate = 1
+
+# Environment variables
+[vars]
+DESTINATION_EMAIL = "hello@zenpeople.com.au"
+
+# Secrets (set via wrangler secret put <NAME>)
+# RESEND_API_KEY
+# SOURCE_EMAIL
