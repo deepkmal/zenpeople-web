@@ -141,6 +141,7 @@ export function ResumeUploadSection({ id }: ResumeUploadSectionProps) {
         phone: formData.phone,
         email: formData.email,
         additionalInfo: formData.additionalInfo || undefined,
+        file: file || undefined,
       });
 
       if (result.success) {

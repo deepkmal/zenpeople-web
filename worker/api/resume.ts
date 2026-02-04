@@ -1,5 +1,5 @@
 import { Hono } from 'hono';
-import type { Env, ResumeFormData } from '../types';
+import type { Env, EmailAttachment } from '../types';
 import {
   sendEmail,
   tableRow,
@@ -11,42 +11,90 @@ import {
 
 const resume = new Hono<{ Bindings: Env }>();
 
+// Helper to convert ArrayBuffer to base64
+function arrayBufferToBase64(buffer: ArrayBuffer): string {
+  const bytes = new Uint8Array(buffer);
+  let binary = '';
+  for (let i = 0; i < bytes.byteLength; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return btoa(binary);
+}
+
 resume.post('/', async (c) => {
   try {
-    const data: ResumeFormData = await c.req.json();
+    const contentType = c.req.header('content-type') || '';
+
+    let firstName: string;
+    let lastName: string;
+    let phone: string;
+    let email: string;
+    let additionalInfo: string | undefined;
+    let fileAttachment: EmailAttachment | undefined;
+
+    if (contentType.includes('multipart/form-data')) {
+      // Parse FormData
+      const formData = await c.req.formData();
+      firstName = formData.get('firstName') as string;
+      lastName = formData.get('lastName') as string;
+      phone = formData.get('phone') as string;
+      email = formData.get('email') as string;
+      additionalInfo = formData.get('additionalInfo') as string | undefined;
+
+      // Handle file attachment
+      const file = formData.get('file') as File | null;
+      if (file && file.size > 0) {
+        const arrayBuffer = await file.arrayBuffer();
+        const base64Content = arrayBufferToBase64(arrayBuffer);
+        fileAttachment = {
+          filename: file.name,
+          content: base64Content,
+        };
+      }
+    } else {
+      // Parse JSON (backwards compatible)
+      const data = await c.req.json();
+      firstName = data.firstName;
+      lastName = data.lastName;
+      phone = data.phone;
+      email = data.email;
+      additionalInfo = data.additionalInfo;
+    }
 
     // Validate required fields
-    if (!data.firstName || !data.lastName) {
+    if (!firstName || !lastName) {
       return c.json({ error: 'First name and last name are required' }, 400);
     }
 
-    if (!data.phone) {
+    if (!phone) {
       return c.json({ error: 'Phone number is required' }, 400);
     }
 
-    if (!data.email) {
+    if (!email) {
       return c.json({ error: 'Email is required' }, 400);
     }
 
     // Build notification email content
     const notificationRows =
-      tableRow('Name', `${data.firstName} ${data.lastName}`) +
-      tableRow('Email', data.email, true) +
-      tableRow('Phone', data.phone, true) +
-      optionalTableRow('Additional Information', data.additionalInfo);
+      tableRow('Name', `${firstName} ${lastName}`) +
+      tableRow('Email', email, true) +
+      tableRow('Phone', phone, true) +
+      optionalTableRow('Additional Information', additionalInfo) +
+      (fileAttachment ? tableRow('Resume', `${fileAttachment.filename} (attached)`) : '');
 
     const notificationHtml = emailWrapper(
       'New Resume Registration',
       notificationTable(notificationRows)
     );
 
-    // Send notification email to ZenPeople
+    // Send notification email to ZenPeople (with attachment if present)
     const notificationResult = await sendEmail(c.env.RESEND_API_KEY, {
       from: c.env.SOURCE_EMAIL,
       to: 'hello@zenpeople.com.au',
-      subject: `New Resume Registration - ${data.firstName} ${data.lastName}`,
+      subject: `New Resume Registration - ${firstName} ${lastName}`,
       html: notificationHtml,
-      replyTo: data.email,
+      replyTo: email,
+      attachments: fileAttachment ? [fileAttachment] : undefined,
     });
 
     if (!notificationResult.ok) {
@@ -56,9 +104,9 @@ resume.post('/', async (c) => {
     // Send confirmation email to user
     const confirmationResult = await sendEmail(c.env.RESEND_API_KEY, {
       from: c.env.SOURCE_EMAIL,
-      to: data.email,
+      to: email,
       subject: 'Welcome to ZenPeople',
-      html: resumeConfirmationEmail(data.firstName),
+      html: resumeConfirmationEmail(firstName),
     });
 
     if (!confirmationResult.ok) {

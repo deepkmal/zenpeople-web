@@ -6,19 +6,29 @@ export async function sendEmail(
   options: EmailOptions
 ): Promise<{ ok: boolean; error?: string }> {
   try {
+    const payload: Record<string, unknown> = {
+      from: options.from,
+      to: options.to,
+      subject: options.subject,
+      html: options.html,
+      reply_to: options.replyTo,
+    };
+
+    // Add attachments if present
+    if (options.attachments && options.attachments.length > 0) {
+      payload.attachments = options.attachments.map(att => ({
+        filename: att.filename,
+        content: att.content,
+      }));
+    }
+
     const response = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        from: options.from,
-        to: options.to,
-        subject: options.subject,
-        html: options.html,
-        reply_to: options.replyTo,
-      }),
+      body: JSON.stringify(payload),
     });
 
     if (!response.ok) {

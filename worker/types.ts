@@ -31,10 +31,16 @@ export interface ResumeFormData {
   additionalInfo?: string;
 }
 
+export interface EmailAttachment {
+  filename: string;
+  content: string; // base64 encoded
+}
+
 export interface EmailOptions {
   from: string;
   to: string;
   subject: string;
   html: string;
   replyTo?: string;
+  attachments?: EmailAttachment[];
 }

@@ -30,6 +30,7 @@ export interface ResumeFormData {
   phone: string;
   email: string;
   additionalInfo?: string;
+  file?: File;
 }
 
 async function submitForm(endpoint: string, data: object): Promise<ApiResponse> {
@@ -64,5 +65,33 @@ export async function submitQuoteForm(data: QuoteFormData): Promise<ApiResponse>
 }
 
 export async function submitResumeForm(data: ResumeFormData): Promise<ApiResponse> {
-  return submitForm('resume', data);
+  try {
+    const formData = new FormData();
+    formData.append('firstName', data.firstName);
+    formData.append('lastName', data.lastName);
+    formData.append('phone', data.phone);
+    formData.append('email', data.email);
+    if (data.additionalInfo) {
+      formData.append('additionalInfo', data.additionalInfo);
+    }
+    if (data.file) {
+      formData.append('file', data.file);
+    }
+
+    const response = await fetch(`${API_BASE}/api/resume`, {
+      method: 'POST',
+      body: formData,
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      return { error: result.error || 'Failed to submit form' };
+    }
+
+    return { success: true, message: result.message };
+  } catch (error) {
+    console.error('Resume form submission error:', error);
+    return { error: 'Network error. Please try again.' };
+  }
 }
