@@ -94,7 +94,7 @@ resume.post('/', async (c) => {
 
     // Send notification email to ZenPeople (with attachment if present)
     const notificationResult = await sendEmail(c.env.RESEND_API_KEY, {
-      from: c.env.SOURCE_EMAIL,
+      from: 'noreply@zenpeople.com.au',
       to: c.env.DESTINATION_EMAIL,
       subject: `New Resume Registration - ${firstName} ${lastName}`,
       html: notificationHtml,
@@ -108,7 +108,7 @@ resume.post('/', async (c) => {
 
     // Confirmation email to user (disabled for now)
     // const confirmationResult = await sendEmail(c.env.RESEND_API_KEY, {
-    //   from: c.env.SOURCE_EMAIL,
+    //   from: 'noreply@zenpeople.com.au',
     //   to: email,
     //   subject: 'Welcome to ZenPeople',
     //   html: resumeConfirmationEmail(firstName),

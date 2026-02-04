@@ -46,7 +46,7 @@ quote.post('/', async (c) => {
 
     // Send notification email to ZenPeople
     const notificationResult = await sendEmail(c.env.RESEND_API_KEY, {
-      from: c.env.SOURCE_EMAIL,
+      from: 'noreply@zenpeople.com.au',
       to: c.env.DESTINATION_EMAIL,
       subject: `New Quote Request - ${data.company}`,
       html: notificationHtml,
@@ -59,7 +59,7 @@ quote.post('/', async (c) => {
 
     // Confirmation email to user (disabled for now)
     // const confirmationResult = await sendEmail(c.env.RESEND_API_KEY, {
-    //   from: c.env.SOURCE_EMAIL,
+    //   from: 'noreply@zenpeople.com.au',
     //   to: data.email,
     //   subject: 'Thank You for Your Quote Request - ZenPeople',
     //   html: quoteConfirmationEmail(data.firstName, data.company),

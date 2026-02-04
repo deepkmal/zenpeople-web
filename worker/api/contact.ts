@@ -46,7 +46,7 @@ contact.post('/', async (c) => {
 
     // Send notification email to ZenPeople
     const notificationResult = await sendEmail(c.env.RESEND_API_KEY, {
-      from: c.env.SOURCE_EMAIL,
+      from: 'noreply@zenpeople.com.au',
       to: c.env.DESTINATION_EMAIL,
       subject: `New Contact Form Submission - ${data.firstName} ${data.lastName}`,
       html: notificationHtml,
@@ -59,7 +59,7 @@ contact.post('/', async (c) => {
 
     // Confirmation email to user (disabled for now)
     // const confirmationResult = await sendEmail(c.env.RESEND_API_KEY, {
-    //   from: c.env.SOURCE_EMAIL,
+    //   from: 'noreply@zenpeople.com.au',
     //   to: data.email,
     //   subject: 'Thank You for Contacting ZenPeople',
     //   html: contactConfirmationEmail(data.firstName),
