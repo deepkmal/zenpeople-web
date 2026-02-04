@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { ArrowLeft, MapPin, Briefcase, DollarSign, Clock, Loader2 } from 'lucide-react'
 import { Container } from '../components/ui/Container'
@@ -19,6 +19,27 @@ export function JobListingPage() {
   const [isApplyDrawerOpen, setIsApplyDrawerOpen] = useState(false)
   const [showToast, setShowToast] = useState(false)
   const [toastMessage, setToastMessage] = useState('')
+  const [isFooterVisible, setIsFooterVisible] = useState(false)
+  const footerSentinelRef = useRef<HTMLDivElement>(null)
+
+  // Detect when footer is approaching to unstick the apply bar
+  useEffect(() => {
+    const sentinel = footerSentinelRef.current
+    if (!sentinel) return
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsFooterVisible(entry.isIntersecting)
+      },
+      {
+        rootMargin: '0px',
+        threshold: 0,
+      }
+    )
+
+    observer.observe(sentinel)
+    return () => observer.disconnect()
+  }, [job])
 
   const handleApplyClick = useCallback(() => {
     // Use modal on desktop (640px+), drawer on mobile
@@ -173,8 +194,17 @@ export function JobListingPage() {
         </Container>
       </section>
 
-      {/* Sticky Apply Footer */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 py-4 z-40">
+      {/* Sentinel to detect when footer is approaching */}
+      <div ref={footerSentinelRef} className="h-0" />
+
+      {/* Apply Footer - fixed until footer is visible, then static */}
+      <div
+        className={`${
+          isFooterVisible
+            ? 'relative'
+            : 'fixed bottom-0 left-0 right-0 z-40'
+        } bg-white border-t border-gray-200 py-4`}
+      >
         <Container>
           <div className="max-w-4xl mx-auto flex justify-end">
             <button
