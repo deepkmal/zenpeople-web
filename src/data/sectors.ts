@@ -7,6 +7,7 @@ export interface Sector {
   id: string;
   name: string;
   slug: string;
+  jobSector: string; // Maps to job filter sector value
   image: string;
   description: string;
   positions: Position[];
@@ -17,6 +18,7 @@ export const sectors: Sector[] = [
     id: '1',
     name: 'Engineering Consulting',
     slug: 'engineering-consulting',
+    jobSector: 'engineering-design-consulting',
     image: '/images/sectors/engineering-consulting.webp',
     description: 'We connect top engineering and consulting talent with leading consulting and construction companies across Australia. From structural and facade engineering to facade and remedial consulting, we understand the technical expertise required in this specialised field.',
     positions: [
@@ -34,6 +36,7 @@ export const sectors: Sector[] = [
     id: '2',
     name: 'Facade and Glazing',
     slug: 'facade-glazing',
+    jobSector: 'facade-manufacturing-supply',
     image: '/images/sectors/facade-manufacturing.webp',
     description: 'From production managers to construction managers, we recruit for all roles within facade manufacturing and construction. Our deep industry knowledge ensures we find candidates who understand the complexities of modern facade systems.',
     positions: [
@@ -62,6 +65,7 @@ export const sectors: Sector[] = [
     id: '3',
     name: 'Remedial',
     slug: 'remedial',
+    jobSector: 'remedial-construction',
     image: '/images/sectors/remedial.webp',
     description: 'Remedial construction requires specialised knowledge of building defects, waterproofing, and facade repair. We source experienced professionals who can diagnose and resolve complex building issues.',
     positions: [
@@ -78,6 +82,7 @@ export const sectors: Sector[] = [
     id: '4',
     name: 'Sales & Marketing',
     slug: 'sales-marketing',
+    jobSector: 'sales-marketing',
     image: '/images/sectors/sales-marketing.webp',
     description: 'Sales and marketing professionals in the facade industry need to understand technical products and long sales cycles. We find talent who can bridge the gap between technical knowledge and commercial success.',
     positions: [
@@ -93,6 +98,7 @@ export const sectors: Sector[] = [
     id: '5',
     name: 'Business Support and Admin',
     slug: 'business-support-admin',
+    jobSector: 'business-support-admin',
     image: '/images/sectors/business-support.webp',
     description: 'Every successful facade company needs strong administrative and operational support. We recruit professionals who keep businesses running smoothly, from finance teams to HR and administration.',
     positions: [
@@ -108,6 +114,7 @@ export const sectors: Sector[] = [
     id: '6',
     name: 'Executive Search',
     slug: 'executive-search',
+    jobSector: 'executive-search',
     image: '/images/sectors/executive-search.webp',
     description: 'For senior leadership and executive roles, we offer a discrete and thorough search process. We identify and engage with top-tier candidates who can drive your business forward.',
     positions: [

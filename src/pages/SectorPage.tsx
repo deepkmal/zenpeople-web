@@ -61,7 +61,7 @@ export function SectorPage() {
           {/* CTA Button */}
           <div className="mt-12 text-center">
             <Link
-              to={`/jobs?sector=${sector.slug}`}
+              to={`/jobs?sector=${sector.jobSector}`}
               className="inline-flex items-center gap-3 bg-[#141B2D] text-white px-8 py-4 font-semibold hover:bg-[#141B2D]/90 transition-colors group"
             >
               <span>Show me what's available</span>
