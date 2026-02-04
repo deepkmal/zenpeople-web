@@ -21,14 +21,3 @@ invocation_logs = true
 enabled = false
 persist = true
 head_sampling_rate = 1
-
-# Environment variables
-[vars]
-SOURCE_EMAIL = "onboarding@resend.dev"
-
-# Secrets (set via wrangler secret put <NAME>)
-# RESEND_API_KEY
-# DESTINATION_EMAIL
-
-# Custom domain configured via Cloudflare dashboard (Workers & Pages → Settings → Domains)
-# api.zenpeople.com.au
