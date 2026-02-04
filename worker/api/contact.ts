@@ -44,7 +44,7 @@ contact.post('/', async (c) => {
     // Send notification email to ZenPeople
     const notificationResult = await sendEmail(c.env.RESEND_API_KEY, {
       from: c.env.SOURCE_EMAIL,
-      to: 'hello@zenpeople.com.au',
+      to: c.env.DESTINATION_EMAIL,
       subject: `New Contact Form Submission - ${data.firstName} ${data.lastName}`,
       html: notificationHtml,
       replyTo: data.email,

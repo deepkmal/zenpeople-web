@@ -90,7 +90,7 @@ resume.post('/', async (c) => {
     // Send notification email to ZenPeople (with attachment if present)
     const notificationResult = await sendEmail(c.env.RESEND_API_KEY, {
       from: c.env.SOURCE_EMAIL,
-      to: 'hello@zenpeople.com.au',
+      to: c.env.DESTINATION_EMAIL,
       subject: `New Resume Registration - ${firstName} ${lastName}`,
       html: notificationHtml,
       replyTo: email,

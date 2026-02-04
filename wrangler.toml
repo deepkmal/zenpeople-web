@@ -9,5 +9,5 @@ not_found_handling = "single-page-application"
 
 # Environment variables (set in Cloudflare dashboard as secrets)
 # RESEND_API_KEY - Your Resend API key
-# SOURCE_EMAIL - Email address to send from (e.g., onboarding@resend.dev)
-# CMS_URL - Payload CMS URL (e.g., https://admin.zenpeople.com)
+# SOURCE_EMAIL - Email address to send from (e.g., noreply@zenpeople.com.au)
+# DESTINATION_EMAIL - Email address to receive notifications (e.g., hello@zenpeople.com.au)
