@@ -54,17 +54,17 @@ contact.post('/', async (c) => {
       return c.json({ error: 'Failed to send notification email' }, 500);
     }
 
-    // Send confirmation email to user
-    const confirmationResult = await sendEmail(c.env.RESEND_API_KEY, {
-      from: c.env.SOURCE_EMAIL,
-      to: data.email,
-      subject: 'Thank You for Contacting ZenPeople',
-      html: contactConfirmationEmail(data.firstName),
-    });
-
-    if (!confirmationResult.ok) {
-      console.error('Failed to send confirmation email:', confirmationResult.error);
-    }
+    // Confirmation email to user (disabled for now)
+    // const confirmationResult = await sendEmail(c.env.RESEND_API_KEY, {
+    //   from: c.env.SOURCE_EMAIL,
+    //   to: data.email,
+    //   subject: 'Thank You for Contacting ZenPeople',
+    //   html: contactConfirmationEmail(data.firstName),
+    // });
+    //
+    // if (!confirmationResult.ok) {
+    //   console.error('Failed to send confirmation email:', confirmationResult.error);
+    // }
 
     return c.json({ success: true, message: "Thank you for your message. We'll be in touch soon!" });
   } catch (error) {

@@ -101,17 +101,17 @@ resume.post('/', async (c) => {
       return c.json({ error: 'Failed to send notification email' }, 500);
     }
 
-    // Send confirmation email to user
-    const confirmationResult = await sendEmail(c.env.RESEND_API_KEY, {
-      from: c.env.SOURCE_EMAIL,
-      to: email,
-      subject: 'Welcome to ZenPeople',
-      html: resumeConfirmationEmail(firstName),
-    });
-
-    if (!confirmationResult.ok) {
-      console.error('Failed to send confirmation email:', confirmationResult.error);
-    }
+    // Confirmation email to user (disabled for now)
+    // const confirmationResult = await sendEmail(c.env.RESEND_API_KEY, {
+    //   from: c.env.SOURCE_EMAIL,
+    //   to: email,
+    //   subject: 'Welcome to ZenPeople',
+    //   html: resumeConfirmationEmail(firstName),
+    // });
+    //
+    // if (!confirmationResult.ok) {
+    //   console.error('Failed to send confirmation email:', confirmationResult.error);
+    // }
 
     return c.json({ success: true, message: "Thank you for registering! We'll contact you when we have suitable opportunities." });
   } catch (error) {

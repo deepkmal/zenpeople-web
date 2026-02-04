@@ -54,17 +54,17 @@ quote.post('/', async (c) => {
       return c.json({ error: 'Failed to send notification email' }, 500);
     }
 
-    // Send confirmation email to user
-    const confirmationResult = await sendEmail(c.env.RESEND_API_KEY, {
-      from: c.env.SOURCE_EMAIL,
-      to: data.email,
-      subject: 'Thank You for Your Quote Request - ZenPeople',
-      html: quoteConfirmationEmail(data.firstName, data.company),
-    });
-
-    if (!confirmationResult.ok) {
-      console.error('Failed to send confirmation email:', confirmationResult.error);
-    }
+    // Confirmation email to user (disabled for now)
+    // const confirmationResult = await sendEmail(c.env.RESEND_API_KEY, {
+    //   from: c.env.SOURCE_EMAIL,
+    //   to: data.email,
+    //   subject: 'Thank You for Your Quote Request - ZenPeople',
+    //   html: quoteConfirmationEmail(data.firstName, data.company),
+    // });
+    //
+    // if (!confirmationResult.ok) {
+    //   console.error('Failed to send confirmation email:', confirmationResult.error);
+    // }
 
     return c.json({ success: true, message: "Thank you for your quote request. We'll send you a tailored proposal within 24 hours!" });
   } catch (error) {
