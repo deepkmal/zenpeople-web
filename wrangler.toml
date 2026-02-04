@@ -30,7 +30,7 @@ DESTINATION_EMAIL = "deepaktestingemail@gmail.com"
 # RESEND_API_KEY
 # SOURCE_EMAIL
 
-# Custom domain route (subdomain for API)
+# Custom domain route
 routes = [
-  { pattern = "api.zenpeople.com.au/*", custom_domain = true }
+  { pattern = "zenpeople.com.au/api/*", custom_domain = true }
 ]
