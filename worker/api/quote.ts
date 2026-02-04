@@ -12,8 +12,11 @@ import {
 const quote = new Hono<{ Bindings: Env }>();
 
 quote.post('/', async (c) => {
+  console.log('[Quote] Form submission received');
+
   try {
     const data: QuoteFormData = await c.req.json();
+    console.log(`[Quote] From: ${data.email}, Company: ${data.company}`);
 
     // Validate required fields
     if (!data.firstName || !data.lastName) {

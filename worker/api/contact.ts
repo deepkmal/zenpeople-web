@@ -12,8 +12,11 @@ import {
 const contact = new Hono<{ Bindings: Env }>();
 
 contact.post('/', async (c) => {
+  console.log('[Contact] Form submission received');
+
   try {
     const data: ContactFormData = await c.req.json();
+    console.log(`[Contact] From: ${data.email}, Name: ${data.firstName} ${data.lastName}`);
 
     // Validate required fields
     if (!data.firstName || !data.lastName) {

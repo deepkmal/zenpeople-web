@@ -22,8 +22,11 @@ function arrayBufferToBase64(buffer: ArrayBuffer): string {
 }
 
 resume.post('/', async (c) => {
+  console.log('[Resume] Form submission received');
+
   try {
     const contentType = c.req.header('content-type') || '';
+    console.log(`[Resume] Content-Type: ${contentType}`);
 
     let firstName: string;
     let lastName: string;
@@ -60,6 +63,8 @@ resume.post('/', async (c) => {
       email = data.email;
       additionalInfo = data.additionalInfo;
     }
+
+    console.log(`[Resume] From: ${email}, Name: ${firstName} ${lastName}, File: ${fileAttachment ? fileAttachment.filename : 'none'}`);
 
     // Validate required fields
     if (!firstName || !lastName) {
