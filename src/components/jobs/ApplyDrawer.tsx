@@ -74,7 +74,7 @@ export function ApplyDrawer({
         className={`fixed inset-x-0 bottom-0 z-[101] bg-white rounded-t-2xl shadow-xl transform transition-transform ${
           isVisible ? 'translate-y-0 duration-300 ease-out' : 'translate-y-full duration-200 ease-in'
         }`}
-        style={{ maxHeight: '90vh' }}
+        style={{ maxHeight: '80vh' }}
       >
         {/* Handle */}
         <div className="flex justify-center pt-3 pb-2">
@@ -95,7 +95,7 @@ export function ApplyDrawer({
         </div>
 
         {/* Content */}
-        <div className="p-4 overflow-y-auto" style={{ maxHeight: 'calc(90vh - 80px)' }}>
+        <div className="p-4 overflow-y-auto" style={{ maxHeight: 'calc(80vh - 80px)' }}>
           <ApplicationForm
             jobId={jobId}
             jobTitle={jobTitle}
