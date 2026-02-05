@@ -13,7 +13,6 @@ import {
   validatePhone,
   validateRequired,
   validateOptional,
-  validateTurnstile,
   MAX_LENGTHS,
 } from '../validation';
 import { checkRateLimit, getClientIP } from '../rate-limit';
@@ -38,24 +37,6 @@ contact.post('/', async (c) => {
 
     const data = await c.req.json();
     console.log(`[Contact] Request data keys: ${Object.keys(data).join(', ')}`);
-
-    // Turnstile verification (skip if request comes from localhost)
-    const isFromLocalhost = origin.includes('localhost') || origin.includes('127.0.0.1');
-    console.log(`[Contact] isFromLocalhost: ${isFromLocalhost}, turnstileToken present: ${!!data.turnstileToken}`);
-    if (!isFromLocalhost) {
-      const turnstileResult = await validateTurnstile(
-        data.turnstileToken,
-        c.env.TURNSTILE_SECRET_KEY,
-        clientIP
-      );
-      console.log(`[Contact] Turnstile result: ${JSON.stringify(turnstileResult)}`);
-      if (!turnstileResult.valid) {
-        console.log(`[Contact] Turnstile validation failed: ${turnstileResult.error}`);
-        return c.json({ error: turnstileResult.error }, 400);
-      }
-    } else {
-      console.log('[Contact] Skipping Turnstile (localhost origin)');
-    }
 
     // Sanitize inputs
     const firstName = sanitize(data.firstName);

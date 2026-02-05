@@ -13,7 +13,6 @@ export interface ContactFormData {
   email: string;
   phone: string;
   message: string;
-  turnstileToken?: string;
 }
 
 export interface QuoteFormData {
@@ -23,7 +22,6 @@ export interface QuoteFormData {
   email: string;
   phone?: string;
   sector?: string;
-  turnstileToken?: string;
 }
 
 export interface ResumeFormData {
@@ -33,7 +31,6 @@ export interface ResumeFormData {
   email: string;
   additionalInfo?: string;
   file?: File;
-  turnstileToken?: string;
 }
 
 export interface ApplicationFormData {
@@ -44,7 +41,6 @@ export interface ApplicationFormData {
   jobTitle: string;
   jobSlug: string;
   file?: File;
-  turnstileToken?: string;
 }
 
 export async function submitContactForm(data: ContactFormData): Promise<ApiResponse> {
@@ -100,9 +96,6 @@ export async function submitResumeForm(data: ResumeFormData): Promise<ApiRespons
     formData.append('lastName', data.lastName);
     formData.append('phone', data.phone);
     formData.append('email', data.email);
-    if (data.turnstileToken) {
-      formData.append('turnstileToken', data.turnstileToken);
-    }
     if (data.additionalInfo) {
       formData.append('additionalInfo', data.additionalInfo);
     }
@@ -137,9 +130,6 @@ export async function submitApplicationForm(data: ApplicationFormData): Promise<
     formData.append('email', data.email);
     formData.append('jobTitle', data.jobTitle);
     formData.append('jobSlug', data.jobSlug);
-    if (data.turnstileToken) {
-      formData.append('turnstileToken', data.turnstileToken);
-    }
     if (data.file) {
       formData.append('file', data.file);
     }

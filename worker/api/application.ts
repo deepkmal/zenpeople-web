@@ -11,7 +11,6 @@ import {
   validateEmail,
   validatePhone,
   validateRequired,
-  validateTurnstile,
   validateFile,
   MAX_LENGTHS,
 } from '../validation';
@@ -54,7 +53,6 @@ application.post('/', async (c) => {
     let email: string;
     let jobTitle: string;
     let jobSlug: string;
-    let turnstileToken: string;
     let file: File | null = null;
     let fileAttachment: EmailAttachment | undefined;
 
@@ -66,7 +64,6 @@ application.post('/', async (c) => {
       email = formData.get('email') as string;
       jobTitle = formData.get('jobTitle') as string;
       jobSlug = formData.get('jobSlug') as string;
-      turnstileToken = formData.get('turnstileToken') as string;
       file = formData.get('file') as File | null;
     } else {
       const data = await c.req.json();
@@ -76,25 +73,6 @@ application.post('/', async (c) => {
       email = data.email;
       jobTitle = data.jobTitle;
       jobSlug = data.jobSlug;
-      turnstileToken = data.turnstileToken;
-    }
-
-    // Turnstile verification (skip if request comes from localhost)
-    const isFromLocalhost = origin.includes('localhost') || origin.includes('127.0.0.1');
-    console.log(`[Application] isFromLocalhost: ${isFromLocalhost}, turnstileToken present: ${!!turnstileToken}`);
-    if (!isFromLocalhost) {
-      const turnstileResult = await validateTurnstile(
-        turnstileToken,
-        c.env.TURNSTILE_SECRET_KEY,
-        clientIP
-      );
-      console.log(`[Application] Turnstile result: ${JSON.stringify(turnstileResult)}`);
-      if (!turnstileResult.valid) {
-        console.log(`[Application] Turnstile validation failed: ${turnstileResult.error}`);
-        return c.json({ error: turnstileResult.error }, 400);
-      }
-    } else {
-      console.log('[Application] Skipping Turnstile (localhost origin)');
     }
 
     // Sanitize inputs

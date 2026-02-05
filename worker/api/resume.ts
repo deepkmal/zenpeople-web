@@ -13,7 +13,6 @@ import {
   validatePhone,
   validateRequired,
   validateOptional,
-  validateTurnstile,
   validateFile,
   MAX_LENGTHS,
   FILE_VALIDATION,
@@ -56,7 +55,6 @@ resume.post('/', async (c) => {
     let phone: string;
     let email: string;
     let additionalInfo: string | undefined;
-    let turnstileToken: string;
     let file: File | null = null;
     let fileAttachment: EmailAttachment | undefined;
 
@@ -67,7 +65,6 @@ resume.post('/', async (c) => {
       phone = formData.get('phone') as string;
       email = formData.get('email') as string;
       additionalInfo = formData.get('additionalInfo') as string | undefined;
-      turnstileToken = formData.get('turnstileToken') as string;
       file = formData.get('file') as File | null;
     } else {
       const data = await c.req.json();
@@ -76,25 +73,6 @@ resume.post('/', async (c) => {
       phone = data.phone;
       email = data.email;
       additionalInfo = data.additionalInfo;
-      turnstileToken = data.turnstileToken;
-    }
-
-    // Turnstile verification (skip if request comes from localhost)
-    const isFromLocalhost = origin.includes('localhost') || origin.includes('127.0.0.1');
-    console.log(`[Resume] isFromLocalhost: ${isFromLocalhost}, turnstileToken present: ${!!turnstileToken}`);
-    if (!isFromLocalhost) {
-      const turnstileResult = await validateTurnstile(
-        turnstileToken,
-        c.env.TURNSTILE_SECRET_KEY,
-        clientIP
-      );
-      console.log(`[Resume] Turnstile result: ${JSON.stringify(turnstileResult)}`);
-      if (!turnstileResult.valid) {
-        console.log(`[Resume] Turnstile validation failed: ${turnstileResult.error}`);
-        return c.json({ error: turnstileResult.error }, 400);
-      }
-    } else {
-      console.log('[Resume] Skipping Turnstile (localhost origin)');
     }
 
     // Sanitize inputs

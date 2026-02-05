@@ -61,7 +61,6 @@ export interface ApplicationData {
   resume?: File
   jobTitle: string
   jobSlug: string
-  turnstileToken?: string
 }
 
 export interface LeadData {
@@ -74,7 +73,6 @@ export interface LeadData {
   message?: string
   resume?: File
   additionalInfo?: string
-  turnstileToken?: string
 }
 
 // Employment type display mapping
@@ -192,11 +190,6 @@ export async function submitApplication(data: ApplicationData): Promise<{ succes
       formData.append('file', data.resume)
     }
 
-    // Add turnstile token if provided
-    if (data.turnstileToken) {
-      formData.append('turnstileToken', data.turnstileToken)
-    }
-
     const response = await fetch('https://api.zenpeople.com.au/api/application', {
       method: 'POST',
       body: formData,
@@ -232,7 +225,6 @@ export async function submitLead(data: LeadData): Promise<{ success: boolean; er
       formData.append('email', data.email.toLowerCase())
       if (data.phone) formData.append('phone', data.phone)
       if (data.additionalInfo) formData.append('additionalInfo', data.additionalInfo)
-      if (data.turnstileToken) formData.append('turnstileToken', data.turnstileToken)
       if (data.resume) formData.append('file', data.resume)
 
       const response = await fetch(endpoint, {
@@ -254,7 +246,6 @@ export async function submitLead(data: LeadData): Promise<{ success: boolean; er
       lastName: data.lastName,
       email: data.email.toLowerCase(),
       phone: data.phone,
-      turnstileToken: data.turnstileToken,
     }
 
     if (data.type === 'contact') {

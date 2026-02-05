@@ -1,7 +1,6 @@
 import { useState, useMemo, useCallback } from 'react'
 import { Upload, X, FileText, Loader2 } from 'lucide-react'
 import { submitApplication, type ApplicationData } from '../../utils/payload-api'
-import { Turnstile } from '../ui/Turnstile'
 
 interface ApplicationFormProps {
   jobTitle: string
@@ -45,10 +44,6 @@ export function ApplicationForm({ jobTitle, jobSlug, onSuccess, onError }: Appli
   const [hasAttemptedSubmit, setHasAttemptedSubmit] = useState(false)
   const [fileError, setFileError] = useState<string | null>(null)
   const [submitError, setSubmitError] = useState<string | null>(null)
-  const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
-
-  const handleTurnstileVerify = useCallback((token: string) => setTurnstileToken(token), [])
-  const handleTurnstileExpire = useCallback(() => setTurnstileToken(null), [])
 
   // Validation
   const errors = useMemo<FormErrors>(() => {
@@ -72,8 +67,7 @@ export function ApplicationForm({ jobTitle, jobSlug, onSuccess, onError }: Appli
     return newErrors
   }, [formData])
 
-  const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-  const isFormValid = Object.keys(errors).length === 0 && (turnstileToken !== null || isLocalhost)
+  const isFormValid = Object.keys(errors).length === 0
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -129,7 +123,6 @@ export function ApplicationForm({ jobTitle, jobSlug, onSuccess, onError }: Appli
       jobTitle,
       jobSlug,
       ...(formData.resume && { resume: formData.resume }),
-      ...(turnstileToken && { turnstileToken }),
     }
 
     const result = await submitApplication(applicationData)
@@ -287,13 +280,6 @@ export function ApplicationForm({ jobTitle, jobSlug, onSuccess, onError }: Appli
           {submitError}
         </div>
       )}
-
-      {/* Turnstile */}
-      <Turnstile
-        onVerify={handleTurnstileVerify}
-        onExpire={handleTurnstileExpire}
-        theme="light"
-      />
 
       {/* Submit Button */}
       <button
