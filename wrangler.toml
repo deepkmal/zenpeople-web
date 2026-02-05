@@ -25,10 +25,6 @@ enabled = false
 persist = true
 head_sampling_rate = 1
 
-# Environment variables
-[vars]
-DESTINATION_EMAIL = "deepaktestingemail@gmail.com"
-
 # Secrets (set via wrangler secret put <NAME>)
 # RESEND_API_KEY
 
