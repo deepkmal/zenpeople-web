@@ -3,7 +3,6 @@ import type { Env, EmailAttachment } from '../types';
 import {
   sendEmail,
   tableRow,
-  optionalTableRow,
   emailWrapper,
   notificationTable,
 } from '../email-utils';
@@ -12,15 +11,13 @@ import {
   validateEmail,
   validatePhone,
   validateRequired,
-  validateOptional,
   validateTurnstile,
   validateFile,
   MAX_LENGTHS,
-  FILE_VALIDATION,
 } from '../validation';
 import { checkRateLimit, getClientIP } from '../rate-limit';
 
-const resume = new Hono<{ Bindings: Env }>();
+const application = new Hono<{ Bindings: Env }>();
 
 // Helper to convert ArrayBuffer to base64
 function arrayBufferToBase64(buffer: ArrayBuffer): string {
@@ -32,27 +29,28 @@ function arrayBufferToBase64(buffer: ArrayBuffer): string {
   return btoa(binary);
 }
 
-resume.post('/', async (c) => {
-  console.log('[Resume] Form submission received');
+application.post('/', async (c) => {
+  console.log('[Application] Job application received');
 
   try {
     // Rate limiting
     const clientIP = getClientIP(c.req.raw);
-    const rateLimit = checkRateLimit(`resume:${clientIP}`, { maxRequests: 5, windowMs: 60000 });
+    const rateLimit = checkRateLimit(`application:${clientIP}`, { maxRequests: 10, windowMs: 60000 });
 
     if (!rateLimit.allowed) {
-      console.log(`[Resume] Rate limit exceeded for IP: ${clientIP}`);
+      console.log(`[Application] Rate limit exceeded for IP: ${clientIP}`);
       return c.json({ error: 'Too many requests. Please try again later.' }, 429);
     }
 
     const contentType = c.req.header('content-type') || '';
-    console.log(`[Resume] Content-Type: ${contentType}`);
+    console.log(`[Application] Content-Type: ${contentType}`);
 
     let firstName: string;
     let lastName: string;
     let phone: string;
     let email: string;
-    let additionalInfo: string | undefined;
+    let jobTitle: string;
+    let jobSlug: string;
     let turnstileToken: string;
     let file: File | null = null;
     let fileAttachment: EmailAttachment | undefined;
@@ -63,7 +61,8 @@ resume.post('/', async (c) => {
       lastName = formData.get('lastName') as string;
       phone = formData.get('phone') as string;
       email = formData.get('email') as string;
-      additionalInfo = formData.get('additionalInfo') as string | undefined;
+      jobTitle = formData.get('jobTitle') as string;
+      jobSlug = formData.get('jobSlug') as string;
       turnstileToken = formData.get('turnstileToken') as string;
       file = formData.get('file') as File | null;
     } else {
@@ -72,7 +71,8 @@ resume.post('/', async (c) => {
       lastName = data.lastName;
       phone = data.phone;
       email = data.email;
-      additionalInfo = data.additionalInfo;
+      jobTitle = data.jobTitle;
+      jobSlug = data.jobSlug;
       turnstileToken = data.turnstileToken;
     }
 
@@ -91,7 +91,8 @@ resume.post('/', async (c) => {
     lastName = sanitize(lastName);
     phone = sanitize(phone);
     email = sanitize(email)?.toLowerCase();
-    additionalInfo = additionalInfo ? sanitize(additionalInfo) : undefined;
+    jobTitle = sanitize(jobTitle);
+    jobSlug = sanitize(jobSlug);
 
     // Validate required fields
     const firstNameValidation = validateRequired(firstName, 'First name', MAX_LENGTHS.firstName);
@@ -114,14 +115,18 @@ resume.post('/', async (c) => {
       return c.json({ error: emailValidation.error }, 400);
     }
 
-    // Validate optional fields
-    const additionalInfoValidation = validateOptional(additionalInfo, 'Additional information', MAX_LENGTHS.additionalInfo);
-    if (!additionalInfoValidation.valid) {
-      return c.json({ error: additionalInfoValidation.error }, 400);
+    const jobTitleValidation = validateRequired(jobTitle, 'Job title', MAX_LENGTHS.jobTitle);
+    if (!jobTitleValidation.valid) {
+      return c.json({ error: jobTitleValidation.error }, 400);
     }
 
-    // Validate file (required for resume form)
-    const fileValidation = validateFile(file, true);
+    const jobSlugValidation = validateRequired(jobSlug, 'Job information', MAX_LENGTHS.jobSlug);
+    if (!jobSlugValidation.valid) {
+      return c.json({ error: jobSlugValidation.error }, 400);
+    }
+
+    // Validate file (optional for job applications)
+    const fileValidation = validateFile(file, false);
     if (!fileValidation.valid) {
       return c.json({ error: fileValidation.error }, 400);
     }
@@ -136,18 +141,21 @@ resume.post('/', async (c) => {
       };
     }
 
-    console.log(`[Resume] From: ${email}, Name: ${firstName} ${lastName}, File: ${fileAttachment ? fileAttachment.filename : 'none'}`);
+    console.log(`[Application] From: ${email}, Name: ${firstName} ${lastName}, Job: ${jobTitle}, File: ${fileAttachment ? fileAttachment.filename : 'none'}`);
+
+    // Build job URL
+    const jobUrl = `https://zenpeople.com.au/jobs/${jobSlug}`;
 
     // Build notification email content
     const notificationRows =
       tableRow('Name', `${firstName} ${lastName}`) +
       tableRow('Email', email, true) +
       tableRow('Phone', phone, true) +
-      optionalTableRow('Additional Information', additionalInfo) +
-      (fileAttachment ? tableRow('Resume', `${fileAttachment.filename} (attached)`) : '');
+      tableRow('Position', `<a href="${jobUrl}" style="color: #141B2D;">${jobTitle}</a>`) +
+      (fileAttachment ? tableRow('Resume', `${fileAttachment.filename} (attached)`) : tableRow('Resume', 'Not provided'));
 
     const notificationHtml = emailWrapper(
-      'New Resume Registration',
+      'New Job Application',
       notificationTable(notificationRows)
     );
 
@@ -155,7 +163,7 @@ resume.post('/', async (c) => {
     const notificationResult = await sendEmail(c.env.RESEND_API_KEY, {
       from: 'noreply@zenpeople.com.au',
       to: c.env.DESTINATION_EMAIL,
-      subject: `New Resume Registration - ${firstName} ${lastName}`,
+      subject: `New Application - ${jobTitle} - ${firstName} ${lastName}`,
       html: notificationHtml,
       replyTo: email,
       attachments: fileAttachment ? [fileAttachment] : undefined,
@@ -165,11 +173,11 @@ resume.post('/', async (c) => {
       return c.json({ error: 'Failed to send notification email' }, 500);
     }
 
-    return c.json({ success: true, message: "Thank you for registering! We'll contact you when we have suitable opportunities." });
+    return c.json({ success: true, message: "Thank you for your application! We'll be in touch soon." });
   } catch (error) {
-    console.error('Resume form error:', error);
+    console.error('Application form error:', error);
     return c.json({ error: 'Internal server error' }, 500);
   }
 });
 
-export default resume;
+export default application;

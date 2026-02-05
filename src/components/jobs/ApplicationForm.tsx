@@ -1,10 +1,11 @@
 import { useState, useMemo, useCallback } from 'react'
 import { Upload, X, FileText, Loader2 } from 'lucide-react'
 import { submitApplication, type ApplicationData } from '../../utils/payload-api'
+import { Turnstile } from '../ui/Turnstile'
 
 interface ApplicationFormProps {
-  jobId: string
   jobTitle: string
+  jobSlug: string
   onSuccess: () => void
   onError: (message: string) => void
 }
@@ -32,7 +33,7 @@ const ALLOWED_FILE_TYPES = [
 const ALLOWED_EXTENSIONS = ['.pdf', '.doc', '.docx']
 const MAX_FILE_SIZE = 5 * 1024 * 1024 // 5MB
 
-export function ApplicationForm({ jobId, jobTitle, onSuccess, onError }: ApplicationFormProps) {
+export function ApplicationForm({ jobTitle, jobSlug, onSuccess, onError }: ApplicationFormProps) {
   const [formData, setFormData] = useState<FormData>({
     firstName: '',
     lastName: '',
@@ -44,6 +45,10 @@ export function ApplicationForm({ jobId, jobTitle, onSuccess, onError }: Applica
   const [hasAttemptedSubmit, setHasAttemptedSubmit] = useState(false)
   const [fileError, setFileError] = useState<string | null>(null)
   const [submitError, setSubmitError] = useState<string | null>(null)
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
+
+  const handleTurnstileVerify = useCallback((token: string) => setTurnstileToken(token), [])
+  const handleTurnstileExpire = useCallback(() => setTurnstileToken(null), [])
 
   // Validation
   const errors = useMemo<FormErrors>(() => {
@@ -67,7 +72,7 @@ export function ApplicationForm({ jobId, jobTitle, onSuccess, onError }: Applica
     return newErrors
   }, [formData])
 
-  const isFormValid = Object.keys(errors).length === 0
+  const isFormValid = Object.keys(errors).length === 0 && turnstileToken !== null
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -120,8 +125,10 @@ export function ApplicationForm({ jobId, jobTitle, onSuccess, onError }: Applica
       lastName: formData.lastName.trim(),
       email: formData.email.trim(),
       phone: formData.phone.trim(),
-      job: jobId,
+      jobTitle,
+      jobSlug,
       ...(formData.resume && { resume: formData.resume }),
+      ...(turnstileToken && { turnstileToken }),
     }
 
     const result = await submitApplication(applicationData)
@@ -279,6 +286,13 @@ export function ApplicationForm({ jobId, jobTitle, onSuccess, onError }: Applica
           {submitError}
         </div>
       )}
+
+      {/* Turnstile */}
+      <Turnstile
+        onVerify={handleTurnstileVerify}
+        onExpire={handleTurnstileExpire}
+        theme="light"
+      />
 
       {/* Submit Button */}
       <button

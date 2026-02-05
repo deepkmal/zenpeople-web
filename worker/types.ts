@@ -1,7 +1,7 @@
 export interface Env {
   RESEND_API_KEY: string;
-  SOURCE_EMAIL: string;
   DESTINATION_EMAIL: string;
+  TURNSTILE_SECRET_KEY: string;
   ASSETS: Fetcher;
 }
 

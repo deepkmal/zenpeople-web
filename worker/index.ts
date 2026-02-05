@@ -4,6 +4,7 @@ import type { Env } from './types';
 import contact from './api/contact';
 import quote from './api/quote';
 import resume from './api/resume';
+import application from './api/application';
 
 const app = new Hono<{ Bindings: Env }>();
 
@@ -18,6 +19,7 @@ app.use('/api/*', cors({
 app.route('/api/contact', contact);
 app.route('/api/quote', quote);
 app.route('/api/resume', resume);
+app.route('/api/application', application);
 
 // Serve static assets for all other routes (SPA fallback handled by wrangler.toml)
 app.all('*', async (c) => {

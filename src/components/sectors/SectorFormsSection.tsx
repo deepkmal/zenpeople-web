@@ -2,6 +2,7 @@ import { useState, useMemo, useRef, useCallback } from 'react';
 import { ChevronDown, Paperclip, FileText, X } from 'lucide-react';
 import { submitLead } from '../../utils/payload-api';
 import { Toast } from '../ui/Toast';
+import { Turnstile } from '../ui/Turnstile';
 
 // Quote Form Data Types
 interface QuoteFormData {
@@ -61,6 +62,7 @@ export function SectorFormsSection() {
   const [quoteIsSubmitting, setQuoteIsSubmitting] = useState(false);
   const [quoteSubmitStatus, setQuoteSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [quoteHasAttemptedSubmit, setQuoteHasAttemptedSubmit] = useState(false);
+  const [quoteTurnstileToken, setQuoteTurnstileToken] = useState<string | null>(null);
 
   // Resume form state
   const [resumeFormData, setResumeFormData] = useState<ResumeFormData>({
@@ -75,6 +77,7 @@ export function SectorFormsSection() {
   const [resumeIsSubmitting, setResumeIsSubmitting] = useState(false);
   const [resumeSubmitStatus, setResumeSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [resumeHasAttemptedSubmit, setResumeHasAttemptedSubmit] = useState(false);
+  const [resumeTurnstileToken, setResumeTurnstileToken] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Toast state
@@ -83,6 +86,10 @@ export function SectorFormsSection() {
 
   const handleCloseQuoteToast = useCallback(() => setShowQuoteToast(false), []);
   const handleCloseResumeToast = useCallback(() => setShowResumeToast(false), []);
+  const handleQuoteTurnstileVerify = useCallback((token: string) => setQuoteTurnstileToken(token), []);
+  const handleQuoteTurnstileExpire = useCallback(() => setQuoteTurnstileToken(null), []);
+  const handleResumeTurnstileVerify = useCallback((token: string) => setResumeTurnstileToken(token), []);
+  const handleResumeTurnstileExpire = useCallback(() => setResumeTurnstileToken(null), []);
 
   const validateEmail = (email: string): boolean => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -104,7 +111,7 @@ export function SectorFormsSection() {
     return newErrors;
   }, [quoteFormData]);
 
-  const quoteIsFormValid = Object.keys(quoteErrors).length === 0;
+  const quoteIsFormValid = Object.keys(quoteErrors).length === 0 && quoteTurnstileToken !== null;
 
   // Resume form validation
   const resumeErrors = useMemo<ResumeFormErrors>(() => {
@@ -121,7 +128,7 @@ export function SectorFormsSection() {
     return newErrors;
   }, [resumeFormData, file]);
 
-  const resumeIsFormValid = Object.keys(resumeErrors).length === 0;
+  const resumeIsFormValid = Object.keys(resumeErrors).length === 0 && resumeTurnstileToken !== null;
 
   // Quote form handlers
   const handleQuoteChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -144,6 +151,7 @@ export function SectorFormsSection() {
         company: quoteFormData.company,
         email: quoteFormData.email,
         phone: quoteFormData.phone || undefined,
+        turnstileToken: quoteTurnstileToken || undefined,
       });
 
       if (result.success) {
@@ -207,6 +215,7 @@ export function SectorFormsSection() {
         email: resumeFormData.email,
         additionalInfo: resumeFormData.additionalInfo || undefined,
         resume: file || undefined,
+        turnstileToken: resumeTurnstileToken || undefined,
       });
 
       if (result.success) {
@@ -341,6 +350,11 @@ export function SectorFormsSection() {
                 {quoteSubmitStatus === 'error' && (
                   <p className="text-red-300 text-sm">Something went wrong. Please try again.</p>
                 )}
+                <Turnstile
+                  onVerify={handleQuoteTurnstileVerify}
+                  onExpire={handleQuoteTurnstileExpire}
+                  theme="light"
+                />
                 <button
                   type="submit"
                   disabled={quoteIsSubmitting || !quoteIsFormValid}
@@ -480,6 +494,11 @@ export function SectorFormsSection() {
                 {resumeSubmitStatus === 'error' && (
                   <p className="text-red-500 text-sm">Something went wrong. Please try again.</p>
                 )}
+                <Turnstile
+                  onVerify={handleResumeTurnstileVerify}
+                  onExpire={handleResumeTurnstileExpire}
+                  theme="light"
+                />
                 <button
                   type="submit"
                   disabled={resumeIsSubmitting || !resumeIsFormValid}
@@ -575,6 +594,12 @@ export function SectorFormsSection() {
                     onChange={handleQuoteChange}
                     className="w-full px-4 py-3 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-navy text-sm"
                     placeholder="Phone"
+                  />
+                  <Turnstile
+                    onVerify={handleQuoteTurnstileVerify}
+                    onExpire={handleQuoteTurnstileExpire}
+                    theme="light"
+                    size="compact"
                   />
                   <button
                     type="submit"
@@ -703,6 +728,12 @@ export function SectorFormsSection() {
                     rows={3}
                     className="w-full px-4 py-3 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-navy resize-none text-sm"
                     placeholder="Additional information (optional)"
+                  />
+                  <Turnstile
+                    onVerify={handleResumeTurnstileVerify}
+                    onExpire={handleResumeTurnstileExpire}
+                    theme="light"
+                    size="compact"
                   />
                   <button
                     type="submit"
