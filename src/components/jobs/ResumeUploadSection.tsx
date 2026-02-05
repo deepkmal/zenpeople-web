@@ -44,6 +44,7 @@ export function ResumeUploadSection({ id }: ResumeUploadSectionProps) {
   const [fileError, setFileError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [hasAttemptedSubmit, setHasAttemptedSubmit] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [showToast, setShowToast] = useState(false);
@@ -155,9 +156,11 @@ export function ResumeUploadSection({ id }: ResumeUploadSectionProps) {
         setShowToast(true);
       } else {
         console.error('Resume form error:', result.error);
+        setSubmitError(result.error || 'Something went wrong');
         setSubmitStatus('error');
       }
-    } catch {
+    } catch (err) {
+      setSubmitError(err instanceof Error ? err.message : 'Something went wrong');
       setSubmitStatus('error');
     } finally {
       setIsSubmitting(false);
@@ -342,7 +345,7 @@ export function ResumeUploadSection({ id }: ResumeUploadSectionProps) {
 
               {submitStatus === 'error' && (
                 <p className="text-red-500 text-sm">
-                  Something went wrong. Please try again.
+                  {submitError || 'Something went wrong. Please try again.'}
                 </p>
               )}
 

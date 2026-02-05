@@ -97,6 +97,7 @@ export function HirePage() {
         companyRequired
         hideMessage
         buttonLabel="Get quote"
+        formType="quote"
       />
     </div>
   );

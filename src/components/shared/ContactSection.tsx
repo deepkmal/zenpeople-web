@@ -29,6 +29,7 @@ interface ContactSectionProps {
   companyRequired?: boolean;
   hideMessage?: boolean;
   buttonLabel?: string;
+  formType?: 'contact' | 'quote';
 }
 
 export function ContactSection({
@@ -38,6 +39,7 @@ export function ContactSection({
   companyRequired = false,
   hideMessage = false,
   buttonLabel = 'Send Message',
+  formType = 'contact',
 }: ContactSectionProps) {
   const [formData, setFormData] = useState<FormData>({
     firstName: '',
@@ -49,6 +51,7 @@ export function ContactSection({
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [hasAttemptedSubmit, setHasAttemptedSubmit] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
@@ -119,7 +122,7 @@ export function ContactSection({
 
     try {
       const result = await submitLead({
-        type: 'contact',
+        type: formType,
         firstName: formData.firstName,
         lastName: formData.lastName,
         company: formData.company || undefined,
@@ -136,9 +139,11 @@ export function ContactSection({
         setShowToast(true);
       } else {
         console.error('Form submission error:', result.error);
+        setSubmitError(result.error || 'Something went wrong');
         setSubmitStatus('error');
       }
-    } catch {
+    } catch (err) {
+      setSubmitError(err instanceof Error ? err.message : 'Something went wrong');
       setSubmitStatus('error');
     } finally {
       setIsSubmitting(false);
@@ -292,7 +297,7 @@ export function ContactSection({
 
                 {submitStatus === 'error' && (
                   <p className="text-red-300 text-sm">
-                    Something went wrong. Please try again.
+                    {submitError || 'Something went wrong. Please try again.'}
                   </p>
                 )}
 

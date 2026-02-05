@@ -61,6 +61,7 @@ export function SectorFormsSection() {
   });
   const [quoteIsSubmitting, setQuoteIsSubmitting] = useState(false);
   const [quoteSubmitStatus, setQuoteSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [quoteSubmitError, setQuoteSubmitError] = useState<string | null>(null);
   const [quoteHasAttemptedSubmit, setQuoteHasAttemptedSubmit] = useState(false);
   const [quoteTurnstileToken, setQuoteTurnstileToken] = useState<string | null>(null);
 
@@ -76,6 +77,7 @@ export function SectorFormsSection() {
   const [fileError, setFileError] = useState<string | null>(null);
   const [resumeIsSubmitting, setResumeIsSubmitting] = useState(false);
   const [resumeSubmitStatus, setResumeSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [resumeSubmitError, setResumeSubmitError] = useState<string | null>(null);
   const [resumeHasAttemptedSubmit, setResumeHasAttemptedSubmit] = useState(false);
   const [resumeTurnstileToken, setResumeTurnstileToken] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -162,9 +164,11 @@ export function SectorFormsSection() {
         setShowQuoteToast(true);
       } else {
         console.error('Quote form error:', result.error);
+        setQuoteSubmitError(result.error || 'Something went wrong');
         setQuoteSubmitStatus('error');
       }
-    } catch {
+    } catch (err) {
+      setQuoteSubmitError(err instanceof Error ? err.message : 'Something went wrong');
       setQuoteSubmitStatus('error');
     } finally {
       setQuoteIsSubmitting(false);
@@ -228,9 +232,11 @@ export function SectorFormsSection() {
         setShowResumeToast(true);
       } else {
         console.error('Resume form error:', result.error);
+        setResumeSubmitError(result.error || 'Something went wrong');
         setResumeSubmitStatus('error');
       }
-    } catch {
+    } catch (err) {
+      setResumeSubmitError(err instanceof Error ? err.message : 'Something went wrong');
       setResumeSubmitStatus('error');
     } finally {
       setResumeIsSubmitting(false);
@@ -349,7 +355,7 @@ export function SectorFormsSection() {
                   />
                 </div>
                 {quoteSubmitStatus === 'error' && (
-                  <p className="text-red-300 text-sm">Something went wrong. Please try again.</p>
+                  <p className="text-red-300 text-sm">{quoteSubmitError || 'Something went wrong. Please try again.'}</p>
                 )}
                 <Turnstile
                   onVerify={handleQuoteTurnstileVerify}
@@ -493,7 +499,7 @@ export function SectorFormsSection() {
                   />
                 </div>
                 {resumeSubmitStatus === 'error' && (
-                  <p className="text-red-500 text-sm">Something went wrong. Please try again.</p>
+                  <p className="text-red-500 text-sm">{resumeSubmitError || 'Something went wrong. Please try again.'}</p>
                 )}
                 <Turnstile
                   onVerify={handleResumeTurnstileVerify}
