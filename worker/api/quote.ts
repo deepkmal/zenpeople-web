@@ -21,11 +21,14 @@ import { checkRateLimit, getClientIP } from '../rate-limit';
 const quote = new Hono<{ Bindings: Env }>();
 
 quote.post('/', async (c) => {
-  console.log('[Quote] Form submission received');
+  const host = c.req.header('host') || '';
+  const origin = c.req.header('origin') || '';
+  console.log(`[Quote] Form submission received - host: ${host}, origin: ${origin}`);
 
   try {
     // Rate limiting
     const clientIP = getClientIP(c.req.raw);
+    console.log(`[Quote] Client IP: ${clientIP}`);
     const rateLimit = checkRateLimit(`quote:${clientIP}`, { maxRequests: 5, windowMs: 60000 });
 
     if (!rateLimit.allowed) {
@@ -34,15 +37,24 @@ quote.post('/', async (c) => {
     }
 
     const data = await c.req.json();
+    console.log(`[Quote] Request data keys: ${Object.keys(data).join(', ')}`);
 
-    // Turnstile verification
-    const turnstileResult = await validateTurnstile(
-      data.turnstileToken,
-      c.env.TURNSTILE_SECRET_KEY,
-      clientIP
-    );
-    if (!turnstileResult.valid) {
-      return c.json({ error: turnstileResult.error }, 400);
+    // Turnstile verification (skip in non-production)
+    const isProduction = host.includes('zenpeople.com.au');
+    console.log(`[Quote] isProduction: ${isProduction}, turnstileToken present: ${!!data.turnstileToken}`);
+    if (isProduction) {
+      const turnstileResult = await validateTurnstile(
+        data.turnstileToken,
+        c.env.TURNSTILE_SECRET_KEY,
+        clientIP
+      );
+      console.log(`[Quote] Turnstile result: ${JSON.stringify(turnstileResult)}`);
+      if (!turnstileResult.valid) {
+        console.log(`[Quote] Turnstile validation failed: ${turnstileResult.error}`);
+        return c.json({ error: turnstileResult.error }, 400);
+      }
+    } else {
+      console.log('[Quote] Skipping Turnstile (non-production)');
     }
 
     // Sanitize inputs
@@ -116,7 +128,8 @@ quote.post('/', async (c) => {
 
     return c.json({ success: true, message: "Thank you for your quote request. We'll send you a tailored proposal within 24 hours!" });
   } catch (error) {
-    console.error('Quote form error:', error);
+    console.error('[Quote] Error:', error instanceof Error ? error.message : error);
+    console.error('[Quote] Stack:', error instanceof Error ? error.stack : 'N/A');
     return c.json({ error: 'Internal server error' }, 500);
   }
 });

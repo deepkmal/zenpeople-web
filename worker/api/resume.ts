@@ -33,11 +33,14 @@ function arrayBufferToBase64(buffer: ArrayBuffer): string {
 }
 
 resume.post('/', async (c) => {
-  console.log('[Resume] Form submission received');
+  const host = c.req.header('host') || '';
+  const origin = c.req.header('origin') || '';
+  console.log(`[Resume] Form submission received - host: ${host}, origin: ${origin}`);
 
   try {
     // Rate limiting
     const clientIP = getClientIP(c.req.raw);
+    console.log(`[Resume] Client IP: ${clientIP}`);
     const rateLimit = checkRateLimit(`resume:${clientIP}`, { maxRequests: 5, windowMs: 60000 });
 
     if (!rateLimit.allowed) {
@@ -76,14 +79,22 @@ resume.post('/', async (c) => {
       turnstileToken = data.turnstileToken;
     }
 
-    // Turnstile verification
-    const turnstileResult = await validateTurnstile(
-      turnstileToken,
-      c.env.TURNSTILE_SECRET_KEY,
-      clientIP
-    );
-    if (!turnstileResult.valid) {
-      return c.json({ error: turnstileResult.error }, 400);
+    // Turnstile verification (skip in non-production)
+    const isProduction = host.includes('zenpeople.com.au');
+    console.log(`[Resume] isProduction: ${isProduction}, turnstileToken present: ${!!turnstileToken}`);
+    if (isProduction) {
+      const turnstileResult = await validateTurnstile(
+        turnstileToken,
+        c.env.TURNSTILE_SECRET_KEY,
+        clientIP
+      );
+      console.log(`[Resume] Turnstile result: ${JSON.stringify(turnstileResult)}`);
+      if (!turnstileResult.valid) {
+        console.log(`[Resume] Turnstile validation failed: ${turnstileResult.error}`);
+        return c.json({ error: turnstileResult.error }, 400);
+      }
+    } else {
+      console.log('[Resume] Skipping Turnstile (non-production)');
     }
 
     // Sanitize inputs
@@ -167,7 +178,8 @@ resume.post('/', async (c) => {
 
     return c.json({ success: true, message: "Thank you for registering! We'll contact you when we have suitable opportunities." });
   } catch (error) {
-    console.error('Resume form error:', error);
+    console.error('[Resume] Error:', error instanceof Error ? error.message : error);
+    console.error('[Resume] Stack:', error instanceof Error ? error.stack : 'N/A');
     return c.json({ error: 'Internal server error' }, 500);
   }
 });

@@ -30,11 +30,14 @@ function arrayBufferToBase64(buffer: ArrayBuffer): string {
 }
 
 application.post('/', async (c) => {
-  console.log('[Application] Job application received');
+  const host = c.req.header('host') || '';
+  const origin = c.req.header('origin') || '';
+  console.log(`[Application] Job application received - host: ${host}, origin: ${origin}`);
 
   try {
     // Rate limiting
     const clientIP = getClientIP(c.req.raw);
+    console.log(`[Application] Client IP: ${clientIP}`);
     const rateLimit = checkRateLimit(`application:${clientIP}`, { maxRequests: 10, windowMs: 60000 });
 
     if (!rateLimit.allowed) {
@@ -76,14 +79,22 @@ application.post('/', async (c) => {
       turnstileToken = data.turnstileToken;
     }
 
-    // Turnstile verification
-    const turnstileResult = await validateTurnstile(
-      turnstileToken,
-      c.env.TURNSTILE_SECRET_KEY,
-      clientIP
-    );
-    if (!turnstileResult.valid) {
-      return c.json({ error: turnstileResult.error }, 400);
+    // Turnstile verification (skip in non-production)
+    const isProduction = host.includes('zenpeople.com.au');
+    console.log(`[Application] isProduction: ${isProduction}, turnstileToken present: ${!!turnstileToken}`);
+    if (isProduction) {
+      const turnstileResult = await validateTurnstile(
+        turnstileToken,
+        c.env.TURNSTILE_SECRET_KEY,
+        clientIP
+      );
+      console.log(`[Application] Turnstile result: ${JSON.stringify(turnstileResult)}`);
+      if (!turnstileResult.valid) {
+        console.log(`[Application] Turnstile validation failed: ${turnstileResult.error}`);
+        return c.json({ error: turnstileResult.error }, 400);
+      }
+    } else {
+      console.log('[Application] Skipping Turnstile (non-production)');
     }
 
     // Sanitize inputs
@@ -175,7 +186,8 @@ application.post('/', async (c) => {
 
     return c.json({ success: true, message: "Thank you for your application! We'll be in touch soon." });
   } catch (error) {
-    console.error('Application form error:', error);
+    console.error('[Application] Error:', error instanceof Error ? error.message : error);
+    console.error('[Application] Stack:', error instanceof Error ? error.stack : 'N/A');
     return c.json({ error: 'Internal server error' }, 500);
   }
 });

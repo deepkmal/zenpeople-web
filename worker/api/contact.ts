@@ -21,11 +21,14 @@ import { checkRateLimit, getClientIP } from '../rate-limit';
 const contact = new Hono<{ Bindings: Env }>();
 
 contact.post('/', async (c) => {
-  console.log('[Contact] Form submission received');
+  const host = c.req.header('host') || '';
+  const origin = c.req.header('origin') || '';
+  console.log(`[Contact] Form submission received - host: ${host}, origin: ${origin}`);
 
   try {
     // Rate limiting
     const clientIP = getClientIP(c.req.raw);
+    console.log(`[Contact] Client IP: ${clientIP}`);
     const rateLimit = checkRateLimit(`contact:${clientIP}`, { maxRequests: 5, windowMs: 60000 });
 
     if (!rateLimit.allowed) {
@@ -34,15 +37,24 @@ contact.post('/', async (c) => {
     }
 
     const data = await c.req.json();
+    console.log(`[Contact] Request data keys: ${Object.keys(data).join(', ')}`);
 
-    // Turnstile verification
-    const turnstileResult = await validateTurnstile(
-      data.turnstileToken,
-      c.env.TURNSTILE_SECRET_KEY,
-      clientIP
-    );
-    if (!turnstileResult.valid) {
-      return c.json({ error: turnstileResult.error }, 400);
+    // Turnstile verification (skip in non-production)
+    const isProduction = host.includes('zenpeople.com.au');
+    console.log(`[Contact] isProduction: ${isProduction}, turnstileToken present: ${!!data.turnstileToken}`);
+    if (isProduction) {
+      const turnstileResult = await validateTurnstile(
+        data.turnstileToken,
+        c.env.TURNSTILE_SECRET_KEY,
+        clientIP
+      );
+      console.log(`[Contact] Turnstile result: ${JSON.stringify(turnstileResult)}`);
+      if (!turnstileResult.valid) {
+        console.log(`[Contact] Turnstile validation failed: ${turnstileResult.error}`);
+        return c.json({ error: turnstileResult.error }, 400);
+      }
+    } else {
+      console.log('[Contact] Skipping Turnstile (non-production)');
     }
 
     // Sanitize inputs
@@ -115,7 +127,8 @@ contact.post('/', async (c) => {
 
     return c.json({ success: true, message: "Thank you for your message. We'll be in touch soon!" });
   } catch (error) {
-    console.error('Contact form error:', error);
+    console.error('[Contact] Error:', error instanceof Error ? error.message : error);
+    console.error('[Contact] Stack:', error instanceof Error ? error.stack : 'N/A');
     return c.json({ error: 'Internal server error' }, 500);
   }
 });
