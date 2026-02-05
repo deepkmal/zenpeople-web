@@ -1,7 +1,7 @@
 import { useEffect, useRef, useCallback } from 'react';
 
-// Turnstile site key - this is public and safe to expose
-const TURNSTILE_SITE_KEY = import.meta.env.VITE_TURNSTILE_SITE_KEY;
+// Turnstile site key - hardcoded since Cloudflare build doesn't pass env vars
+const TURNSTILE_SITE_KEY = '0x4AAAAAACXxp2uCrJyhe9Pq';
 
 declare global {
   interface Window {
