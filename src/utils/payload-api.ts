@@ -2,8 +2,6 @@
 
 import { jobs } from '../data/jobs'
 
-const API_BASE = 'https://zenpeople-admin.fly.dev'
-
 // Types
 export interface Job {
   id: string
@@ -61,7 +59,9 @@ export interface ApplicationData {
   email: string
   phone: string
   resume?: File
-  job: string // job id
+  jobTitle: string
+  jobSlug: string
+  turnstileToken?: string
 }
 
 export interface LeadData {
@@ -74,6 +74,7 @@ export interface LeadData {
   message?: string
   resume?: File
   additionalInfo?: string
+  turnstileToken?: string
 }
 
 // Employment type display mapping
@@ -183,21 +184,27 @@ export async function submitApplication(data: ApplicationData): Promise<{ succes
     formData.append('lastName', data.lastName)
     formData.append('email', data.email.toLowerCase())
     formData.append('phone', data.phone)
-    formData.append('job', data.job)
+    formData.append('jobTitle', data.jobTitle)
+    formData.append('jobSlug', data.jobSlug)
 
     // Add resume file if provided
     if (data.resume) {
       formData.append('file', data.resume)
     }
 
-    const response = await fetch(`${API_BASE}/api/applications`, {
+    // Add turnstile token if provided
+    if (data.turnstileToken) {
+      formData.append('turnstileToken', data.turnstileToken)
+    }
+
+    const response = await fetch('https://api.zenpeople.com.au/api/application', {
       method: 'POST',
       body: formData,
     })
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}))
-      return { success: false, error: errorData.message || 'Failed to submit application' }
+      return { success: false, error: errorData.error || 'Failed to submit application' }
     }
 
     return { success: true }
@@ -209,30 +216,65 @@ export async function submitApplication(data: ApplicationData): Promise<{ succes
 // Submit lead (contact/quote/resume form)
 export async function submitLead(data: LeadData): Promise<{ success: boolean; error?: string }> {
   try {
-    const formData = new FormData()
-    formData.append('type', data.type)
-    formData.append('firstName', data.firstName)
-    formData.append('lastName', data.lastName)
-    formData.append('email', data.email.toLowerCase())
+    // Determine the correct API endpoint based on type
+    const endpointMap = {
+      contact: 'https://api.zenpeople.com.au/api/contact',
+      quote: 'https://api.zenpeople.com.au/api/quote',
+      resume: 'https://api.zenpeople.com.au/api/resume',
+    }
+    const endpoint = endpointMap[data.type]
 
-    if (data.phone) formData.append('phone', data.phone)
-    if (data.company) formData.append('company', data.company)
-    if (data.message) formData.append('message', data.message)
-    if (data.additionalInfo) formData.append('additionalInfo', data.additionalInfo)
+    // For resume type, use FormData (multipart for file upload)
+    if (data.type === 'resume') {
+      const formData = new FormData()
+      formData.append('firstName', data.firstName)
+      formData.append('lastName', data.lastName)
+      formData.append('email', data.email.toLowerCase())
+      if (data.phone) formData.append('phone', data.phone)
+      if (data.additionalInfo) formData.append('additionalInfo', data.additionalInfo)
+      if (data.turnstileToken) formData.append('turnstileToken', data.turnstileToken)
+      if (data.resume) formData.append('file', data.resume)
 
-    // Add resume file if provided
-    if (data.resume) {
-      formData.append('file', data.resume)
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        body: formData,
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}))
+        return { success: false, error: errorData.error || 'Failed to submit form' }
+      }
+
+      return { success: true }
     }
 
-    const response = await fetch(`${API_BASE}/api/leads`, {
+    // For contact and quote types, use JSON
+    const jsonData: Record<string, string | undefined> = {
+      firstName: data.firstName,
+      lastName: data.lastName,
+      email: data.email.toLowerCase(),
+      phone: data.phone,
+      turnstileToken: data.turnstileToken,
+    }
+
+    if (data.type === 'contact') {
+      jsonData.company = data.company
+      jsonData.message = data.message
+    } else if (data.type === 'quote') {
+      jsonData.company = data.company
+    }
+
+    const response = await fetch(endpoint, {
       method: 'POST',
-      body: formData,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(jsonData),
     })
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}))
-      return { success: false, error: errorData.message || 'Failed to submit form' }
+      return { success: false, error: errorData.error || 'Failed to submit form' }
     }
 
     return { success: true }

@@ -5,8 +5,8 @@ import { ApplicationForm } from './ApplicationForm'
 interface ApplyDrawerProps {
   isOpen: boolean
   onClose: () => void
-  jobId: string
   jobTitle: string
+  jobSlug: string
   onSuccess: () => void
   onError: (message: string) => void
 }
@@ -14,8 +14,8 @@ interface ApplyDrawerProps {
 export function ApplyDrawer({
   isOpen,
   onClose,
-  jobId,
   jobTitle,
+  jobSlug,
   onSuccess,
   onError,
 }: ApplyDrawerProps) {
@@ -97,8 +97,8 @@ export function ApplyDrawer({
         {/* Content */}
         <div className="p-4 overflow-y-auto" style={{ maxHeight: 'calc(80vh - 80px)' }}>
           <ApplicationForm
-            jobId={jobId}
             jobTitle={jobTitle}
+            jobSlug={jobSlug}
             onSuccess={() => {
               onSuccess()
               onClose()

@@ -19,6 +19,7 @@ export function JobListingPage() {
   const [isApplyDrawerOpen, setIsApplyDrawerOpen] = useState(false)
   const [showToast, setShowToast] = useState(false)
   const [toastMessage, setToastMessage] = useState('')
+  const [toastVariant, setToastVariant] = useState<'success' | 'error'>('success')
   const [isFooterVisible, setIsFooterVisible] = useState(false)
   const footerSentinelRef = useRef<HTMLDivElement>(null)
 
@@ -52,11 +53,13 @@ export function JobListingPage() {
 
   const handleApplySuccess = useCallback(() => {
     setToastMessage('Application submitted successfully!')
+    setToastVariant('success')
     setShowToast(true)
   }, [])
 
   const handleApplyError = useCallback((message: string) => {
     setToastMessage(message)
+    setToastVariant('error')
     setShowToast(true)
   }, [])
 
@@ -222,8 +225,8 @@ export function JobListingPage() {
       <ApplyModal
         isOpen={isApplyModalOpen}
         onClose={() => setIsApplyModalOpen(false)}
-        jobId={job.id}
         jobTitle={job.title}
+        jobSlug={job.slug}
         onSuccess={handleApplySuccess}
         onError={handleApplyError}
       />
@@ -232,8 +235,8 @@ export function JobListingPage() {
       <ApplyDrawer
         isOpen={isApplyDrawerOpen}
         onClose={() => setIsApplyDrawerOpen(false)}
-        jobId={job.id}
         jobTitle={job.title}
+        jobSlug={job.slug}
         onSuccess={handleApplySuccess}
         onError={handleApplyError}
       />
@@ -243,6 +246,7 @@ export function JobListingPage() {
         message={toastMessage}
         isVisible={showToast}
         onClose={handleCloseToast}
+        variant={toastVariant}
       />
     </>
   )

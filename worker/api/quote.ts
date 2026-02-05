@@ -1,13 +1,22 @@
 import { Hono } from 'hono';
-import type { Env, QuoteFormData } from '../types';
+import type { Env } from '../types';
 import {
   sendEmail,
   tableRow,
   optionalTableRow,
   emailWrapper,
   notificationTable,
-  quoteConfirmationEmail,
 } from '../email-utils';
+import {
+  sanitize,
+  validateEmail,
+  validatePhone,
+  validateRequired,
+  validateOptional,
+  validateTurnstile,
+  MAX_LENGTHS,
+} from '../validation';
+import { checkRateLimit, getClientIP } from '../rate-limit';
 
 const quote = new Hono<{ Bindings: Env }>();
 
@@ -15,29 +24,77 @@ quote.post('/', async (c) => {
   console.log('[Quote] Form submission received');
 
   try {
-    const data: QuoteFormData = await c.req.json();
-    console.log(`[Quote] From: ${data.email}, Company: ${data.company}`);
+    // Rate limiting
+    const clientIP = getClientIP(c.req.raw);
+    const rateLimit = checkRateLimit(`quote:${clientIP}`, { maxRequests: 5, windowMs: 60000 });
+
+    if (!rateLimit.allowed) {
+      console.log(`[Quote] Rate limit exceeded for IP: ${clientIP}`);
+      return c.json({ error: 'Too many requests. Please try again later.' }, 429);
+    }
+
+    const data = await c.req.json();
+
+    // Turnstile verification
+    const turnstileResult = await validateTurnstile(
+      data.turnstileToken,
+      c.env.TURNSTILE_SECRET_KEY,
+      clientIP
+    );
+    if (!turnstileResult.valid) {
+      return c.json({ error: turnstileResult.error }, 400);
+    }
+
+    // Sanitize inputs
+    const firstName = sanitize(data.firstName);
+    const lastName = sanitize(data.lastName);
+    const company = sanitize(data.company);
+    const email = sanitize(data.email)?.toLowerCase();
+    const phone = sanitize(data.phone);
+    const sector = sanitize(data.sector);
 
     // Validate required fields
-    if (!data.firstName || !data.lastName) {
-      return c.json({ error: 'First name and last name are required' }, 400);
+    const firstNameValidation = validateRequired(firstName, 'First name', MAX_LENGTHS.firstName);
+    if (!firstNameValidation.valid) {
+      return c.json({ error: firstNameValidation.error }, 400);
     }
 
-    if (!data.company) {
-      return c.json({ error: 'Company name is required' }, 400);
+    const lastNameValidation = validateRequired(lastName, 'Last name', MAX_LENGTHS.lastName);
+    if (!lastNameValidation.valid) {
+      return c.json({ error: lastNameValidation.error }, 400);
     }
 
-    if (!data.email) {
-      return c.json({ error: 'Email is required' }, 400);
+    const companyValidation = validateRequired(company, 'Company', MAX_LENGTHS.company);
+    if (!companyValidation.valid) {
+      return c.json({ error: companyValidation.error }, 400);
     }
+
+    const emailValidation = validateEmail(email);
+    if (!emailValidation.valid) {
+      return c.json({ error: emailValidation.error }, 400);
+    }
+
+    // Phone is optional for quote form
+    const phoneValidation = validatePhone(phone, false);
+    if (!phoneValidation.valid) {
+      return c.json({ error: phoneValidation.error }, 400);
+    }
+
+    // Sector is optional
+    const sectorValidation = validateOptional(sector, 'Sector', 100);
+    if (!sectorValidation.valid) {
+      return c.json({ error: sectorValidation.error }, 400);
+    }
+
+    console.log(`[Quote] From: ${email}, Company: ${company}`);
 
     // Build notification email content
     const notificationRows =
-      tableRow('Name', `${data.firstName} ${data.lastName}`) +
-      tableRow('Company', data.company) +
-      tableRow('Email', data.email, true) +
-      optionalTableRow('Phone', data.phone, true) +
-      optionalTableRow('Sector', data.sector);
+      tableRow('Name', `${firstName} ${lastName}`) +
+      tableRow('Company', company) +
+      tableRow('Email', email, true) +
+      optionalTableRow('Phone', phone, true) +
+      optionalTableRow('Sector', sector);
 
     const notificationHtml = emailWrapper(
       'New Quote Request',
@@ -48,26 +105,14 @@ quote.post('/', async (c) => {
     const notificationResult = await sendEmail(c.env.RESEND_API_KEY, {
       from: 'noreply@zenpeople.com.au',
       to: c.env.DESTINATION_EMAIL,
-      subject: `New Quote Request - ${data.company}`,
+      subject: `New Quote Request - ${company}`,
       html: notificationHtml,
-      replyTo: data.email,
+      replyTo: email,
     });
 
     if (!notificationResult.ok) {
       return c.json({ error: 'Failed to send notification email' }, 500);
     }
-
-    // Confirmation email to user (disabled for now)
-    // const confirmationResult = await sendEmail(c.env.RESEND_API_KEY, {
-    //   from: 'noreply@zenpeople.com.au',
-    //   to: data.email,
-    //   subject: 'Thank You for Your Quote Request - ZenPeople',
-    //   html: quoteConfirmationEmail(data.firstName, data.company),
-    // });
-    //
-    // if (!confirmationResult.ok) {
-    //   console.error('Failed to send confirmation email:', confirmationResult.error);
-    // }
 
     return c.json({ success: true, message: "Thank you for your quote request. We'll send you a tailored proposal within 24 hours!" });
   } catch (error) {

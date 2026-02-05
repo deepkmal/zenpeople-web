@@ -1,14 +1,15 @@
 import { useEffect, useState } from 'react';
-import { CheckCircle, X } from 'lucide-react';
+import { CheckCircle, XCircle, X } from 'lucide-react';
 
 interface ToastProps {
   message: string;
   isVisible: boolean;
   onClose: () => void;
   duration?: number;
+  variant?: 'success' | 'error';
 }
 
-export function Toast({ message, isVisible, onClose, duration = 5000 }: ToastProps) {
+export function Toast({ message, isVisible, onClose, duration = 5000, variant = 'success' }: ToastProps) {
   const [isAnimating, setIsAnimating] = useState(false);
 
   useEffect(() => {
@@ -25,6 +26,9 @@ export function Toast({ message, isVisible, onClose, duration = 5000 }: ToastPro
 
   if (!isVisible && !isAnimating) return null;
 
+  const Icon = variant === 'error' ? XCircle : CheckCircle;
+  const iconColor = variant === 'error' ? 'text-red-500' : 'text-green-500';
+
   return (
     <div
       className={`fixed top-4 right-4 z-50 flex items-center gap-3 bg-white shadow-lg border border-gray-200 px-4 py-3 rounded-lg max-w-sm transition-all duration-300 ${
@@ -32,7 +36,7 @@ export function Toast({ message, isVisible, onClose, duration = 5000 }: ToastPro
       }`}
       role="alert"
     >
-      <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
+      <Icon className={`w-5 h-5 ${iconColor} flex-shrink-0`} />
       <p className="text-gray-700 text-sm flex-1">{message}</p>
       <button
         onClick={onClose}
