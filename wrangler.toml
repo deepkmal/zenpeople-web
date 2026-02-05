@@ -4,6 +4,7 @@ compatibility_date = "2024-01-01"
 
 [vars]
 DESTINATION_EMAIL = "deepaktestingemail@gmail.com"
+VITE_TURNSTILE_SITE_KEY = "0x4AAAAAACXxp2uCrJyhe9Pq"
 
 [assets]
 directory = "./dist"
