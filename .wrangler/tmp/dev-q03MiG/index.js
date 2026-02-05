@@ -1,7 +1,7 @@
 var __defProp = Object.defineProperty;
 var __name = (target, value) => __defProp(target, "name", { value, configurable: true });
 
-// .wrangler/tmp/bundle-SVEbhQ/checked-fetch.js
+// .wrangler/tmp/bundle-pdmCFP/checked-fetch.js
 var urls = /* @__PURE__ */ new Set();
 function checkURL(request, init) {
   const url = request instanceof URL ? request : new URL(
@@ -2466,9 +2466,9 @@ contact.post("/", async (c) => {
     }
     const data = await c.req.json();
     console.log(`[Contact] Request data keys: ${Object.keys(data).join(", ")}`);
-    const isProduction = host.includes("zenpeople.com.au");
-    console.log(`[Contact] isProduction: ${isProduction}, turnstileToken present: ${!!data.turnstileToken}`);
-    if (isProduction) {
+    const isFromLocalhost = origin.includes("localhost") || origin.includes("127.0.0.1");
+    console.log(`[Contact] isFromLocalhost: ${isFromLocalhost}, turnstileToken present: ${!!data.turnstileToken}`);
+    if (!isFromLocalhost) {
       const turnstileResult = await validateTurnstile(
         data.turnstileToken,
         c.env.TURNSTILE_SECRET_KEY,
@@ -2480,7 +2480,7 @@ contact.post("/", async (c) => {
         return c.json({ error: turnstileResult.error }, 400);
       }
     } else {
-      console.log("[Contact] Skipping Turnstile (non-production)");
+      console.log("[Contact] Skipping Turnstile (localhost origin)");
     }
     const firstName = sanitize(data.firstName);
     const lastName = sanitize(data.lastName);
@@ -2553,9 +2553,9 @@ quote.post("/", async (c) => {
     }
     const data = await c.req.json();
     console.log(`[Quote] Request data keys: ${Object.keys(data).join(", ")}`);
-    const isProduction = host.includes("zenpeople.com.au");
-    console.log(`[Quote] isProduction: ${isProduction}, turnstileToken present: ${!!data.turnstileToken}`);
-    if (isProduction) {
+    const isFromLocalhost = origin.includes("localhost") || origin.includes("127.0.0.1");
+    console.log(`[Quote] isFromLocalhost: ${isFromLocalhost}, turnstileToken present: ${!!data.turnstileToken}`);
+    if (!isFromLocalhost) {
       const turnstileResult = await validateTurnstile(
         data.turnstileToken,
         c.env.TURNSTILE_SECRET_KEY,
@@ -2567,7 +2567,7 @@ quote.post("/", async (c) => {
         return c.json({ error: turnstileResult.error }, 400);
       }
     } else {
-      console.log("[Quote] Skipping Turnstile (non-production)");
+      console.log("[Quote] Skipping Turnstile (localhost origin)");
     }
     const firstName = sanitize(data.firstName);
     const lastName = sanitize(data.lastName);
@@ -2675,9 +2675,9 @@ resume.post("/", async (c) => {
       additionalInfo = data.additionalInfo;
       turnstileToken = data.turnstileToken;
     }
-    const isProduction = host.includes("zenpeople.com.au");
-    console.log(`[Resume] isProduction: ${isProduction}, turnstileToken present: ${!!turnstileToken}`);
-    if (isProduction) {
+    const isFromLocalhost = origin.includes("localhost") || origin.includes("127.0.0.1");
+    console.log(`[Resume] isFromLocalhost: ${isFromLocalhost}, turnstileToken present: ${!!turnstileToken}`);
+    if (!isFromLocalhost) {
       const turnstileResult = await validateTurnstile(
         turnstileToken,
         c.env.TURNSTILE_SECRET_KEY,
@@ -2689,7 +2689,7 @@ resume.post("/", async (c) => {
         return c.json({ error: turnstileResult.error }, 400);
       }
     } else {
-      console.log("[Resume] Skipping Turnstile (non-production)");
+      console.log("[Resume] Skipping Turnstile (localhost origin)");
     }
     firstName = sanitize(firstName);
     lastName = sanitize(lastName);
@@ -2808,9 +2808,9 @@ application.post("/", async (c) => {
       jobSlug = data.jobSlug;
       turnstileToken = data.turnstileToken;
     }
-    const isProduction = host.includes("zenpeople.com.au");
-    console.log(`[Application] isProduction: ${isProduction}, turnstileToken present: ${!!turnstileToken}`);
-    if (isProduction) {
+    const isFromLocalhost = origin.includes("localhost") || origin.includes("127.0.0.1");
+    console.log(`[Application] isFromLocalhost: ${isFromLocalhost}, turnstileToken present: ${!!turnstileToken}`);
+    if (!isFromLocalhost) {
       const turnstileResult = await validateTurnstile(
         turnstileToken,
         c.env.TURNSTILE_SECRET_KEY,
@@ -2822,7 +2822,7 @@ application.post("/", async (c) => {
         return c.json({ error: turnstileResult.error }, 400);
       }
     } else {
-      console.log("[Application] Skipping Turnstile (non-production)");
+      console.log("[Application] Skipping Turnstile (localhost origin)");
     }
     firstName = sanitize(firstName);
     lastName = sanitize(lastName);
@@ -2950,7 +2950,7 @@ var jsonError = /* @__PURE__ */ __name(async (request, env, _ctx, middlewareCtx)
 }, "jsonError");
 var middleware_miniflare3_json_error_default = jsonError;
 
-// .wrangler/tmp/bundle-SVEbhQ/middleware-insertion-facade.js
+// .wrangler/tmp/bundle-pdmCFP/middleware-insertion-facade.js
 var __INTERNAL_WRANGLER_MIDDLEWARE__ = [
   middleware_ensure_req_body_drained_default,
   middleware_miniflare3_json_error_default
@@ -2982,7 +2982,7 @@ function __facade_invoke__(request, env, ctx, dispatch, finalMiddleware) {
 }
 __name(__facade_invoke__, "__facade_invoke__");
 
-// .wrangler/tmp/bundle-SVEbhQ/middleware-loader.entry.ts
+// .wrangler/tmp/bundle-pdmCFP/middleware-loader.entry.ts
 var __Facade_ScheduledController__ = class ___Facade_ScheduledController__ {
   constructor(scheduledTime, cron, noRetry) {
     this.scheduledTime = scheduledTime;

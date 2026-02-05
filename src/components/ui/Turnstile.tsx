@@ -77,6 +77,11 @@ export function Turnstile({
 }: TurnstileProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const widgetIdRef = useRef<string | null>(null);
+  const hasCalledVerify = useRef(false);
+
+  // Check localhost inside component
+  const isLocalhost = typeof window !== 'undefined' &&
+    (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
 
   const handleVerify = useCallback((token: string) => {
     onVerify(token);
@@ -95,6 +100,16 @@ export function Turnstile({
   }, [onExpire]);
 
   useEffect(() => {
+    // Auto-verify on localhost (only once)
+    if (isLocalhost && !hasCalledVerify.current) {
+      hasCalledVerify.current = true;
+      console.log('[Turnstile] Localhost detected, auto-verifying');
+      onVerify('localhost-bypass-token');
+      return;
+    }
+
+    if (isLocalhost) return;
+
     let mounted = true;
 
     loadTurnstileScript().then(() => {
@@ -121,7 +136,12 @@ export function Turnstile({
         window.turnstile.remove(widgetIdRef.current);
       }
     };
-  }, [handleVerify, handleError, handleExpire, theme, size]);
+  }, [isLocalhost, handleVerify, handleError, handleExpire, theme, size, onVerify]);
+
+  // Don't render widget on localhost
+  if (isLocalhost) {
+    return null;
+  }
 
   return <div ref={containerRef} className={className} />;
 }

@@ -94,7 +94,8 @@ export function ContactSection({
     return newErrors;
   }, [formData, companyRequired, hideMessage]);
 
-  const isFormValid = Object.keys(errors).length === 0 && turnstileToken !== null;
+  const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+  const isFormValid = Object.keys(errors).length === 0 && (turnstileToken !== null || isLocalhost);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>

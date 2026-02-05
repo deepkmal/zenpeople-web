@@ -111,7 +111,8 @@ export function SectorFormsSection() {
     return newErrors;
   }, [quoteFormData]);
 
-  const quoteIsFormValid = Object.keys(quoteErrors).length === 0 && quoteTurnstileToken !== null;
+  const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+  const quoteIsFormValid = Object.keys(quoteErrors).length === 0 && (quoteTurnstileToken !== null || isLocalhost);
 
   // Resume form validation
   const resumeErrors = useMemo<ResumeFormErrors>(() => {
@@ -128,7 +129,7 @@ export function SectorFormsSection() {
     return newErrors;
   }, [resumeFormData, file]);
 
-  const resumeIsFormValid = Object.keys(resumeErrors).length === 0 && resumeTurnstileToken !== null;
+  const resumeIsFormValid = Object.keys(resumeErrors).length === 0 && (resumeTurnstileToken !== null || isLocalhost);
 
   // Quote form handlers
   const handleQuoteChange = (e: React.ChangeEvent<HTMLInputElement>) => {

@@ -39,10 +39,10 @@ quote.post('/', async (c) => {
     const data = await c.req.json();
     console.log(`[Quote] Request data keys: ${Object.keys(data).join(', ')}`);
 
-    // Turnstile verification (skip in non-production)
-    const isProduction = host.includes('zenpeople.com.au');
-    console.log(`[Quote] isProduction: ${isProduction}, turnstileToken present: ${!!data.turnstileToken}`);
-    if (isProduction) {
+    // Turnstile verification (skip if request comes from localhost)
+    const isFromLocalhost = origin.includes('localhost') || origin.includes('127.0.0.1');
+    console.log(`[Quote] isFromLocalhost: ${isFromLocalhost}, turnstileToken present: ${!!data.turnstileToken}`);
+    if (!isFromLocalhost) {
       const turnstileResult = await validateTurnstile(
         data.turnstileToken,
         c.env.TURNSTILE_SECRET_KEY,
@@ -54,7 +54,7 @@ quote.post('/', async (c) => {
         return c.json({ error: turnstileResult.error }, 400);
       }
     } else {
-      console.log('[Quote] Skipping Turnstile (non-production)');
+      console.log('[Quote] Skipping Turnstile (localhost origin)');
     }
 
     // Sanitize inputs
