@@ -29,23 +29,16 @@ function arrayBufferToBase64(buffer: ArrayBuffer): string {
 }
 
 application.post('/', async (c) => {
-  const host = c.req.header('host') || '';
-  const origin = c.req.header('origin') || '';
-  console.log(`[Application] Job application received - host: ${host}, origin: ${origin}`);
-
   try {
     // Rate limiting
     const clientIP = getClientIP(c.req.raw);
-    console.log(`[Application] Client IP: ${clientIP}`);
     const rateLimit = checkRateLimit(`application:${clientIP}`, { maxRequests: 10, windowMs: 60000 });
 
     if (!rateLimit.allowed) {
-      console.log(`[Application] Rate limit exceeded for IP: ${clientIP}`);
       return c.json({ error: 'Too many requests. Please try again later.' }, 429);
     }
 
     const contentType = c.req.header('content-type') || '';
-    console.log(`[Application] Content-Type: ${contentType}`);
 
     let firstName: string;
     let lastName: string;
@@ -129,8 +122,6 @@ application.post('/', async (c) => {
         content: base64Content,
       };
     }
-
-    console.log(`[Application] From: ${email}, Name: ${firstName} ${lastName}, Job: ${jobTitle}, File: ${fileAttachment ? fileAttachment.filename : 'none'}`);
 
     // Build job URL
     const jobUrl = `https://zenpeople.com.au/jobs/${jobSlug}`;

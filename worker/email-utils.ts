@@ -5,8 +5,6 @@ export async function sendEmail(
   apiKey: string,
   options: EmailOptions
 ): Promise<{ ok: boolean; error?: string }> {
-  console.log(`[Email] Sending to: ${options.to}, subject: "${options.subject}"`);
-
   try {
     const payload: Record<string, unknown> = {
       from: options.from,
@@ -22,7 +20,6 @@ export async function sendEmail(
         filename: att.filename,
         content: att.content,
       }));
-      console.log(`[Email] Attachments: ${options.attachments.map(a => a.filename).join(', ')}`);
     }
 
     const response = await fetch('https://api.resend.com/emails', {
@@ -41,7 +38,6 @@ export async function sendEmail(
       return { ok: false, error: responseText };
     }
 
-    console.log(`[Email] Success:`, responseText);
     return { ok: true };
   } catch (error) {
     console.error('[Email] Send error:', error);

@@ -32,23 +32,16 @@ function arrayBufferToBase64(buffer: ArrayBuffer): string {
 }
 
 resume.post('/', async (c) => {
-  const host = c.req.header('host') || '';
-  const origin = c.req.header('origin') || '';
-  console.log(`[Resume] Form submission received - host: ${host}, origin: ${origin}`);
-
   try {
     // Rate limiting
     const clientIP = getClientIP(c.req.raw);
-    console.log(`[Resume] Client IP: ${clientIP}`);
     const rateLimit = checkRateLimit(`resume:${clientIP}`, { maxRequests: 5, windowMs: 60000 });
 
     if (!rateLimit.allowed) {
-      console.log(`[Resume] Rate limit exceeded for IP: ${clientIP}`);
       return c.json({ error: 'Too many requests. Please try again later.' }, 429);
     }
 
     const contentType = c.req.header('content-type') || '';
-    console.log(`[Resume] Content-Type: ${contentType}`);
 
     let firstName: string;
     let lastName: string;
@@ -124,8 +117,6 @@ resume.post('/', async (c) => {
         content: base64Content,
       };
     }
-
-    console.log(`[Resume] From: ${email}, Name: ${firstName} ${lastName}, File: ${fileAttachment ? fileAttachment.filename : 'none'}`);
 
     // Build notification email content
     const notificationRows =

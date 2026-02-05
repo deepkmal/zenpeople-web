@@ -20,23 +20,16 @@ import { checkRateLimit, getClientIP } from '../rate-limit';
 const contact = new Hono<{ Bindings: Env }>();
 
 contact.post('/', async (c) => {
-  const host = c.req.header('host') || '';
-  const origin = c.req.header('origin') || '';
-  console.log(`[Contact] Form submission received - host: ${host}, origin: ${origin}`);
-
   try {
     // Rate limiting
     const clientIP = getClientIP(c.req.raw);
-    console.log(`[Contact] Client IP: ${clientIP}`);
     const rateLimit = checkRateLimit(`contact:${clientIP}`, { maxRequests: 5, windowMs: 60000 });
 
     if (!rateLimit.allowed) {
-      console.log(`[Contact] Rate limit exceeded for IP: ${clientIP}`);
       return c.json({ error: 'Too many requests. Please try again later.' }, 429);
     }
 
     const data = await c.req.json();
-    console.log(`[Contact] Request data keys: ${Object.keys(data).join(', ')}`);
 
     // Sanitize inputs
     const firstName = sanitize(data.firstName);
@@ -77,8 +70,6 @@ contact.post('/', async (c) => {
     if (!companyValidation.valid) {
       return c.json({ error: companyValidation.error }, 400);
     }
-
-    console.log(`[Contact] From: ${email}, Name: ${firstName} ${lastName}`);
 
     // Build notification email content
     const notificationRows =
