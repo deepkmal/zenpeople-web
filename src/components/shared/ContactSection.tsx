@@ -1,6 +1,7 @@
 import { useState, useMemo, useCallback } from 'react';
 import { Container } from '../ui/Container';
 import { Toast } from '../ui/Toast';
+import { Turnstile } from '../ui/Turnstile';
 import { submitLead } from '../../utils/payload-api';
 
 interface FormData {
@@ -50,8 +51,11 @@ export function ContactSection({
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [hasAttemptedSubmit, setHasAttemptedSubmit] = useState(false);
   const [showToast, setShowToast] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
 
   const handleCloseToast = useCallback(() => setShowToast(false), []);
+  const handleTurnstileVerify = useCallback((token: string) => setTurnstileToken(token), []);
+  const handleTurnstileExpire = useCallback(() => setTurnstileToken(null), []);
 
   const validateEmail = (email: string): boolean => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -90,7 +94,7 @@ export function ContactSection({
     return newErrors;
   }, [formData, companyRequired, hideMessage]);
 
-  const isFormValid = Object.keys(errors).length === 0;
+  const isFormValid = Object.keys(errors).length === 0 && turnstileToken !== null;
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -121,6 +125,7 @@ export function ContactSection({
         email: formData.email,
         phone: formData.phone,
         message: formData.message,
+        turnstileToken: turnstileToken || undefined,
       });
 
       if (result.success) {
@@ -289,6 +294,12 @@ export function ContactSection({
                     Something went wrong. Please try again.
                   </p>
                 )}
+
+                <Turnstile
+                  onVerify={handleTurnstileVerify}
+                  onExpire={handleTurnstileExpire}
+                  theme="light"
+                />
 
                 <button
                   type="submit"

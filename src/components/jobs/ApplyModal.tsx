@@ -5,8 +5,8 @@ import { ApplicationForm } from './ApplicationForm'
 interface ApplyModalProps {
   isOpen: boolean
   onClose: () => void
-  jobId: string
   jobTitle: string
+  jobSlug: string
   onSuccess: () => void
   onError: (message: string) => void
 }
@@ -14,8 +14,8 @@ interface ApplyModalProps {
 export function ApplyModal({
   isOpen,
   onClose,
-  jobId,
   jobTitle,
+  jobSlug,
   onSuccess,
   onError,
 }: ApplyModalProps) {
@@ -97,8 +97,8 @@ export function ApplyModal({
         {/* Content */}
         <div className="p-6">
           <ApplicationForm
-            jobId={jobId}
             jobTitle={jobTitle}
+            jobSlug={jobSlug}
             onSuccess={() => {
               onSuccess()
               onClose()

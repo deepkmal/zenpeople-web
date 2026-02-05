@@ -1,13 +1,22 @@
 import { Hono } from 'hono';
-import type { Env, ContactFormData } from '../types';
+import type { Env } from '../types';
 import {
   sendEmail,
   tableRow,
   optionalTableRow,
   emailWrapper,
   notificationTable,
-  contactConfirmationEmail,
 } from '../email-utils';
+import {
+  sanitize,
+  validateEmail,
+  validatePhone,
+  validateRequired,
+  validateOptional,
+  validateTurnstile,
+  MAX_LENGTHS,
+} from '../validation';
+import { checkRateLimit, getClientIP } from '../rate-limit';
 
 const contact = new Hono<{ Bindings: Env }>();
 
@@ -15,29 +24,76 @@ contact.post('/', async (c) => {
   console.log('[Contact] Form submission received');
 
   try {
-    const data: ContactFormData = await c.req.json();
-    console.log(`[Contact] From: ${data.email}, Name: ${data.firstName} ${data.lastName}`);
+    // Rate limiting
+    const clientIP = getClientIP(c.req.raw);
+    const rateLimit = checkRateLimit(`contact:${clientIP}`, { maxRequests: 5, windowMs: 60000 });
+
+    if (!rateLimit.allowed) {
+      console.log(`[Contact] Rate limit exceeded for IP: ${clientIP}`);
+      return c.json({ error: 'Too many requests. Please try again later.' }, 429);
+    }
+
+    const data = await c.req.json();
+
+    // Turnstile verification
+    const turnstileResult = await validateTurnstile(
+      data.turnstileToken,
+      c.env.TURNSTILE_SECRET_KEY,
+      clientIP
+    );
+    if (!turnstileResult.valid) {
+      return c.json({ error: turnstileResult.error }, 400);
+    }
+
+    // Sanitize inputs
+    const firstName = sanitize(data.firstName);
+    const lastName = sanitize(data.lastName);
+    const company = sanitize(data.company);
+    const email = sanitize(data.email)?.toLowerCase();
+    const phone = sanitize(data.phone);
+    const message = sanitize(data.message);
 
     // Validate required fields
-    if (!data.firstName || !data.lastName) {
-      return c.json({ error: 'First name and last name are required' }, 400);
+    const firstNameValidation = validateRequired(firstName, 'First name', MAX_LENGTHS.firstName);
+    if (!firstNameValidation.valid) {
+      return c.json({ error: firstNameValidation.error }, 400);
     }
 
-    if (!data.email) {
-      return c.json({ error: 'Email is required' }, 400);
+    const lastNameValidation = validateRequired(lastName, 'Last name', MAX_LENGTHS.lastName);
+    if (!lastNameValidation.valid) {
+      return c.json({ error: lastNameValidation.error }, 400);
     }
 
-    if (!data.message) {
-      return c.json({ error: 'Message is required' }, 400);
+    const emailValidation = validateEmail(email);
+    if (!emailValidation.valid) {
+      return c.json({ error: emailValidation.error }, 400);
     }
+
+    const phoneValidation = validatePhone(phone, true);
+    if (!phoneValidation.valid) {
+      return c.json({ error: phoneValidation.error }, 400);
+    }
+
+    const messageValidation = validateRequired(message, 'Message', MAX_LENGTHS.message);
+    if (!messageValidation.valid) {
+      return c.json({ error: messageValidation.error }, 400);
+    }
+
+    // Validate optional fields
+    const companyValidation = validateOptional(company, 'Company', MAX_LENGTHS.company);
+    if (!companyValidation.valid) {
+      return c.json({ error: companyValidation.error }, 400);
+    }
+
+    console.log(`[Contact] From: ${email}, Name: ${firstName} ${lastName}`);
 
     // Build notification email content
     const notificationRows =
-      tableRow('Name', `${data.firstName} ${data.lastName}`) +
-      optionalTableRow('Company', data.company) +
-      tableRow('Email', data.email, true) +
-      optionalTableRow('Phone', data.phone, true) +
-      tableRow('Message', data.message);
+      tableRow('Name', `${firstName} ${lastName}`) +
+      optionalTableRow('Company', company) +
+      tableRow('Email', email, true) +
+      optionalTableRow('Phone', phone, true) +
+      tableRow('Message', message);
 
     const notificationHtml = emailWrapper(
       'New Contact Form Submission',
@@ -46,28 +102,16 @@ contact.post('/', async (c) => {
 
     // Send notification email to ZenPeople
     const notificationResult = await sendEmail(c.env.RESEND_API_KEY, {
-      from: c.env.SOURCE_EMAIL,
+      from: 'noreply@zenpeople.com.au',
       to: c.env.DESTINATION_EMAIL,
-      subject: `New Contact Form Submission - ${data.firstName} ${data.lastName}`,
+      subject: `New Contact Form Submission - ${firstName} ${lastName}`,
       html: notificationHtml,
-      replyTo: data.email,
+      replyTo: email,
     });
 
     if (!notificationResult.ok) {
       return c.json({ error: 'Failed to send notification email' }, 500);
     }
-
-    // Confirmation email to user (disabled for now)
-    // const confirmationResult = await sendEmail(c.env.RESEND_API_KEY, {
-    //   from: c.env.SOURCE_EMAIL,
-    //   to: data.email,
-    //   subject: 'Thank You for Contacting ZenPeople',
-    //   html: contactConfirmationEmail(data.firstName),
-    // });
-    //
-    // if (!confirmationResult.ok) {
-    //   console.error('Failed to send confirmation email:', confirmationResult.error);
-    // }
 
     return c.json({ success: true, message: "Thank you for your message. We'll be in touch soon!" });
   } catch (error) {
