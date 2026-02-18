@@ -127,6 +127,32 @@ export function validateOptional(value: string | undefined, fieldName: string, m
 }
 
 /**
+ * Validate file content by checking magic bytes.
+ * Returns true if the file content matches one of the allowed formats.
+ */
+export function validateFileContent(buffer: ArrayBuffer): boolean {
+  const bytes = new Uint8Array(buffer);
+  if (bytes.length < 4) return false;
+
+  // PDF: starts with %PDF
+  if (bytes[0] === 0x25 && bytes[1] === 0x50 && bytes[2] === 0x44 && bytes[3] === 0x46) {
+    return true;
+  }
+
+  // DOCX (ZIP): starts with PK (0x50 0x4B)
+  if (bytes[0] === 0x50 && bytes[1] === 0x4B) {
+    return true;
+  }
+
+  // DOC (OLE2): starts with 0xD0CF11E0
+  if (bytes[0] === 0xD0 && bytes[1] === 0xCF && bytes[2] === 0x11 && bytes[3] === 0xE0) {
+    return true;
+  }
+
+  return false;
+}
+
+/**
  * Validate file upload
  */
 export function validateFile(file: File | null, required = false): ValidationResult {
@@ -151,6 +177,17 @@ export function validateFile(file: File | null, required = false): ValidationRes
     return { valid: false, error: 'Only PDF, DOC, and DOCX files are allowed' };
   }
 
+  return { valid: true };
+}
+
+/**
+ * Validate file upload with content validation (requires pre-read buffer).
+ * Call this after reading the file's arrayBuffer for file content magic-byte checking.
+ */
+export function validateFileContent_post(buffer: ArrayBuffer): ValidationResult {
+  if (!validateFileContent(buffer)) {
+    return { valid: false, error: 'File content does not match an allowed format (PDF, DOC, DOCX)' };
+  }
   return { valid: true };
 }
 

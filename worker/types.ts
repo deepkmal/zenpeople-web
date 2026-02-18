@@ -2,6 +2,10 @@ export interface Env {
   RESEND_API_KEY: string;
   DESTINATION_EMAIL: string;
   TURNSTILE_SECRET_KEY: string;
+  SANITY_PROJECT_ID: string;
+  SANITY_DATASET: string;
+  SANITY_API_TOKEN: string;
+  ALLOWED_ORIGIN: string;
   ASSETS: Fetcher;
 }
 

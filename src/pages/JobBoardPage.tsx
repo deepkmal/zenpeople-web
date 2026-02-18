@@ -10,7 +10,7 @@ import {
   LoadMoreButton,
 } from '../components/jobs'
 import { useJobs } from '../hooks/useJobs'
-import type { JobFilters as JobFiltersType } from '../utils/payload-api'
+import type { JobFilters as JobFiltersType } from '../utils/api'
 
 // Default cities list (in production, this could be fetched from API)
 const DEFAULT_CITIES = [

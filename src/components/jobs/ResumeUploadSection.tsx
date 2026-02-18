@@ -1,7 +1,7 @@
 import { useState, useMemo, useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Paperclip, FileText, X } from 'lucide-react';
-import { submitResumeForm } from '../../utils/api';
+import { submitLead } from '../../utils/api';
 import { Toast } from '../ui/Toast';
 
 interface FormData {
@@ -136,13 +136,14 @@ export function ResumeUploadSection({ id }: ResumeUploadSectionProps) {
     setSubmitStatus('idle');
 
     try {
-      const result = await submitResumeForm({
+      const result = await submitLead({
+        type: 'resume',
         firstName: formData.firstName,
         lastName: formData.lastName,
         phone: formData.phone,
         email: formData.email,
         additionalInfo: formData.additionalInfo || undefined,
-        file: file || undefined,
+        resume: file || undefined,
       });
 
       if (result.success) {

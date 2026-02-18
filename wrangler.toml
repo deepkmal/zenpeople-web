@@ -5,6 +5,8 @@ compatibility_date = "2024-01-01"
 [vars]
 DESTINATION_EMAIL = "recruitment@zenpeople.com.au"
 VITE_TURNSTILE_SITE_KEY = "0x4AAAAAACXxp2uCrJyhe9Pq"
+SANITY_DATASET = "production"
+ALLOWED_ORIGIN = "https://zenpeople.com.au"
 
 [assets]
 directory = "./dist"
@@ -31,3 +33,5 @@ routes = [
 
 # Secrets (set via wrangler secret put <NAME>)
 # RESEND_API_KEY
+# SANITY_PROJECT_ID
+# SANITY_API_TOKEN

@@ -30,13 +30,3 @@ dist-ssr
 
 # Plan directory
 plan/
-
-# Payload CMS (admin folder)
-admin/.next/
-admin/.open-next/
-admin/node_modules/
-admin/payload.db
-admin/payload.db-journal
-admin/media/
-admin/resumes/
-admin/.env

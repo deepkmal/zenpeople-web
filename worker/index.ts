@@ -1,6 +1,11 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import type { Env } from './types';
+import {
+  originGuard,
+  contentTypeEnforcement,
+  bodySizeLimit,
+} from './security';
 import contact from './api/contact';
 import quote from './api/quote';
 import resume from './api/resume';
@@ -10,10 +15,25 @@ const app = new Hono<{ Bindings: Env }>();
 
 // CORS middleware for API routes
 app.use('/api/*', cors({
-  origin: '*',
+  origin: (origin, c) => {
+    const allowed = c.env.ALLOWED_ORIGIN || 'https://zenpeople.com.au';
+    if (
+      origin.includes('localhost') ||
+      origin.includes('127.0.0.1') ||
+      origin === allowed
+    ) {
+      return origin;
+    }
+    return allowed;
+  },
   allowMethods: ['POST', 'OPTIONS'],
   allowHeaders: ['Content-Type'],
 }));
+
+// Security middleware stack for API routes
+app.use('/api/*', originGuard);
+app.use('/api/*', contentTypeEnforcement);
+app.use('/api/*', bodySizeLimit);
 
 // API routes
 app.route('/api/contact', contact);

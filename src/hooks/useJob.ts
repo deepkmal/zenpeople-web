@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { fetchJobBySlug, type Job } from '../utils/payload-api'
+import { fetchJobBySlug, type Job } from '../utils/api'
 
 interface UseJobResult {
   job: Job | null

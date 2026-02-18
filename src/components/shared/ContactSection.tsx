@@ -1,7 +1,7 @@
 import { useState, useMemo, useCallback } from 'react';
 import { Container } from '../ui/Container';
 import { Toast } from '../ui/Toast';
-import { submitLead } from '../../utils/payload-api';
+import { submitLead } from '../../utils/api';
 
 interface FormData {
   firstName: string;

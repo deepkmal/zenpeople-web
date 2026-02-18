@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Search, SlidersHorizontal } from 'lucide-react'
 import { MultiSelectDropdown } from './MultiSelectDropdown'
 import { FilterSheet } from './FilterSheet'
-import { employmentTypeLabels, sectorLabels } from '../../utils/payload-api'
+import { employmentTypeLabels, sectorLabels } from '../../utils/api'
 
 interface JobFiltersProps {
   keyword: string

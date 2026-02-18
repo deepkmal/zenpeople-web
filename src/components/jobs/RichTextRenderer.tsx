@@ -1,4 +1,4 @@
-import type { RichTextContent, RichTextNode } from '../../utils/payload-api'
+import type { RichTextContent, RichTextNode } from '../../utils/api'
 
 type HeadingLevel = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'
 

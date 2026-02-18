@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react'
-import { fetchJobs, type Job, type JobFilters, type JobsResponse } from '../utils/payload-api'
+import { fetchJobs, type Job, type JobFilters, type JobsResponse } from '../utils/api'
 
 interface UseJobsResult {
   jobs: Job[]
