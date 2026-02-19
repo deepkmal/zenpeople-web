@@ -12,6 +12,7 @@
     "worker:deploy": "npm run build && npx wrangler deploy"
   },
   "dependencies": {
+    "@sanity/webhook": "^4.0.4",
     "@tailwindcss/vite": "^4.1.18",
     "embla-carousel-react": "^8.6.0",
     "hono": "^4.11.4",

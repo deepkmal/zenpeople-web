@@ -10,8 +10,12 @@ import contact from './api/contact';
 import quote from './api/quote';
 import resume from './api/resume';
 import application from './api/application';
+import sanityWebhook from './api/webhooks/sanity';
 
 const app = new Hono<{ Bindings: Env }>();
+
+// Webhook routes (authenticated via secret, not browser middleware)
+app.route('/webhooks/sanity', sanityWebhook);
 
 // CORS middleware for API routes
 app.use('/api/*', cors({

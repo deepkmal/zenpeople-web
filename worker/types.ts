@@ -5,6 +5,7 @@ export interface Env {
   SANITY_PROJECT_ID: string;
   SANITY_DATASET: string;
   SANITY_API_TOKEN: string;
+  SANITY_WEBHOOK_SECRET: string;
   ALLOWED_ORIGIN: string;
   ASSETS: Fetcher;
 }

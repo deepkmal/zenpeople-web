@@ -8,6 +8,7 @@ import { JobsPage } from './pages/JobsPage';
 import { JobBoardPage } from './pages/JobBoardPage';
 import { JobListingPage } from './pages/JobListingPage';
 import { SectorPage } from './pages/SectorPage';
+import { NotFoundPage } from './pages/NotFoundPage';
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
           <Route path="/sectors/:slug" element={<SectorPage />} />
           <Route path="/privacy" element={<PlaceholderPage title="Privacy Policy" />} />
           <Route path="/terms" element={<PlaceholderPage title="Terms & Conditions" />} />
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </Layout>
     </BrowserRouter>
