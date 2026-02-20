@@ -8,6 +8,11 @@ export interface Env {
   SANITY_WEBHOOK_SECRET: string;
   ALLOWED_ORIGIN: string;
   ASSETS: Fetcher;
+  JOBADDER_CLIENT_ID: string;
+  JOBADDER_CLIENT_SECRET: string;
+  JOBADDER_BOARD_ID: string;
+  JOBADDER_WEBHOOK_SECRET: string;
+  JOBADDER_TOKENS: KVNamespace;
 }
 
 export interface ContactFormData {

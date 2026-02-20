@@ -6,9 +6,10 @@ interface SanityConfig {
   apiToken: string
 }
 
-interface SanityMutation {
+export interface SanityMutation {
   create?: Record<string, unknown>
   createOrReplace?: Record<string, unknown>
+  delete?: { id: string }
   patch?: Record<string, unknown>
 }
 
@@ -114,4 +115,88 @@ export async function querySanity<T = unknown>(
 
   const result = (await response.json()) as { result: T }
   return result.result
+}
+
+/**
+ * Create or replace a document in Sanity (upsert by _id)
+ */
+export async function createOrReplaceDocument(
+  config: SanityConfig,
+  doc: Record<string, unknown>
+): Promise<{ id: string }> {
+  const mutations: SanityMutation[] = [{ createOrReplace: doc }]
+
+  const response = await fetch(
+    `https://${config.projectId}.api.sanity.io/v2024-01-01/data/mutate/${config.dataset}`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${config.apiToken}`,
+      },
+      body: JSON.stringify({ mutations }),
+    }
+  )
+
+  if (!response.ok) {
+    const text = await response.text()
+    throw new Error(`Sanity createOrReplace failed (${response.status}): ${text}`)
+  }
+
+  const result = await response.json() as { results: { id: string }[] }
+  return { id: result.results[0]?.id ?? '' }
+}
+
+/**
+ * Delete a document in Sanity by ID
+ */
+export async function deleteDocument(
+  config: SanityConfig,
+  id: string
+): Promise<void> {
+  const mutations: SanityMutation[] = [{ delete: { id } }]
+
+  const response = await fetch(
+    `https://${config.projectId}.api.sanity.io/v2024-01-01/data/mutate/${config.dataset}`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${config.apiToken}`,
+      },
+      body: JSON.stringify({ mutations }),
+    }
+  )
+
+  if (!response.ok) {
+    const text = await response.text()
+    throw new Error(`Sanity delete failed (${response.status}): ${text}`)
+  }
+}
+
+/**
+ * Execute multiple mutations in a single request (for bulk operations)
+ */
+export async function mutate(
+  config: SanityConfig,
+  mutations: SanityMutation[]
+): Promise<{ results: { id: string }[] }> {
+  const response = await fetch(
+    `https://${config.projectId}.api.sanity.io/v2024-01-01/data/mutate/${config.dataset}`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${config.apiToken}`,
+      },
+      body: JSON.stringify({ mutations }),
+    }
+  )
+
+  if (!response.ok) {
+    const text = await response.text()
+    throw new Error(`Sanity mutate failed (${response.status}): ${text}`)
+  }
+
+  return response.json() as Promise<{ results: { id: string }[] }>
 }

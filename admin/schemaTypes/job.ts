@@ -87,6 +87,13 @@ export const job = defineType({
       type: 'boolean',
       initialValue: true,
     }),
+    defineField({
+      name: 'jobAdderId',
+      title: 'JobAdder Ad ID',
+      type: 'string',
+      readOnly: true,
+      hidden: ({document}) => !document?.jobAdderId,
+    }),
   ],
   preview: {
     select: {

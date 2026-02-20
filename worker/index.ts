@@ -11,13 +11,19 @@ import quote from './api/quote';
 import resume from './api/resume';
 import application from './api/application';
 import sanityWebhook from './api/webhooks/sanity';
+import jobadderWebhook from './api/webhooks/jobadder';
+import jobadderRoutes from './api/jobadder';
 
 const app = new Hono<{ Bindings: Env }>();
 
 // Webhook routes (authenticated via secret, not browser middleware)
 app.route('/webhooks/sanity', sanityWebhook);
+app.route('/webhooks/jobadder', jobadderWebhook);
 
-// CORS middleware for API routes
+// JobAdder OAuth & admin routes (no browser security middleware — uses own auth)
+app.route('/api/jobadder', jobadderRoutes);
+
+// CORS middleware for form API routes
 app.use('/api/*', cors({
   origin: (origin, c) => {
     const allowed = c.env.ALLOWED_ORIGIN || 'https://zenpeople.com.au';
