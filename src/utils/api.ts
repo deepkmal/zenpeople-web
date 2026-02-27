@@ -1,7 +1,7 @@
 // API client
 
 import { sanityFetch } from './sanity'
-import { JOBS_QUERY, JOB_BY_SLUG_QUERY, FEATURED_JOBS_QUERY, CITIES_QUERY } from './sanity-queries'
+import { getJobsQuery, JOB_BY_SLUG_QUERY, FEATURED_JOBS_QUERY, CITIES_QUERY } from './sanity-queries'
 
 // Types (existing Lexical-style rich text format — unchanged)
 export interface RichTextContent {
@@ -285,13 +285,12 @@ export async function fetchJobs(
   const end = offset + limit
 
   const result = await sanityFetch<{ docs: SanityJob[]; totalDocs: number }>(
-    JOBS_QUERY,
+    getJobsQuery(filters.sort || 'newest'),
     {
       keyword: filters.keyword || '',
       city: filters.city || '',
       sector: filters.sector || '',
       employment_type: filters.employment_type || '',
-      sort: filters.sort || 'newest',
       offset,
       limit: end,
     }

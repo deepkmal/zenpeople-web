@@ -28,13 +28,14 @@ invocation_logs = true
 enabled = false
 persist = true
 head_sampling_rate = 1
+
 routes = [
   { pattern = "zenpeople.com.au/api/*", custom_domain = true }
 ]
 
-[[kv_namespaces]]
-binding = "JOBADDER_TOKENS"
-id = ""  # Fill in after: wrangler kv namespace create JOBADDER_TOKENS
+# [[kv_namespaces]]
+# binding = "JOBADDER_TOKENS"
+# id = ""  # Fill in after: wrangler kv namespace create JOBADDER_TOKENS
 
 # Secrets (set via wrangler secret put <NAME>)
 # RESEND_API_KEY

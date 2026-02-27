@@ -4,9 +4,12 @@
  * Paginated active jobs with optional keyword/city/sector/employment_type filters.
  * Returns { docs, totalDocs }
  *
- * Parameters: $keyword, $city, $sector, $employment_type, $sort, $offset, $limit
+ * Parameters: $keyword, $city, $sector, $employment_type, $offset, $limit
+ * Sort direction is baked into the query string (GROQ doesn't support dynamic asc/desc).
  */
-export const JOBS_QUERY = `{
+export function getJobsQuery(sort: 'newest' | 'oldest' = 'newest') {
+  const orderClause = sort === 'oldest' ? 'order(_createdAt asc)' : 'order(_createdAt desc)'
+  return `{
   "docs": *[
     _type == "job"
     && isActive == true
@@ -14,12 +17,7 @@ export const JOBS_QUERY = `{
     && ($city == "" || city == $city)
     && ($sector == "" || sector == $sector)
     && ($employment_type == "" || employment_type == $employment_type)
-  ] | order(
-    select(
-      $sort == "oldest" => _createdAt asc,
-      _createdAt desc
-    )
-  ) [$offset...$limit] {
+  ] | ${orderClause} [$offset...$limit] {
     _id,
     _createdAt,
     _updatedAt,
@@ -44,6 +42,7 @@ export const JOBS_QUERY = `{
     && ($employment_type == "" || employment_type == $employment_type)
   ])
 }`
+}
 
 /**
  * Single job by slug with full rich text fields.
