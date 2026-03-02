@@ -12,6 +12,7 @@ export function getJobsQuery(sort: 'newest' | 'oldest' = 'newest') {
   return `{
   "docs": *[
     _type == "job"
+    && !(_id in path("drafts.**"))
     && isActive == true
     && ($keyword == "" || title match $keyword + "*" || summary match $keyword + "*")
     && ($city == "" || city == $city)
@@ -35,6 +36,7 @@ export function getJobsQuery(sort: 'newest' | 'oldest' = 'newest') {
   },
   "totalDocs": count(*[
     _type == "job"
+    && !(_id in path("drafts.**"))
     && isActive == true
     && ($keyword == "" || title match $keyword + "*" || summary match $keyword + "*")
     && ($city == "" || city == $city)
@@ -50,6 +52,7 @@ export function getJobsQuery(sort: 'newest' | 'oldest' = 'newest') {
  */
 export const JOB_BY_SLUG_QUERY = `*[
   _type == "job"
+  && !(_id in path("drafts.**"))
   && slug.current == $slug
   && isActive == true
 ][0] {
@@ -74,6 +77,7 @@ export const JOB_BY_SLUG_QUERY = `*[
  */
 export const FEATURED_JOBS_QUERY = `*[
   _type == "job"
+  && !(_id in path("drafts.**"))
   && isActive == true
 ] | order(_createdAt desc) [0...3] {
   _id,
@@ -95,4 +99,4 @@ export const FEATURED_JOBS_QUERY = `*[
 /**
  * Unique cities from active jobs.
  */
-export const CITIES_QUERY = `array::unique(*[_type == "job" && isActive == true].city) | order(@ asc)`
+export const CITIES_QUERY = `array::unique(*[_type == "job" && !(_id in path("drafts.**")) && isActive == true].city) | order(@ asc)`
