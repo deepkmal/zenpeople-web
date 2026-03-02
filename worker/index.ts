@@ -9,8 +9,13 @@ import application from './api/application';
 const app = new Hono<{ Bindings: Env }>();
 
 // CORS middleware for API routes
+const ALLOWED_ORIGINS = [
+  'https://zenpeople.com.au',
+  'https://www.zenpeople.com.au',
+];
+
 app.use('/api/*', cors({
-  origin: '*',
+  origin: (origin) => ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0],
   allowMethods: ['POST', 'OPTIONS'],
   allowHeaders: ['Content-Type'],
 }));
