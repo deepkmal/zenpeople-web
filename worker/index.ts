@@ -23,31 +23,26 @@ const ALLOWED_ORIGINS = [
 ];
 
 app.use('/api/*', cors({
-  origin: (origin) => ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0],
+  origin: (origin) => {
+    if (
+      ALLOWED_ORIGINS.includes(origin) ||
+      origin.includes('localhost') ||
+      origin.includes('127.0.0.1')
+    ) {
+      return origin;
+    }
+    return ALLOWED_ORIGINS[0];
+  },
+  allowMethods: ['POST', 'OPTIONS'],
+  allowHeaders: ['Content-Type'],
 }));
+
 // Webhook routes (authenticated via secret, not browser middleware)
 app.route('/webhooks/sanity', sanityWebhook);
 app.route('/webhooks/jobadder', jobadderWebhook);
 
 // JobAdder OAuth & admin routes (no browser security middleware — uses own auth)
 app.route('/api/jobadder', jobadderRoutes);
-
-// CORS middleware for form API routes
-app.use('/api/*', cors({
-  origin: (origin, c) => {
-    const allowed = c.env.ALLOWED_ORIGIN || 'https://zenpeople.com.au';
-    if (
-      origin.includes('localhost') ||
-      origin.includes('127.0.0.1') ||
-      origin === allowed
-    ) {
-      return origin;
-    }
-    return allowed;
-  },
-  allowMethods: ['POST', 'OPTIONS'],
-  allowHeaders: ['Content-Type'],
-}));
 
 // Security middleware stack for API routes
 app.use('/api/*', originGuard);
