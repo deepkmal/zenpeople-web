@@ -5,6 +5,9 @@ compatibility_date = "2024-01-01"
 [vars]
 DESTINATION_EMAIL = "recruitment@zenpeople.com.au"
 VITE_TURNSTILE_SITE_KEY = "0x4AAAAAACXxp2uCrJyhe9Pq"
+SANITY_DATASET = "production"
+ALLOWED_ORIGIN = "https://zenpeople.com.au"
+JOBADDER_BOARD_ID = ""  # Fill in after board portal setup with JobAdder support
 
 [assets]
 directory = "./dist"
@@ -25,9 +28,20 @@ invocation_logs = true
 enabled = false
 persist = true
 head_sampling_rate = 1
+
 routes = [
   { pattern = "zenpeople.com.au/api/*", custom_domain = true }
 ]
 
+# [[kv_namespaces]]
+# binding = "JOBADDER_TOKENS"
+# id = ""  # Fill in after: wrangler kv namespace create JOBADDER_TOKENS
+
 # Secrets (set via wrangler secret put <NAME>)
 # RESEND_API_KEY
+# SANITY_PROJECT_ID
+# SANITY_API_TOKEN
+# SANITY_WEBHOOK_SECRET
+# JOBADDER_CLIENT_ID
+# JOBADDER_CLIENT_SECRET
+# JOBADDER_WEBHOOK_SECRET

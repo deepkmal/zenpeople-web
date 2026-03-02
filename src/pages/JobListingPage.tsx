@@ -9,7 +9,7 @@ import {
   employmentTypeLabels,
   sectorLabels,
   formatRelativeTime,
-} from '../utils/payload-api'
+} from '../utils/api'
 
 export function JobListingPage() {
   const { slug } = useParams<{ slug: string }>()

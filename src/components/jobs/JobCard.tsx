@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
-import type { Job, RichTextNode } from '../../utils/payload-api'
-import { employmentTypeLabels, sectorLabels } from '../../utils/payload-api'
+import type { Job, RichTextNode } from '../../utils/api'
+import { employmentTypeLabels, sectorLabels } from '../../utils/api'
 
 interface JobCardProps {
   job: Job

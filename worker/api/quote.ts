@@ -16,6 +16,7 @@ import {
   MAX_LENGTHS,
 } from '../validation';
 import { checkRateLimit, getClientIP } from '../rate-limit';
+import { createDocument } from '../sanity';
 
 const quote = new Hono<{ Bindings: Env }>();
 
@@ -97,6 +98,30 @@ quote.post('/', async (c) => {
     if (!notificationResult.ok) {
       return c.json({ error: 'Failed to send notification email' }, 500);
     }
+
+    // Store in Sanity (non-blocking)
+    c.executionCtx.waitUntil(
+      createDocument(
+        {
+          projectId: c.env.SANITY_PROJECT_ID,
+          dataset: c.env.SANITY_DATASET,
+          apiToken: c.env.SANITY_API_TOKEN,
+        },
+        {
+          _type: 'lead',
+          leadType: 'quote',
+          firstName,
+          lastName,
+          email,
+          phone: phone || undefined,
+          company,
+          sector: sector || undefined,
+          source: 'website',
+        }
+      ).catch((err) => {
+        console.error('[Quote] Sanity write failed:', err instanceof Error ? err.message : err);
+      })
+    );
 
     return c.json({ success: true, message: "Thank you for your quote request. We'll send you a tailored proposal within 24 hours!" });
   } catch (error) {

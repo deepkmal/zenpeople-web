@@ -1,6 +1,6 @@
 import { useState, useMemo, useCallback } from 'react'
 import { Upload, X, FileText, Loader2 } from 'lucide-react'
-import { submitApplication, type ApplicationData } from '../../utils/payload-api'
+import { submitApplication, type ApplicationData } from '../../utils/api'
 
 interface ApplicationFormProps {
   jobTitle: string

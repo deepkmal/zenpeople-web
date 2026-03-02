@@ -12,9 +12,11 @@ import {
   validatePhone,
   validateRequired,
   validateFile,
+  validateFileContent_post,
   MAX_LENGTHS,
 } from '../validation';
 import { checkRateLimit, getClientIP } from '../rate-limit';
+import { createDocument, uploadAsset } from '../sanity';
 
 const application = new Hono<{ Bindings: Env }>();
 
@@ -48,6 +50,9 @@ application.post('/', async (c) => {
     let jobSlug: string;
     let file: File | null = null;
     let fileAttachment: EmailAttachment | undefined;
+    let fileBuffer: ArrayBuffer | null = null;
+    let fileName = '';
+    let fileType = '';
 
     if (contentType.includes('multipart/form-data')) {
       const formData = await c.req.formData();
@@ -113,10 +118,19 @@ application.post('/', async (c) => {
       return c.json({ error: fileValidation.error }, 400);
     }
 
-    // Process file attachment
+    // Process file — read buffer once, reuse for email and Sanity
     if (file && file.size > 0) {
-      const arrayBuffer = await file.arrayBuffer();
-      const base64Content = arrayBufferToBase64(arrayBuffer);
+      fileBuffer = await file.arrayBuffer();
+      fileName = file.name;
+      fileType = file.type;
+
+      // Validate file content (magic bytes)
+      const contentValidation = validateFileContent_post(fileBuffer);
+      if (!contentValidation.valid) {
+        return c.json({ error: contentValidation.error }, 400);
+      }
+
+      const base64Content = arrayBufferToBase64(fileBuffer);
       fileAttachment = {
         filename: file.name,
         content: base64Content,
@@ -152,6 +166,44 @@ application.post('/', async (c) => {
     if (!notificationResult.ok) {
       return c.json({ error: 'Failed to send notification email' }, 500);
     }
+
+    // Store in Sanity (non-blocking)
+    const sanityConfig = {
+      projectId: c.env.SANITY_PROJECT_ID,
+      dataset: c.env.SANITY_DATASET,
+      apiToken: c.env.SANITY_API_TOKEN,
+    };
+
+    // Capture buffer reference for waitUntil closure
+    const capturedBuffer = fileBuffer;
+    const capturedFileName = fileName;
+    const capturedFileType = fileType;
+
+    c.executionCtx.waitUntil(
+      (async () => {
+        try {
+          let resumeFile: { _type: 'file'; asset: { _type: 'reference'; _ref: string } } | undefined;
+
+          if (capturedBuffer) {
+            resumeFile = await uploadAsset(sanityConfig, capturedBuffer, capturedFileName, capturedFileType);
+          }
+
+          await createDocument(sanityConfig, {
+            _type: 'jobApplication',
+            firstName,
+            lastName,
+            email,
+            phone,
+            jobTitle,
+            jobSlug,
+            resumeFile: resumeFile || undefined,
+            source: 'website',
+          });
+        } catch (err) {
+          console.error('[Application] Sanity write failed:', err instanceof Error ? err.message : err);
+        }
+      })()
+    );
 
     return c.json({ success: true, message: "Thank you for your application! We'll be in touch soon." });
   } catch (error) {

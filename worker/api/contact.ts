@@ -16,6 +16,7 @@ import {
   MAX_LENGTHS,
 } from '../validation';
 import { checkRateLimit, getClientIP } from '../rate-limit';
+import { createDocument } from '../sanity';
 
 const contact = new Hono<{ Bindings: Env }>();
 
@@ -96,6 +97,30 @@ contact.post('/', async (c) => {
     if (!notificationResult.ok) {
       return c.json({ error: 'Failed to send notification email' }, 500);
     }
+
+    // Store in Sanity (non-blocking)
+    c.executionCtx.waitUntil(
+      createDocument(
+        {
+          projectId: c.env.SANITY_PROJECT_ID,
+          dataset: c.env.SANITY_DATASET,
+          apiToken: c.env.SANITY_API_TOKEN,
+        },
+        {
+          _type: 'lead',
+          leadType: 'contact',
+          firstName,
+          lastName,
+          email,
+          phone: phone || undefined,
+          company: company || undefined,
+          message,
+          source: 'website',
+        }
+      ).catch((err) => {
+        console.error('[Contact] Sanity write failed:', err instanceof Error ? err.message : err);
+      })
+    );
 
     return c.json({ success: true, message: "Thank you for your message. We'll be in touch soon!" });
   } catch (error) {

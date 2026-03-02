@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { X } from 'lucide-react'
-import { employmentTypeLabels, sectorLabels } from '../../utils/payload-api'
+import { employmentTypeLabels, sectorLabels } from '../../utils/api'
 
 interface FilterSheetProps {
   isOpen: boolean

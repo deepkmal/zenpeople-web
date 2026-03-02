@@ -1,5 +1,5 @@
 import { X } from 'lucide-react'
-import { employmentTypeLabels, sectorLabels } from '../../utils/payload-api'
+import { employmentTypeLabels, sectorLabels } from '../../utils/api'
 
 interface FilterChipsProps {
   city?: string

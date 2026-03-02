@@ -2,7 +2,17 @@ export interface Env {
   RESEND_API_KEY: string;
   DESTINATION_EMAIL: string;
   TURNSTILE_SECRET_KEY: string;
+  SANITY_PROJECT_ID: string;
+  SANITY_DATASET: string;
+  SANITY_API_TOKEN: string;
+  SANITY_WEBHOOK_SECRET: string;
+  ALLOWED_ORIGIN: string;
   ASSETS: Fetcher;
+  JOBADDER_CLIENT_ID: string;
+  JOBADDER_CLIENT_SECRET: string;
+  JOBADDER_BOARD_ID: string;
+  JOBADDER_WEBHOOK_SECRET: string;
+  JOBADDER_TOKENS: KVNamespace;
 }
 
 export interface ContactFormData {

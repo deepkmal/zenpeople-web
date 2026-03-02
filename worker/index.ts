@@ -1,10 +1,18 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import type { Env } from './types';
+import {
+  originGuard,
+  contentTypeEnforcement,
+  bodySizeLimit,
+} from './security';
 import contact from './api/contact';
 import quote from './api/quote';
 import resume from './api/resume';
 import application from './api/application';
+import sanityWebhook from './api/webhooks/sanity';
+import jobadderWebhook from './api/webhooks/jobadder';
+import jobadderRoutes from './api/jobadder';
 
 const app = new Hono<{ Bindings: Env }>();
 
@@ -16,9 +24,35 @@ const ALLOWED_ORIGINS = [
 
 app.use('/api/*', cors({
   origin: (origin) => ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0],
+}));
+// Webhook routes (authenticated via secret, not browser middleware)
+app.route('/webhooks/sanity', sanityWebhook);
+app.route('/webhooks/jobadder', jobadderWebhook);
+
+// JobAdder OAuth & admin routes (no browser security middleware — uses own auth)
+app.route('/api/jobadder', jobadderRoutes);
+
+// CORS middleware for form API routes
+app.use('/api/*', cors({
+  origin: (origin, c) => {
+    const allowed = c.env.ALLOWED_ORIGIN || 'https://zenpeople.com.au';
+    if (
+      origin.includes('localhost') ||
+      origin.includes('127.0.0.1') ||
+      origin === allowed
+    ) {
+      return origin;
+    }
+    return allowed;
+  },
   allowMethods: ['POST', 'OPTIONS'],
   allowHeaders: ['Content-Type'],
 }));
+
+// Security middleware stack for API routes
+app.use('/api/*', originGuard);
+app.use('/api/*', contentTypeEnforcement);
+app.use('/api/*', bodySizeLimit);
 
 // API routes
 app.route('/api/contact', contact);
