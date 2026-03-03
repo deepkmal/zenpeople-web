@@ -19,8 +19,14 @@ export const originGuard: MiddlewareHandler = createMiddleware<{ Bindings: Env }
       origin.includes('localhost') || origin.includes('127.0.0.1') ||
       referer.includes('localhost') || referer.includes('127.0.0.1')
 
-    const originMatches =
-      origin.includes(allowed) || referer.includes(allowed)
+    const allowedOrigins = [
+      allowed,
+      allowed.replace('https://', 'https://www.'),
+    ]
+
+    const originMatches = allowedOrigins.some(
+      (a) => origin.includes(a) || referer.includes(a)
+    )
 
     if (!isLocalhost && !originMatches) {
       return c.json({ error: 'Forbidden' }, 403)
